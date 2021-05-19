@@ -1,0 +1,16 @@
+WARNING:
+- Driver, predisposizione raccolta statistiche (ride_stats)
+- Cancellazione ride sempre se nessun driver trovato nello step corrente
+- Assegnazione ride in un unico step (non realistico)
+- Lunghezza ride e lunghezza stimata coincidono per ora
+- Il driver dopo che lascia il customer non viene settata nessuna nuova route (continua a girare secondo i principi del simulatore)
+    per aggiungere nuova route:
+        try:
+            from_edge, to_edge = driver.generate_from_to(self.net.edge_prefix, to_area.edges)
+            route_stage = self.traci.simulation.findRoute(from_edge,to_edge)
+            self.traci.vehicle.setRoute(driver.id,route_stage.edges)
+        except:
+            print("Unexpected route not found in update_rides_state")
+            pass
+    in update_rides_state (va modificato opportunamente)
+- Uber drivers e costumers dict (rischio collisioni in simulazioni con migliaia di drivers e customers)

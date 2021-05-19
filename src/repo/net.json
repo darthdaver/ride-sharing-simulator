@@ -1,0 +1,422 @@
+{
+    "areas": {
+        "A":{
+            "id": "A",
+            "edges":[
+                297,
+                492
+            ],
+            "generation":{
+                "customer":0.3,
+                "driver":0.2,
+                "many":[
+                    3,
+                    2
+                ]
+            },
+            "balances":[
+                1.0
+            ],
+            "customers":[
+                
+            ],
+            "drivers":[
+                
+            ],
+            "customers_counter":0,
+            "drivers_counter":0,
+            "canceled":0,
+            "completed":0,
+            "prices":[
+                
+            ],
+            "expected_prices":[
+                
+            ],
+            "waiting_times":[
+                
+            ],
+            "ride_times":[
+                
+            ],
+            "total_times":[
+                
+            ],
+            "waiting_lengths":[
+                
+            ],
+            "ride_lengths":[
+                
+            ],
+            "total_lengths":[
+                
+            ],
+            "diff_prices":[
+                
+            ],
+            "diff_waiting_times":[
+                
+            ],
+            "diff_ride_times":[
+                
+            ],
+            "diff_total_times":[
+                
+            ],
+            "diff_waiting_lengths":[
+                
+            ],
+            "diff_ride_lengths":[
+                
+            ],
+            "diff_total_lengths":[
+                
+            ],
+            "surge_multipliers":[
+                1.0
+            ],
+            "customer_personality_probability_distribution":[
+                [
+                    0.5,
+                    "hurry"
+                ],
+                [
+                    0.6,
+                    "greedy"
+                ],
+                [
+                    1,
+                    "normal"
+                ]
+            ],
+            "driver_personality_probability_distribution":[
+                [
+                    0.2,
+                    "greedy"
+                ],
+                [
+                    1,
+                    "normal"
+                ]
+            ],
+            "rejections":[
+                
+            ]
+            },
+        "B":{
+            "id": "B",
+            "edges":[
+                0,
+                219
+            ],
+            "generation":{
+                "customer":0.3,
+                "driver":0.2,
+                "many":[
+                    3,
+                    2
+                ]
+            },
+            "balances":[
+                1.0
+            ],
+            "customers":[
+                
+            ],
+            "drivers":[
+                
+            ],
+            "customers_counter":0,
+            "drivers_counter":0,
+            "canceled":0,
+            "completed":0,
+            "prices":[
+                
+            ],
+            "expected_prices":[
+                
+            ],
+            "waiting_times":[
+                
+            ],
+            "ride_times":[
+                
+            ],
+            "total_times":[
+                
+            ],
+            "waiting_lengths":[
+                
+            ],
+            "ride_lengths":[
+                
+            ],
+            "total_lengths":[
+                
+            ],
+            "diff_prices":[
+                
+            ],
+            "diff_waiting_times":[
+                
+            ],
+            "diff_ride_times":[
+                
+            ],
+            "diff_total_times":[
+                
+            ],
+            "diff_waiting_lengths":[
+                
+            ],
+            "diff_ride_lengths":[
+                
+            ],
+            "diff_total_lengths":[
+                
+            ],
+            "surge_multipliers":[
+                1.0
+            ],
+            "customer_personality_probability_distribution":[
+                [
+                    0.5,
+                    "hurry"
+                ],
+                [
+                    0.6,
+                    "greedy"
+                ],
+                [
+                    1,
+                    "normal"
+                ]
+            ],
+            "driver_personality_probability_distribution":[
+                [
+                    0.1,
+                    "greedy"
+                ],
+                [
+                    1,
+                    "normal"
+                ]
+            ],
+            "rejections":[
+                
+            ]
+            },
+        "C":{
+            "id": "C",
+            "edges":[
+                220,
+                296
+            ],
+            "generation":{
+                "customer":0.25,
+                "driver":0.1,
+                "many":[
+                    3,
+                    3
+                ]
+            },
+            "balances":[
+                1.0
+            ],
+            "customers":[
+                
+            ],
+            "drivers":[
+                
+            ],
+            "customers_counter":0,
+            "drivers_counter":0,
+            "canceled":0,
+            "completed":0,
+            "prices":[
+                
+            ],
+            "expected_prices":[
+                
+            ],
+            "waiting_times":[
+                
+            ],
+            "ride_times":[
+                
+            ],
+            "total_times":[
+                
+            ],
+            "waiting_lengths":[
+                
+            ],
+            "ride_lengths":[
+                
+            ],
+            "total_lengths":[
+                
+            ],
+            "diff_prices":[
+                
+            ],
+            "diff_waiting_times":[
+                
+            ],
+            "diff_ride_times":[
+                
+            ],
+            "diff_total_times":[
+                
+            ],
+            "diff_waiting_lengths":[
+                
+            ],
+            "diff_ride_lengths":[
+                
+            ],
+            "diff_total_lengths":[
+                
+            ],
+            "surge_multipliers":[
+                1.0
+            ],
+            "customer_personality_probability_distribution":[
+                [
+                    0.2,
+                    "hurry"
+                ],
+                [
+                    0.4,
+                    "greedy"
+                ],
+                [
+                    1,
+                    "normal"
+                ]
+            ],
+            "driver_personality_probability_distribution":[
+                [
+                    0.1,
+                    "greedy"
+                ],
+                [
+                    1,
+                    "normal"
+                ]
+            ],
+            "rejections":[
+                
+            ]
+            },
+        "D":{
+            "id": "D",
+            "edges":[
+                493,
+                570
+            ],
+            "generation":{
+                "customer":0.25,
+                "driver":0.1,
+                "many":[
+                    2,
+                    2
+                ]
+            },
+            "surge_multipliers":[
+                1.0
+            ],
+            "balances":[
+                1.0
+            ],
+            "customers":[
+                
+            ],
+            "drivers":[
+                
+            ],
+            "customers_counter":0,
+            "drivers_counter":0,
+            "canceled":0,
+            "completed":0,
+            "prices":[
+                
+            ],
+            "expected_prices":[
+                
+            ],
+            "waiting_times":[
+                
+            ],
+            "ride_times":[
+                
+            ],
+            "total_times":[
+                
+            ],
+            "waiting_lengths":[
+                
+            ],
+            "ride_lengths":[
+                
+            ],
+            "total_lengths":[
+                
+            ],
+            "diff_prices":[
+                
+            ],
+            "diff_waiting_times":[
+                
+            ],
+            "diff_total_times":[
+                
+            ],
+            "diff_ride_times":[
+                
+            ],
+            "diff_waiting_lengths":[
+                
+            ],
+            "diff_ride_lengths":[
+                
+            ],
+            "diff_total_lengths":[
+                
+            ],
+            "customer_personality_probability_distribution":[
+                [
+                    0.2,
+                    "hurry"
+                ],
+                [
+                    0.5,
+                    "greedy"
+                ],
+                [
+                    1,
+                    "normal"
+                ]
+            ],
+            "driver_personality_probability_distribution":[
+                [
+                    0.1,
+                    "greedy"
+                ],
+                [
+                    1,
+                    "normal"
+                ]
+            ],
+            "rejections":[
+                
+            ]
+        }
+    },
+    "info": {
+        "min_edge_num": 0,
+        "max_edge_num": 570,
+        "edge_prefix": "gneE",
+        "num_random_routes": 100
+    }
+ }
