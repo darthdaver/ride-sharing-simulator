@@ -10,9 +10,9 @@ class Ride:
         self.to_edge = reservation.toEdge
         self.state = RideState.REQUESTED.value
         self.traci_reservation = reservation
-        self.rejections = 0
         self.stats = {
-            "timestamp_request": timestamp
+            "timestamp_request": timestamp,
+            "rejections": 0
         }
 
 
@@ -56,3 +56,22 @@ class Ride:
         self.stats["timestamp_accepted"] = timestamp
         self.stats["surge_multiplier"] = surge
         self.stats["time_to_accept_request"] = timestamp - self.stats["timestamp_request"]
+
+    def __str__(self):
+        #ride_str = '-'*4
+        #ride_str += "\nRide\n"
+        #ride_str += '-'*4
+        #ride_str += '\n'
+        ride_str = "\n"
+        ride_str += f"  - id: {self.id}\n"
+        ride_str += f"  - customer id: {self.customer_id}\n"
+        ride_str += f"  - driver id: {self.driver_id}\n"
+        ride_str += f"  - from: {self.from_edge}\n"
+        ride_str += f"  - to: {self.to_edge}\n"
+        ride_str += f"  - state: {self.state}\n"
+        ride_str += "   - stats:\n"
+        for k, v in self.stats.items():
+            ride_str += f"          - {k}: {v}\n"
+        #ride_str += '-'*4
+        ride_str += '\n'
+        return ride_str

@@ -32,9 +32,9 @@ class Net:
 
     def edge_area(self, edge_id):
         #print("edge_area")
-        for area_id, area_data in self.areas.items():
+        for area_id, area in self.areas.items():
             edges_names = []
-            for i in range(area_data["edges"][0],area_data["edges"][1]+1):
+            for i in range(area.edges[0], area.edges[1]+1):
                 edges_names.append(f"{self.edge_prefix}{i}")
                 edges_names.append(f"-{self.edge_prefix}{i}")
             if (edge_id in edges_names):

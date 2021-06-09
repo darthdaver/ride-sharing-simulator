@@ -10,18 +10,18 @@ class Peak(Scenario):
         self.peak_intervals = setup["peak_intervals"]
         pass
 
-    def thrown_scenario(self, step, net):
+    def trigger_scenario(self, step, net):
         for start, end in self.peak_intervals:
             if (step == start):
-                net.areas["A"].generation["customer"] = 0.6
-                net.areas["B"].generation["customer"] = 0.6
-                net.areas["C"].generation["customer"] = 0.4
-                net.areas["D"].generation["customer"] = 0.4
+                net.areas["A"].generation_policy["customer"] = 0.6
+                net.areas["B"].generation_policy["customer"] = 0.6
+                net.areas["C"].generation_policy["customer"] = 0.4
+                net.areas["D"].generation_policy["customer"] = 0.4
                 print("PEAK TRIGGERED")
 
             if (step == end):
-                net.areas["A"].generation["customer"] = 0.25
-                net.areas["B"].generation["customer"] = 0.25
-                net.areas["C"].generation["customer"] = 0.1
-                net.areas["D"].generation["customer"] = 0.1
+                net.areas["A"].generation_policy["customer"] = 0.25
+                net.areas["B"].generation_policy["customer"] = 0.25
+                net.areas["C"].generation_policy["customer"] = 0.1
+                net.areas["D"].generation_policy["customer"] = 0.1
                 print("PEAK UNTRIGGERED")

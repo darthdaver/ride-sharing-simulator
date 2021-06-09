@@ -1,11 +1,11 @@
-from taxi_simulation_trial.src.state.RideState import RideState
+from src.state.RideState import RideState
 from src.utils import utils
 
 class Uber:
     def __init__(self, fare, request):
         self.base_fare = fare["base_fare"]
         self.minimum_fare = fare["minimum_fare"]
-        self.fare_per_minute = fare["fee_per_minute"]
+        self.fee_per_minute = fare["fee_per_minute"]
         self.fee_per_mile = fare["fee_per_mile"]
         self.surge_multiplier_policy = fare["surge_multiplier_policy"]
         self.request_max_driver_distance = request["max_driver_distance"]
@@ -56,14 +56,36 @@ class Uber:
         return utils.lists_union(in_progress_rides)
 
 
+    def print_matched_rides(self):
+        print("[\n")
+        for c, d, r, t in self.matched_rides:
+            print(f"    {c} - {d} - {r}")
+        print("]\n")
+
+
+    def print_ride_list(self, ride_list):
+        print("[\n")
+        for ride in ride_list:
+            print(f"    {ride.id}")
+        print("]\n")
+
+    def print_driver_list(self, driver_list):
+        print("[\n")
+        for driver in driver_list:
+            print(f"    {driver.id}")
+        print("]\n")
+
+
     def receive_request(self, ride_request, customer):
         self.unprocessed_requests.append(ride_request)
         self.rides[customer.id] = ride_request
-        self.uber.customers[customer.id] = customer
 
 
     def update_cancel_ride(self, ride):
-        self.pending_requests.remove(ride)
+        if (ride in self.unprocessed_requests):
+            self.unprocessed_requests.remove(ride)
+        elif (ride in self.pending_requests):
+            self.pending_requests.remove(ride)
         self.canceled_rides.append(ride)
 
 
@@ -74,7 +96,8 @@ class Uber:
         self.idle_drivers.append(driver)
 
 
-    def update_on_road_ride(self, ride, driver):
+    def update_onroad_ride(self, ride, driver):
+        self.inactive_drivers
         self.pickup_drivers.remove(driver)
         self.onroad_drivers.append(driver)
         self.pickup_rides.remove(ride)
@@ -82,7 +105,8 @@ class Uber:
     
 
     def update_pending_request(self, ride):
-        self.unprocessed_requests.remove(ride)
+        if (ride in self.unprocessed_requests):
+            self.unprocessed_requests.remove(ride)
         self.pending_requests.append(ride)
 
 
@@ -91,7 +115,7 @@ class Uber:
         self.pickup_drivers.append(driver)
         self.pending_requests.remove(ride)
         self.pickup_rides.append(ride)
-        self.matched_rides.append((customer.id, driver.id, timestamp))
+        self.matched_rides.append((customer.id, driver.id, ride.id, timestamp))
 
 
     def update_remove_driver(self, driver):

@@ -9,8 +9,8 @@ class Greedy(Scenario):
         self.trigger_step = setup["trigger_step"]
         pass
 
-    def thrown_scenario(self, step, net):
+    def trigger_scenario(self, step, net):
         if (self.trigger_step == step):
-            net.areas["A"].generation["customer"] = 0.8
-            net.areas["A"].generation["many"] = (8, 3)
+            net.areas["A"].generation_policy["customer"] = 0.8
+            net.areas["A"].generation_policy["many"] = (8, 3)
             print("GREEDY TRIGGERED")

@@ -78,7 +78,7 @@ class Area:
         area_str += f"  - driver: {self.generation_policy['driver']}\n"
         area_str += f"  - many: {self.generation_policy['many']}\n"
         area_str += f"surge multiplier: {self.surge_multiplier}\n"
-        area_str += f"balance: {self.balances[-1]}\n"
+        area_str += f"balance: {self.stats['balances'][-1]}\n"
         area_str += f"customers: ["
         if (len(self.customers) > 0):
             area_str += "\n"
@@ -107,7 +107,7 @@ class Area:
         for k,v in self.stats.items():
             label = k.replace("_"," ")
             if (isinstance(v,list)):
-                area_str += f"average {label}: {utils.list_average(v)}"
+                area_str += f"average {label}: {utils.list_average(v)}\n"
             else:
                 area_str += f"{label}: {v}\n"
         return area_str

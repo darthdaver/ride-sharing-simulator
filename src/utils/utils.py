@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 
 
-def check_empty_intersection(self, lists):
+def check_empty_intersection(lists):
     intersection_list = lists[0]
     for lst in lists[1:]:
         intersection_list = list(set(intersection_list) & set(lst))
@@ -22,7 +22,7 @@ def list_average_diff(lst1, lst2):
     return list_average(lst_diff)
 
 
-def lists_union(self, lists):
+def lists_union(lists):
     flat_list = []
     for lst in lists:
         flat_list = flat_list + lst
@@ -30,12 +30,12 @@ def lists_union(self, lists):
 
 
 # Return a random choice with a certain probability
-def random_choice(self, p=0.5):
+def random_choice(p=0.5):
     # print("random_choice")
     return random.random() < p
 
 
-def read_setup(self, path):
+def read_setup(path):
     # net parameters
     with open(Path(path)) as setup_json:
         setup_obj = json.load(setup_json)

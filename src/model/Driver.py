@@ -1,18 +1,16 @@
 from src.state.DriverState import DriverState
 from src.model.Human import Human
-from serc.utils import utils
+from src.utils import utils
 
 import random
 
 
 class Driver(Human):
     def __init__(self, timestamp, id_num, area_id, num_routes, personality_distribution):
-        super().__init__(timestamp, f"driver_{id_num}", area_id, personality_distribution)
+        super().__init__(timestamp, f"driver_{id_num}", area_id, DriverState.IDLE.value, personality_distribution)
         route_num = random.randrange(0, num_routes)
         self.route_id = f"area_{area_id}_route_{route_num}"
-        self.state = DriverState.IDLE.value
         self.last_ride = timestamp
-        self.ride_stats = {}
 
 
     def generate_from_to(self, edge_prefix, edges):
@@ -28,6 +26,20 @@ class Driver(Human):
         self.state = DriverState.INACTIVE.value
         self.end = timestamp
 
+
+    def update_pickup_ride(self, ride):
+        self.state = DriverState.PICKUP.value
+        self.ride = ride
+
+
+    def update_onroad_ride(self):
+        self.state = DriverState.ONROAD.value
+
+
+    def update_end_moving(self):
+        self.state = DriverState.IDLE.value
+
+
     def update_end_ride(self, timestamp):
         self.state = DriverState.IDLE.value
         self.last_ride = timestamp
@@ -41,7 +53,6 @@ class Driver(Human):
         driver_str = ""
         driver_str += super().__str__()
         driver_str += f"     route id: {self.route_id}\n"
-        driver_str += f"     state: {self.state}\n"
         driver_str += f"     last ride: {self.last_ride}"
         #driver_str += '-'*6
         #driver_str += '\n'

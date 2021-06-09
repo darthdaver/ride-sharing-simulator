@@ -25,6 +25,7 @@ import traci
 import sumolib
 
 from src.controller.Simulator import Simulator
+from src.controller.SimulatorDebug import SimulatorDebug
 
 def get_options():
     optParser = optparse.OptionParser()
@@ -47,9 +48,7 @@ if __name__ == "__main__":
                  "--tripinfo-output", "net_config/tripinfo.xml"])  
 
     print('INIT')
-
     simulator = Simulator(traci)
-
     simulator.init_scenario()
-
     print(f"INIT SIMULATOR")
+    simulator.run()
