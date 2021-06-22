@@ -1,3 +1,103 @@
 {
-    "trigger_step": 7500
+    "greedy_interval": [3500,4500],
+    "areas_generation_policy_greedy_start":{
+        "A": {
+            "customer":0.2,
+            "driver":0.1,
+            "many":[
+                1,
+                1
+            ],
+            "increment": {
+                "customer": 0.04,
+                "driver": 0.01
+            }
+        },
+        "B": {
+            "customer":0.1,
+            "driver":0.12,
+            "many":[
+                1,
+                1
+            ],
+            "increment": {
+                "customer": 0.008,
+                "driver": 0.01
+            }
+        },
+        "C": {
+            "customer":0.03,
+            "driver":0.05,
+            "many":[
+                1,
+                1
+            ],
+            "increment": {
+                "customer": 0.002,
+                "driver": 0.004
+            }
+        },
+        "D": {
+            "customer":0.005,
+            "driver":0.001,
+            "many":[
+                1,
+                1
+            ],
+            "increment": {
+                "customer": 0.001,
+                "driver": 0.001
+            }
+        }
+    },
+    "areas_generation_policy_greedy_end": {
+        "A": {
+            "customer":0.12,
+            "driver":0.15,
+            "many":[
+                1,
+                1
+            ],
+            "increment": {
+                "customer": 0.01,
+                "driver": 0.03
+            }
+        },
+        "B": {
+            "customer":0.1,
+            "driver":0.12,
+            "many":[
+                1,
+                1
+            ],
+            "increment": {
+                "customer": 0.008,
+                "driver": 0.01
+            }
+        },
+        "C": {
+            "customer":0.03,
+            "driver":0.05,
+            "many":[
+                1,
+                1
+            ],
+            "increment": {
+                "customer": 0.002,
+                "driver": 0.004
+            }
+        },
+        "D": {
+            "customer":0.005,
+            "driver":0.001,
+            "many":[
+                1,
+                1
+            ],
+            "increment": {
+                "customer": 0.002,
+                "driver": 0.004
+            }
+        }
+    }
 }

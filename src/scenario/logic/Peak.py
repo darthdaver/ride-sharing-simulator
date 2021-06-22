@@ -8,20 +8,19 @@ class Peak(Scenario):
         super().__init__()
         setup = utils.read_setup(FileSetup.PEAK.value)
         self.peak_intervals = setup["peak_intervals"]
-        pass
+        self.areas_peak_generation_policy_start = setup["areas_generation_policy_peak_start"]
+        self.areas_peak_generation_policy_end = setup["areas_generation_policy_peak_end"]
 
     def trigger_scenario(self, step, net):
         for start, end in self.peak_intervals:
             if (step == start):
-                net.areas["A"].generation_policy["customer"] = 0.6
-                net.areas["B"].generation_policy["customer"] = 0.6
-                net.areas["C"].generation_policy["customer"] = 0.4
-                net.areas["D"].generation_policy["customer"] = 0.4
+                for area_id, area in net.areas.items():
+                    area_peak_generation_policy_start = self.areas_peak_generation_policy_start[area_id]
+                    area.update_generation_policy(area_peak_generation_policy_start)
                 print("PEAK TRIGGERED")
 
             if (step == end):
-                net.areas["A"].generation_policy["customer"] = 0.25
-                net.areas["B"].generation_policy["customer"] = 0.25
-                net.areas["C"].generation_policy["customer"] = 0.1
-                net.areas["D"].generation_policy["customer"] = 0.1
+                for area_id, area in net.areas.items():
+                    area_peak_generation_policy_end = self.areas_peak_generation_policy_end[area_id]
+                    area.update_generation_policy(area_peak_generation_policy_end)
                 print("PEAK UNTRIGGERED")

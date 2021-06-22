@@ -4,7 +4,12 @@ class Area:
     def __init__(self, area):
         self.id = area["id"]
         self.edges = area["edges"]
-        self.generation_policy = area["generation"]
+        self.generation_policy_template = area["generation"]
+        self.generation_policy = {
+            "customer": self.generation_policy_template["customer"],
+            "driver": self.generation_policy_template["driver"],
+            "many" : self.generation_policy_template["many"]
+        }
         self.surge_multiplier = 1
         self.customers = []
         self.drivers = []
@@ -35,8 +40,20 @@ class Area:
         }
 
 
+    def increment_generation(self, agent):
+        if (agent == "driver"):
+            self.generation_policy["driver"] += self.generation_policy_template["increment"]["driver"]
+        elif (agent == "customer"):
+            self.generation_policy["customer"] += self.generation_policy_template["increment"]["customer"]
+
+
     def remove_driver(self, driver_id):
         self.drivers.remove(driver_id)
+
+
+    def reset_generation_policy(self):
+        self.generation_policy["customer"] = self.generation_policy_template["customer"]
+        self.generation_policy["driver"] = self.generation_policy_template["driver"]
 
 
     def update_cancel_ride(self, customer_id):
@@ -64,6 +81,10 @@ class Area:
         self.stats["diff_total_lengths"].append(ride.stats["total_length"] - ride.stats["expected_total_length"])
         self.stats["rejections"].append(ride.stats["rejections"])
 
+
+    def update_generation_policy(self, generation_policy):
+        self.generation_policy_template = generation_policy
+        self.generation_policy = generation_policy
 
 
     def __str__(self):

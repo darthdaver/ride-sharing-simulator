@@ -482,8 +482,8 @@ class SimulatorDebug:
                 self.printer.save_areas_global_stats(step, self.net.areas)
                 self.printer.save_net_global_stats(step, self.net.areas)
 
-                for area_id, area in self.net.areas.items():
-                    area.stats["last_checkpoint"] = area.stats["completed"] - 1
+                #for area_id, area in self.net.areas.items():
+                #    area.stats["last_checkpoint"] = area.stats["completed"] - 1
 
         for ride in self.uber.pickup_rides:
             driver = self.uber.drivers[ride.driver_id]

@@ -9,6 +9,7 @@ class Driver(Human):
     def __init__(self, timestamp, id_num, area_id, num_routes, personality_distribution):
         super().__init__(timestamp, f"driver_{id_num}", area_id, DriverState.IDLE.value, personality_distribution)
         route_num = random.randrange(0, num_routes)
+        self.request_pending = False
         self.route_id = f"area_{area_id}_route_{route_num}"
         self.last_ride = timestamp
 
@@ -27,7 +28,16 @@ class Driver(Human):
         self.end = timestamp
 
 
+    def receive_request(self):
+        self.request_pending = True
+
+
+    def reject_request(self):
+        self.request_pending = True
+
+
     def update_pickup_ride(self, ride):
+        self.request_pending = False
         self.state = DriverState.PICKUP.value
         self.ride = ride
 
