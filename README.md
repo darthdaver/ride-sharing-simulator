@@ -13,7 +13,8 @@ The project exploits the functionalities of [SUMO](https://sumo.dlr.de/docs/inde
 
 The logic of the ride-sharing simulator is written in **Python 3**. Therefore, a stable version of Python 3 (for example, 3.6 or more) is necessary to run the simulator.
 
-### Run
+
+## Run
 
 To run the experiments, download the project, move in the main directory of the project and run the following command:
 
@@ -42,7 +43,19 @@ The logic of the simulator divides the map in 4 different areas, as shown in the
 The simulation produces data that refers to KPIs related to the rides performed in each area of the map. The data are collected in the folder `output`, generated at runtime. The structure of the output folder and the meaning of each generated file is reported in the section **Output Structure** of this **README** file.
 
 
-### Project Structure
+## Software Architecture
+
+The main components of the projects are:
+
+1. **SUMO GUI**: it represents the graphical user interface of **SUMO** the traffic generator and simulator.
+2. **NetEdit**: it is the tool through which the map used for the simulation has been defined.
+3. **TraCI**; it constitutes the **API Interface** through which the logic of the **ride-sharing simulator** can communicate with **SUMO**.
+4. **Random Traffic Script**: generate random traffic in the simulation. In other words, it adds random noise to the simulation.
+5. **JSON Setup Files**: they represents the files to configure the parameters of the **ride-sharing simulator**.
+
+![Software architecture](/assets/software_architecture.png)
+
+## Project Structure
 The following graph show the structure of the given project. The graph list only the relevant files.
 
     |---- net_config
@@ -91,8 +104,16 @@ Contains all the possible states of the different agents and components involved
 
 It contains accessory generic functions used by the simulator and the other components during the simulation.
 
+### random_trips.py
 
-### Output Structure
+`random_trips.py` is a script to generate random traffic within the simulation. The output of the script is a file that contains the descriptions of all the vehicles introduced during the simulation and the route followed by each vehicle during the simulation (for more information, follow the [link](https://sumo.dlr.de/docs/Tools/Trip.html)). In our case, the generated file `random_trips.trips.xml` has been positioned within the folder `net_config`. The content of the file `sumo.sumoconfig` contained in the same folder links to the `random_trips.trips.xml` to generate the traffic during the simulation.
+
+### runner.py
+
+It represents the main file of the project. It is executed to start the simulator and open the SUMO GUI at the beginning of the simulation.
+
+
+## Output Folder Structure
 
     |---- area
     |       |-- area_A_all_{timestamp}.csv
