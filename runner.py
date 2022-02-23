@@ -22,10 +22,8 @@ else:
 
 from sumolib import checkBinary
 import traci
-import sumolib
 
 from src.controller.Simulator import Simulator
-from src.controller.SimulatorDebug import SimulatorDebug
 
 def get_options():
     optParser = optparse.OptionParser()
