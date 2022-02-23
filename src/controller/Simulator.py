@@ -408,7 +408,7 @@ class Simulator:
             for area_id, area in self.net.areas.items():
                 area.stats["last_checkpoint"] = step - 1
 
-        self.traci.close()
+        self.traci.close(False)
         sys.stdout.flush()
 
 
