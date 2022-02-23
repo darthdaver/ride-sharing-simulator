@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<<<<<<< HEAD
 <!-- generated on 2022-02-17 10:19:04 by Eclipse SUMO GUI Version 1.10.0
+=======
+<!-- generated on 22/06/2021 12:21:48 by Eclipse SUMO GUI Version 1.9.0
+>>>>>>> b3a48549333f0579ab7e32ed21e16698643a4fe6
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
@@ -27,7 +31,11 @@
     </taxi_device>
 
     <traci_server>
+<<<<<<< HEAD
         <remote-port value="58849"/>
+=======
+        <remote-port value="59888"/>
+>>>>>>> b3a48549333f0579ab7e32ed21e16698643a4fe6
     </traci_server>
 
     <gui_only>
@@ -39,6 +47,7 @@
 -->
 
 <tripinfos xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/tripinfo_file.xsd">
+<<<<<<< HEAD
     <tripinfo id="driver_6" depart="14.00" departLane="gneE0_0" departPos="84.14" departSpeed="0.00" departDelay="0.00" arrival="18.00" arrivalLane=":gneJ1_4_0" arrivalPos="6.66" arrivalSpeed="5.92" duration="4.00" routeLength="12.12" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="2.08" rerouteNo="5" devices="tripinfo_driver_6 taxi_driver_6" vType="driver" speedFactor="0.97" vaporized="traci">
         <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
     </tripinfo>
@@ -2331,3 +2340,295 @@
     </tripinfo>
     <tripinfo id="709" depart="709.00" departLane="gneE73_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="796.00" arrivalLane="-gneE168_0" arrivalPos="85.60" arrivalSpeed="10.07" duration="87.00" routeLength="879.87" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="25.52" rerouteNo="1" devices="tripinfo_709 routing_709" vType="DEFAULT_VEHTYPE" speedFactor="1.07" vaporized=""/>
     <tripinfo id="567" depart="567.00" departLane="gneE479_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="798.00" arrivalLane="gneE166_0" arrivalPos="85.60" arrivalSpeed="14.48" duration="231.00" routeLength="2452.39" waitingTime="3.00" waitingCount="1" stopTime="0.00" timeLoss="87.79" rerouteNo="1" devices="tripinfo_567 routing_567" vType="DEFAULT_VEHTYPE" speedFactor="1.19" vaporized=""/>
+=======
+    <personinfo id="customer_1" depart="6.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="2.00" vehicle="NULL" depart="-1" arrival="8.00" arrivalPos="85.60" duration="8.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="8.00" arrivalPos="41.00" actType="last stage removed"/>
+    </personinfo>
+    <tripinfo id="driver_0" depart="0.00" departLane="gneE298_0" departPos="0.52" departSpeed="0.00" departDelay="0.00" arrival="10.00" arrivalLane="gneE298_0" arrivalPos="78.47" arrivalSpeed="11.10" duration="10.00" routeLength="77.95" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="2.69" rerouteNo="10" devices="tripinfo_driver_0 taxi_driver_0" vType="driver" speedFactor="1.03" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="driver_2" depart="0.00" departLane="gneE401_0" departPos="39.90" departSpeed="0.00" departDelay="0.00" arrival="14.00" arrivalLane="gneE318_0" arrivalPos="40.92" arrivalSpeed="12.17" duration="14.00" routeLength="95.65" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="5.51" rerouteNo="16" devices="tripinfo_driver_2 taxi_driver_2" vType="driver" speedFactor="1.01" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="driver_3" depart="0.00" departLane="-gneE287_0" departPos="38.70" departSpeed="0.00" departDelay="0.00" arrival="14.00" arrivalLane="gneE247_0" arrivalPos="36.54" arrivalSpeed="11.66" duration="14.00" routeLength="92.47" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="4.25" rerouteNo="16" devices="tripinfo_driver_3 taxi_driver_3" vType="driver" speedFactor="1.04" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="driver_6" depart="5.00" departLane="-gneE413_0" departPos="26.28" departSpeed="0.00" departDelay="0.00" arrival="14.00" arrivalLane="-gneE413_0" arrivalPos="85.48" arrivalSpeed="8.27" duration="9.00" routeLength="59.19" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="3.52" rerouteNo="9" devices="tripinfo_driver_6 taxi_driver_6" vType="driver" speedFactor="0.94" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <personinfo id="customer_4" depart="13.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="2.00" vehicle="NULL" depart="-1" arrival="15.00" arrivalPos="85.60" duration="15.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="15.00" arrivalPos="69.00" actType="last stage removed"/>
+    </personinfo>
+    <personinfo id="customer_0" depart="5.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="11.00" vehicle="NULL" depart="-1" arrival="16.00" arrivalPos="85.60" duration="16.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="16.00" arrivalPos="70.00" actType="last stage removed"/>
+    </personinfo>
+    <tripinfo id="driver_1" depart="0.00" departLane="-gneE380_0" departPos="57.61" departSpeed="0.00" departDelay="0.00" arrival="19.00" arrivalLane="-gneE378_0" arrivalPos="0.22" arrivalSpeed="9.28" duration="19.00" routeLength="142.61" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="5.70" rerouteNo="23" devices="tripinfo_driver_1 taxi_driver_1" vType="driver" speedFactor="0.97" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="driver_5" depart="1.00" departLane="-gneE359_0" departPos="74.95" departSpeed="0.00" departDelay="0.00" arrival="19.00" arrivalLane="-gneE357_0" arrivalPos="22.41" arrivalSpeed="12.80" duration="18.00" routeLength="147.46" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="6.63" rerouteNo="22" devices="tripinfo_driver_5 taxi_driver_5" vType="driver" speedFactor="1.00" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="driver_9" depart="15.00" departLane="gneE419_0" departPos="51.04" departSpeed="0.00" departDelay="0.00" arrival="20.00" arrivalLane="gneE419_0" arrivalPos="69.46" arrivalSpeed="7.61" duration="5.00" routeLength="18.42" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="2.40" rerouteNo="5" devices="tripinfo_driver_9 taxi_driver_9" vType="driver" speedFactor="1.05" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <personinfo id="customer_5" depart="14.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="7.00" vehicle="NULL" depart="-1" arrival="21.00" arrivalPos="85.60" duration="21.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="21.00" arrivalPos="47.00" actType="last stage removed"/>
+    </personinfo>
+    <personinfo id="customer_8" depart="21.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="2.00" vehicle="NULL" depart="-1" arrival="23.00" arrivalPos="85.60" duration="23.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="23.00" arrivalPos="51.00" actType="last stage removed"/>
+    </personinfo>
+    <personinfo id="customer_9" depart="23.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="4.00" vehicle="NULL" depart="-1" arrival="27.00" arrivalPos="85.60" duration="27.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="27.00" arrivalPos="68.00" actType="last stage removed"/>
+    </personinfo>
+    <personinfo id="customer_11" depart="27.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="2.00" vehicle="NULL" depart="-1" arrival="29.00" arrivalPos="85.60" duration="29.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="29.00" arrivalPos="65.00" actType="last stage removed"/>
+    </personinfo>
+    <tripinfo id="driver_13" depart="28.00" departLane="gneE72_0" departPos="70.67" departSpeed="0.00" departDelay="0.00" arrival="32.00" arrivalLane="gneE72_0" arrivalPos="83.86" arrivalSpeed="6.37" duration="4.00" routeLength="13.19" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="1.90" rerouteNo="4" devices="tripinfo_driver_13 taxi_driver_13" vType="driver" speedFactor="1.09" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <personinfo id="customer_3" depart="12.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="22.00" vehicle="NULL" depart="-1" arrival="34.00" arrivalPos="85.60" duration="34.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="34.00" arrivalPos="61.00" actType="last stage removed"/>
+    </personinfo>
+    <tripinfo id="driver_11" depart="24.00" departLane="-gneE240_0" departPos="15.46" departSpeed="0.00" departDelay="0.00" arrival="36.00" arrivalLane=":gneJ139_5_0" arrivalPos="11.52" arrivalSpeed="6.63" duration="12.00" routeLength="81.66" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="5.82" rerouteNo="13" devices="tripinfo_driver_11 taxi_driver_11" vType="driver" speedFactor="0.99" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="driver_17" depart="33.00" departLane="gneE513_0" departPos="49.10" departSpeed="0.00" departDelay="0.00" arrival="40.00" arrivalLane="gneE513_0" arrivalPos="84.99" arrivalSpeed="5.32" duration="7.00" routeLength="35.89" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="3.88" rerouteNo="7" devices="tripinfo_driver_17 taxi_driver_17" vType="driver" speedFactor="0.99" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="driver_14" depart="29.00" departLane="gneE390_0" departPos="31.26" departSpeed="0.00" departDelay="0.00" arrival="41.00" arrivalLane="gneE487_0" arrivalPos="10.66" arrivalSpeed="8.85" duration="12.00" routeLength="74.03" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="4.79" rerouteNo="14" devices="tripinfo_driver_14 taxi_driver_14" vType="driver" speedFactor="1.09" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="driver_16" depart="32.00" departLane="-gneE397_0" departPos="60.84" departSpeed="0.00" departDelay="0.00" arrival="41.00" arrivalLane="-gneE396_0" arrivalPos="12.85" arrivalSpeed="11.86" duration="9.00" routeLength="52.01" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="3.94" rerouteNo="11" devices="tripinfo_driver_16 taxi_driver_16" vType="driver" speedFactor="1.01" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <personinfo id="customer_15" depart="41.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="1.00" vehicle="NULL" depart="-1" arrival="42.00" arrivalPos="85.60" duration="42.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="42.00" arrivalPos="30.00" actType="last stage removed"/>
+    </personinfo>
+    <tripinfo id="driver_15" depart="31.00" departLane="gneE97_0" departPos="74.95" departSpeed="0.00" departDelay="0.00" arrival="43.00" arrivalLane="-gneE205_0" arrivalPos="51.57" arrivalSpeed="7.78" duration="12.00" routeLength="71.26" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="2.81" rerouteNo="14" devices="tripinfo_driver_15 taxi_driver_15" vType="driver" speedFactor="0.98" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="driver_10" depart="18.00" departLane="-gneE444_0" departPos="14.41" departSpeed="0.00" departDelay="0.00" arrival="44.00" arrivalLane="gneE367_0" arrivalPos="40.33" arrivalSpeed="8.23" duration="26.00" routeLength="220.54" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="7.75" rerouteNo="30" devices="tripinfo_driver_10 taxi_driver_10" vType="driver" speedFactor="0.99" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <personinfo id="customer_16" depart="43.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="2.00" vehicle="NULL" depart="-1" arrival="45.00" arrivalPos="85.60" duration="45.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="45.00" arrivalPos="58.00" actType="last stage removed"/>
+    </personinfo>
+    <personinfo id="customer_18" depart="47.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="2.00" vehicle="NULL" depart="-1" arrival="49.00" arrivalPos="85.60" duration="49.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="49.00" arrivalPos="50.00" actType="last stage removed"/>
+    </personinfo>
+    <tripinfo id="driver_19" depart="39.00" departLane="-gneE448_0" departPos="10.64" departSpeed="0.00" departDelay="0.00" arrival="51.00" arrivalLane="-gneE406_0" arrivalPos="2.86" arrivalSpeed="6.61" duration="12.00" routeLength="86.85" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="3.71" rerouteNo="14" devices="tripinfo_driver_19 taxi_driver_19" vType="driver" speedFactor="1.03" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="driver_21" depart="40.00" departLane="gneE317_0" departPos="3.65" departSpeed="0.00" departDelay="0.00" arrival="52.00" arrivalLane="-gneE401_0" arrivalPos="1.58" arrivalSpeed="5.24" duration="12.00" routeLength="92.57" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="4.87" rerouteNo="14" devices="tripinfo_driver_21 taxi_driver_21" vType="driver" speedFactor="0.89" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="driver_22" depart="43.00" departLane="-gneE390_0" departPos="23.74" departSpeed="0.00" departDelay="0.00" arrival="52.00" arrivalLane="-gneE390_0" arrivalPos="72.13" arrivalSpeed="7.91" duration="9.00" routeLength="48.39" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="2.27" rerouteNo="9" devices="tripinfo_driver_22 taxi_driver_22" vType="driver" speedFactor="0.94" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <personinfo id="customer_10" depart="24.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="29.00" vehicle="NULL" depart="-1" arrival="53.00" arrivalPos="85.60" duration="53.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="53.00" arrivalPos="1.00" actType="last stage removed"/>
+    </personinfo>
+    <tripinfo id="driver_23" depart="47.00" departLane="gneE460_0" departPos="80.87" departSpeed="0.00" departDelay="0.00" arrival="54.00" arrivalLane="-gneE377_0" arrivalPos="24.64" arrivalSpeed="10.93" duration="7.00" routeLength="38.40" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="3.11" rerouteNo="9" devices="tripinfo_driver_23 taxi_driver_23" vType="driver" speedFactor="1.09" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <personinfo id="customer_17" depart="44.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="10.00" vehicle="NULL" depart="-1" arrival="54.00" arrivalPos="85.60" duration="54.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="54.00" arrivalPos="22.00" actType="last stage removed"/>
+    </personinfo>
+    <tripinfo id="driver_27" depart="53.00" departLane="-gneE96_0" departPos="72.87" departSpeed="0.00" departDelay="0.00" arrival="55.00" arrivalLane="-gneE96_0" arrivalPos="74.63" arrivalSpeed="1.76" duration="2.00" routeLength="1.76" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.84" rerouteNo="2" devices="tripinfo_driver_27 taxi_driver_27" vType="driver" speedFactor="0.98" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="driver_24" depart="52.00" departLane="gneE473_0" departPos="68.31" departSpeed="0.00" departDelay="0.00" arrival="56.00" arrivalLane="gneE473_0" arrivalPos="78.96" arrivalSpeed="5.12" duration="4.00" routeLength="10.65" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="2.33" rerouteNo="4" devices="tripinfo_driver_24 taxi_driver_24" vType="driver" speedFactor="1.00" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="driver_26" depart="53.00" departLane="gneE430_0" departPos="9.79" departSpeed="0.00" departDelay="0.00" arrival="56.00" arrivalLane="gneE430_0" arrivalPos="15.97" arrivalSpeed="4.22" duration="3.00" routeLength="6.18" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="1.64" rerouteNo="3" devices="tripinfo_driver_26 taxi_driver_26" vType="driver" speedFactor="1.01" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="driver_20" depart="39.00" departLane="-gneE113_0" departPos="61.06" departSpeed="0.00" departDelay="0.00" arrival="58.00" arrivalLane=":gneJ96_4_0" arrivalPos="12.75" arrivalSpeed="7.89" duration="19.00" routeLength="137.08" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="8.43" rerouteNo="23" devices="tripinfo_driver_20 taxi_driver_20" vType="driver" speedFactor="0.95" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <personinfo id="customer_19" depart="48.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="10.00" vehicle="NULL" depart="-1" arrival="58.00" arrivalPos="85.60" duration="58.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="58.00" arrivalPos="22.00" actType="last stage removed"/>
+    </personinfo>
+    <personinfo id="customer_20" depart="53.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="5.00" vehicle="NULL" depart="-1" arrival="58.00" arrivalPos="85.60" duration="58.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="58.00" arrivalPos="45.00" actType="last stage removed"/>
+    </personinfo>
+    <personinfo id="customer_22" depart="56.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="2.00" vehicle="NULL" depart="-1" arrival="58.00" arrivalPos="85.60" duration="58.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="58.00" arrivalPos="71.00" actType="last stage removed"/>
+    </personinfo>
+    <personinfo id="customer_23" depart="56.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="2.00" vehicle="NULL" depart="-1" arrival="58.00" arrivalPos="85.60" duration="58.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="58.00" arrivalPos="56.00" actType="last stage removed"/>
+    </personinfo>
+    <personinfo id="customer_24" depart="57.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="2.00" vehicle="NULL" depart="-1" arrival="59.00" arrivalPos="85.60" duration="59.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="59.00" arrivalPos="43.00" actType="last stage removed"/>
+    </personinfo>
+    <personinfo id="customer_14" depart="36.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="24.00" vehicle="NULL" depart="-1" arrival="60.00" arrivalPos="85.60" duration="60.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="60.00" arrivalPos="81.00" actType="last stage removed"/>
+    </personinfo>
+    <tripinfo id="driver_25" depart="52.00" departLane="-gneE222_0" departPos="40.26" departSpeed="0.00" departDelay="0.00" arrival="63.00" arrivalLane="-gneE278_0" arrivalPos="12.74" arrivalSpeed="8.01" duration="11.00" routeLength="67.12" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="4.08" rerouteNo="13" devices="tripinfo_driver_25 taxi_driver_25" vType="driver" speedFactor="0.95" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="driver_30" depart="59.00" departLane="gneE295_0" departPos="49.61" departSpeed="0.00" departDelay="0.00" arrival="65.00" arrivalLane="gneE295_0" arrivalPos="77.46" arrivalSpeed="9.83" duration="6.00" routeLength="27.85" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="2.27" rerouteNo="6" devices="tripinfo_driver_30 taxi_driver_30" vType="driver" speedFactor="1.02" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <personinfo id="customer_26" depart="66.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="2.00" vehicle="NULL" depart="-1" arrival="68.00" arrivalPos="85.60" duration="68.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="68.00" arrivalPos="8.00" actType="last stage removed"/>
+    </personinfo>
+    <tripinfo id="driver_29" depart="58.00" departLane="-gneE51_0" departPos="31.37" departSpeed="0.00" departDelay="0.00" arrival="70.00" arrivalLane="gneE132_0" arrivalPos="16.09" arrivalSpeed="8.83" duration="12.00" routeLength="79.35" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="4.63" rerouteNo="14" devices="tripinfo_driver_29 taxi_driver_29" vType="driver" speedFactor="0.95" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="driver_34" depart="71.00" departLane="gneE498_0" departPos="36.14" departSpeed="0.00" departDelay="0.00" arrival="72.00" arrivalLane="gneE498_0" arrivalPos="36.14" arrivalSpeed="0.00" duration="1.00" routeLength="0.00" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.00" rerouteNo="1" devices="tripinfo_driver_34 taxi_driver_34" vType="driver" speedFactor="1.04" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <personinfo id="customer_27" depart="70.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="2.00" vehicle="NULL" depart="-1" arrival="72.00" arrivalPos="89.60" duration="72.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="72.00" arrivalPos="60.00" actType="last stage removed"/>
+    </personinfo>
+    <tripinfo id="10" depart="10.00" departLane="gneE412_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="74.00" arrivalLane="gneE301_0" arrivalPos="85.60" arrivalSpeed="18.49" duration="64.00" routeLength="669.76" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="16.22" rerouteNo="1" devices="tripinfo_10 routing_10" vType="DEFAULT_VEHTYPE" speedFactor="1.09" vaporized=""/>
+    <tripinfo id="25" depart="25.00" departLane="-gneE479_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="76.00" arrivalLane="-gneE313_0" arrivalPos="85.60" arrivalSpeed="17.17" duration="51.00" routeLength="580.29" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="9.08" rerouteNo="1" devices="tripinfo_25 routing_25" vType="DEFAULT_VEHTYPE" speedFactor="0.97" vaporized=""/>
+    <personinfo id="customer_28" depart="74.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="2.00" vehicle="NULL" depart="-1" arrival="76.00" arrivalPos="85.60" duration="76.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="76.00" arrivalPos="76.00" actType="last stage removed"/>
+    </personinfo>
+    <tripinfo id="driver_28" depart="58.00" departLane="gneE425_0" departPos="38.06" departSpeed="0.00" departDelay="0.00" arrival="80.00" arrivalLane=":gneJ226_10_0" arrivalPos="13.80" arrivalSpeed="8.25" duration="22.00" routeLength="161.14" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="6.38" rerouteNo="26" devices="tripinfo_driver_28 taxi_driver_28" vType="driver" speedFactor="0.94" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="driver_36" depart="76.00" departLane="gneE104_0" departPos="39.01" departSpeed="0.00" departDelay="0.00" arrival="81.00" arrivalLane="gneE104_0" arrivalPos="56.33" arrivalSpeed="7.54" duration="5.00" routeLength="17.32" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="2.30" rerouteNo="5" devices="tripinfo_driver_36 taxi_driver_36" vType="driver" speedFactor="1.02" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="1" depart="1.00" departLane="-gneE381_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="83.00" arrivalLane="-gneE327_0" arrivalPos="85.60" arrivalSpeed="11.02" duration="82.00" routeLength="874.50" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="17.52" rerouteNo="1" devices="tripinfo_1 routing_1" vType="DEFAULT_VEHTYPE" speedFactor="0.94" vaporized=""/>
+    <tripinfo id="driver_33" depart="71.00" departLane="gneE317_0" departPos="67.88" departSpeed="0.00" departDelay="0.00" arrival="83.00" arrivalLane="-gneE401_0" arrivalPos="61.08" arrivalSpeed="15.83" duration="12.00" routeLength="87.83" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="5.59" rerouteNo="14" devices="tripinfo_driver_33 taxi_driver_33" vType="driver" speedFactor="0.96" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="16" depart="16.00" departLane="gneE135_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="84.00" arrivalLane="gneE71_0" arrivalPos="85.60" arrivalSpeed="7.97" duration="68.00" routeLength="574.29" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="13.70" rerouteNo="1" devices="tripinfo_16 routing_16" vType="DEFAULT_VEHTYPE" speedFactor="0.91" vaporized=""/>
+    <tripinfo id="driver_35" depart="73.00" departLane="-gneE468_0" departPos="2.96" departSpeed="0.00" departDelay="0.00" arrival="84.00" arrivalLane=":gneJ257_6_0" arrivalPos="4.84" arrivalSpeed="6.10" duration="11.00" routeLength="87.48" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="4.31" rerouteNo="12" devices="tripinfo_driver_35 taxi_driver_35" vType="driver" speedFactor="0.96" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="28" depart="28.00" departLane="-gneE274_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="85.00" arrivalLane="gneE333_0" arrivalPos="85.60" arrivalSpeed="11.83" duration="57.00" routeLength="569.55" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="11.75" rerouteNo="1" devices="tripinfo_28 routing_28" vType="DEFAULT_VEHTYPE" speedFactor="0.95" vaporized=""/>
+    <tripinfo id="driver_38" depart="79.00" departLane="-gneE69_0" departPos="16.31" departSpeed="0.00" departDelay="0.00" arrival="87.00" arrivalLane="-gneE69_0" arrivalPos="73.74" arrivalSpeed="14.60" duration="8.00" routeLength="57.42" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="3.55" rerouteNo="8" devices="tripinfo_driver_38 taxi_driver_38" vType="driver" speedFactor="1.04" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="driver_39" depart="80.00" departLane="-gneE137_0" departPos="1.00" departSpeed="0.00" departDelay="0.00" arrival="89.00" arrivalLane="-gneE137_0" arrivalPos="61.99" arrivalSpeed="11.93" duration="9.00" routeLength="60.99" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="3.36" rerouteNo="9" devices="tripinfo_driver_39 taxi_driver_39" vType="driver" speedFactor="1.01" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="driver_40" depart="81.00" departLane="gneE11_0" departPos="46.71" departSpeed="0.00" departDelay="0.00" arrival="90.00" arrivalLane="gneE12_0" arrivalPos="2.25" arrivalSpeed="9.97" duration="9.00" routeLength="55.54" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="3.27" rerouteNo="11" devices="tripinfo_driver_40 taxi_driver_40" vType="driver" speedFactor="1.02" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="driver_37" depart="79.00" departLane="gneE302_0" departPos="51.75" departSpeed="0.00" departDelay="0.00" arrival="92.00" arrivalLane="gneE382_0" arrivalPos="43.78" arrivalSpeed="13.83" duration="13.00" routeLength="86.66" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="5.01" rerouteNo="15" devices="tripinfo_driver_37 taxi_driver_37" vType="driver" speedFactor="0.96" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="38" depart="38.00" departLane="gneE524_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="93.00" arrivalLane="-gneE570_0" arrivalPos="85.60" arrivalSpeed="15.38" duration="55.00" routeLength="564.39" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="16.39" rerouteNo="1" devices="tripinfo_38 routing_38" vType="DEFAULT_VEHTYPE" speedFactor="1.00" vaporized=""/>
+    <personinfo id="customer_30" depart="92.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="2.00" vehicle="NULL" depart="-1" arrival="94.00" arrivalPos="85.60" duration="94.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="94.00" arrivalPos="55.00" actType="last stage removed"/>
+    </personinfo>
+    <tripinfo id="driver_41" depart="83.00" departLane="gneE285_0" departPos="29.68" departSpeed="0.00" departDelay="0.00" arrival="95.00" arrivalLane="-gneE240_0" arrivalPos="17.38" arrivalSpeed="9.71" duration="12.00" routeLength="82.33" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="4.92" rerouteNo="14" devices="tripinfo_driver_41 taxi_driver_41" vType="driver" speedFactor="0.97" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="27" depart="27.00" departLane="gneE250_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="96.00" arrivalLane="gneE21_0" arrivalPos="85.60" arrivalSpeed="12.66" duration="69.00" routeLength="780.08" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="11.07" rerouteNo="1" devices="tripinfo_27 routing_27" vType="DEFAULT_VEHTYPE" speedFactor="0.90" vaporized=""/>
+    <tripinfo id="39" depart="39.00" departLane="-gneE370_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="97.00" arrivalLane="-gneE351_0" arrivalPos="85.60" arrivalSpeed="18.22" duration="58.00" routeLength="569.34" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="16.11" rerouteNo="1" devices="tripinfo_39 routing_39" vType="DEFAULT_VEHTYPE" speedFactor="1.07" vaporized=""/>
+    <tripinfo id="67" depart="67.00" departLane="-gneE186_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="99.00" arrivalLane="-gneE85_0" arrivalPos="85.60" arrivalSpeed="9.97" duration="32.00" routeLength="275.13" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="14.19" rerouteNo="1" devices="tripinfo_67 routing_67" vType="DEFAULT_VEHTYPE" speedFactor="1.11" vaporized=""/>
+    <tripinfo id="0" depart="0.00" departLane="gneE241_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="100.00" arrivalLane="-gneE123_0" arrivalPos="85.60" arrivalSpeed="9.62" duration="100.00" routeLength="1058.81" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="28.04" rerouteNo="1" devices="tripinfo_0 routing_0" vType="DEFAULT_VEHTYPE" speedFactor="1.06" vaporized=""/>
+    <tripinfo id="driver_45" depart="93.00" departLane="gneE488_0" departPos="24.37" departSpeed="0.00" departDelay="0.00" arrival="100.00" arrivalLane="gneE488_0" arrivalPos="62.81" arrivalSpeed="10.77" duration="7.00" routeLength="38.44" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="3.74" rerouteNo="7" devices="tripinfo_driver_45 taxi_driver_45" vType="driver" speedFactor="0.94" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="driver_44" depart="89.00" departLane="-gneE96_0" departPos="1.14" departSpeed="0.00" departDelay="0.00" arrival="102.00" arrivalLane="-gneE95_0" arrivalPos="14.40" arrivalSpeed="14.21" duration="13.00" routeLength="113.26" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="2.69" rerouteNo="15" devices="tripinfo_driver_44 taxi_driver_44" vType="driver" speedFactor="1.03" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="15" depart="15.00" departLane="gneE413_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="104.00" arrivalLane="gneE334_0" arrivalPos="85.60" arrivalSpeed="9.87" duration="89.00" routeLength="874.71" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="14.69" rerouteNo="1" devices="tripinfo_15 routing_15" vType="DEFAULT_VEHTYPE" speedFactor="0.82" vaporized=""/>
+    <personinfo id="customer_32" depart="102.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="2.00" vehicle="NULL" depart="-1" arrival="104.00" arrivalPos="85.60" duration="104.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="104.00" arrivalPos="4.00" actType="last stage removed"/>
+    </personinfo>
+    <tripinfo id="43" depart="43.00" departLane="gneE97_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="105.00" arrivalLane="gneE107_0" arrivalPos="85.60" arrivalSpeed="14.54" duration="62.00" routeLength="579.66" waitingTime="1.00" waitingCount="1" stopTime="0.00" timeLoss="17.85" rerouteNo="1" devices="tripinfo_43 routing_43" vType="DEFAULT_VEHTYPE" speedFactor="0.92" vaporized=""/>
+    <tripinfo id="71" depart="76.00" departLane="-gneE370_0" departPos="5.10" departSpeed="0.00" departDelay="5.00" arrival="105.00" arrivalLane="gneE481_0" arrivalPos="85.60" arrivalSpeed="15.24" duration="29.00" routeLength="280.29" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="4.99" rerouteNo="1" devices="tripinfo_71 routing_71" vType="DEFAULT_VEHTYPE" speedFactor="0.85" vaporized=""/>
+    <tripinfo id="34" depart="34.00" departLane="-gneE422_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="107.00" arrivalLane="-gneE373_0" arrivalPos="85.60" arrivalSpeed="5.03" duration="73.00" routeLength="658.81" waitingTime="1.00" waitingCount="1" stopTime="0.00" timeLoss="27.25" rerouteNo="1" devices="tripinfo_34 routing_34" vType="DEFAULT_VEHTYPE" speedFactor="1.02" vaporized=""/>
+    <tripinfo id="55" depart="55.00" departLane="gneE485_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="107.00" arrivalLane="-gneE369_0" arrivalPos="85.60" arrivalSpeed="13.90" duration="52.00" routeLength="575.13" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="7.99" rerouteNo="1" devices="tripinfo_55 routing_55" vType="DEFAULT_VEHTYPE" speedFactor="0.91" vaporized=""/>
+    <tripinfo id="driver_47" depart="98.00" departLane="-gneE51_0" departPos="75.99" departSpeed="0.00" departDelay="0.00" arrival="107.00" arrivalLane="gneE132_0" arrivalPos="43.03" arrivalSpeed="13.38" duration="9.00" routeLength="61.67" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="3.47" rerouteNo="11" devices="tripinfo_driver_47 taxi_driver_47" vType="driver" speedFactor="1.03" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="18" depart="18.00" departLane="gneE437_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="109.00" arrivalLane="gneE22_0" arrivalPos="85.60" arrivalSpeed="14.52" duration="91.00" routeLength="1069.55" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="27.58" rerouteNo="1" devices="tripinfo_18 routing_18" vType="DEFAULT_VEHTYPE" speedFactor="1.09" vaporized=""/>
+    <tripinfo id="driver_48" depart="98.00" departLane="-gneE292_0" departPos="25.12" departSpeed="0.00" departDelay="0.00" arrival="109.00" arrivalLane=":gneJ141_13_0" arrivalPos="6.13" arrivalSpeed="7.13" duration="11.00" routeLength="72.54" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="5.18" rerouteNo="13" devices="tripinfo_driver_48 taxi_driver_48" vType="driver" speedFactor="0.98" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="driver_49" depart="102.00" departLane="gneE426_0" departPos="20.67" departSpeed="0.00" departDelay="0.00" arrival="110.00" arrivalLane="gneE426_0" arrivalPos="77.39" arrivalSpeed="12.35" duration="8.00" routeLength="56.72" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="3.58" rerouteNo="8" devices="tripinfo_driver_49 taxi_driver_49" vType="driver" speedFactor="0.97" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="31" depart="31.00" departLane="gneE157_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="112.00" arrivalLane="gneE288_0" arrivalPos="85.60" arrivalSpeed="16.77" duration="81.00" routeLength="775.13" waitingTime="4.00" waitingCount="1" stopTime="0.00" timeLoss="28.03" rerouteNo="1" devices="tripinfo_31 routing_31" vType="DEFAULT_VEHTYPE" speedFactor="1.00" vaporized=""/>
+    <tripinfo id="driver_46" depart="98.00" departLane="gneE408_0" departPos="29.22" departSpeed="0.00" departDelay="0.00" arrival="112.00" arrivalLane="gneE467_0" arrivalPos="33.37" arrivalSpeed="12.28" duration="14.00" routeLength="98.78" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="6.23" rerouteNo="16" devices="tripinfo_driver_46 taxi_driver_46" vType="driver" speedFactor="1.05" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="driver_53" depart="109.00" departLane="gneE408_0" departPos="33.96" departSpeed="0.00" departDelay="0.00" arrival="113.00" arrivalLane="gneE408_0" arrivalPos="44.78" arrivalSpeed="5.24" duration="4.00" routeLength="10.82" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="2.40" rerouteNo="4" devices="tripinfo_driver_53 taxi_driver_53" vType="driver" speedFactor="1.12" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="13" depart="13.00" departLane="-gneE193_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="116.00" arrivalLane="-gneE198_0" arrivalPos="85.60" arrivalSpeed="17.02" duration="103.00" routeLength="959.02" waitingTime="2.00" waitingCount="1" stopTime="0.00" timeLoss="40.40" rerouteNo="1" devices="tripinfo_13 routing_13" vType="DEFAULT_VEHTYPE" speedFactor="1.06" vaporized=""/>
+    <tripinfo id="49" depart="49.00" departLane="gneE69_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="116.00" arrivalLane="gneE47_0" arrivalPos="85.60" arrivalSpeed="12.04" duration="67.00" routeLength="669.34" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="13.96" rerouteNo="1" devices="tripinfo_49 routing_49" vType="DEFAULT_VEHTYPE" speedFactor="1.06" vaporized=""/>
+    <personinfo id="customer_34" depart="113.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="3.00" vehicle="NULL" depart="-1" arrival="116.00" arrivalPos="85.60" duration="116.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="116.00" arrivalPos="88.00" actType="last stage removed"/>
+    </personinfo>
+    <tripinfo id="driver_54" depart="110.00" departLane="gneE325_0" departPos="82.95" departSpeed="0.00" departDelay="0.00" arrival="117.00" arrivalLane="gneE326_0" arrivalPos="21.13" arrivalSpeed="12.00" duration="7.00" routeLength="42.18" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="3.16" rerouteNo="9" devices="tripinfo_driver_54 taxi_driver_54" vType="driver" speedFactor="0.93" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="driver_57" depart="112.00" departLane="gneE287_0" departPos="81.67" departSpeed="0.00" departDelay="0.00" arrival="120.00" arrivalLane="-gneE252_0" arrivalPos="29.33" arrivalSpeed="10.38" duration="8.00" routeLength="42.29" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="2.91" rerouteNo="10" devices="tripinfo_driver_57 taxi_driver_57" vType="driver" speedFactor="0.96" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="driver_59" depart="115.00" departLane="gneE446_0" departPos="72.96" departSpeed="0.00" departDelay="0.00" arrival="122.00" arrivalLane="gneE336_0" arrivalPos="3.45" arrivalSpeed="7.53" duration="7.00" routeLength="30.28" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="3.17" rerouteNo="10" devices="tripinfo_driver_59 taxi_driver_59" vType="driver" speedFactor="0.99" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="48" depart="48.00" departLane="gneE95_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="123.00" arrivalLane="gneE128_0" arrivalPos="85.60" arrivalSpeed="12.68" duration="75.00" routeLength="674.92" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="12.41" rerouteNo="1" devices="tripinfo_48 routing_48" vType="DEFAULT_VEHTYPE" speedFactor="0.79" vaporized=""/>
+    <tripinfo id="driver_60" depart="118.00" departLane="gneE426_0" departPos="76.39" departSpeed="0.00" departDelay="0.00" arrival="124.00" arrivalLane="gneE354_0" arrivalPos="2.91" arrivalSpeed="7.20" duration="6.00" routeLength="26.31" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="2.72" rerouteNo="9" devices="tripinfo_driver_60 taxi_driver_60" vType="driver" speedFactor="1.05" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <tripinfo id="52" depart="52.00" departLane="-gneE372_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="125.00" arrivalLane="gneE242_0" arrivalPos="85.60" arrivalSpeed="19.06" duration="73.00" routeLength="980.18" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="16.04" rerouteNo="1" devices="tripinfo_52 routing_52" vType="DEFAULT_VEHTYPE" speedFactor="1.14" vaporized=""/>
+    <tripinfo id="driver_51" depart="107.00" departLane="-gneE292_0" departPos="66.28" departSpeed="0.00" departDelay="0.00" arrival="125.00" arrivalLane="gneE286_0" arrivalPos="5.49" arrivalSpeed="6.67" duration="18.00" routeLength="138.79" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="7.28" rerouteNo="23" devices="tripinfo_driver_51 taxi_driver_51" vType="driver" speedFactor="0.99" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <personinfo id="customer_36" depart="119.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="7.00" vehicle="NULL" depart="-1" arrival="126.00" arrivalPos="85.60" duration="126.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="126.00" arrivalPos="43.00" actType="last stage removed"/>
+    </personinfo>
+    <personinfo id="customer_33" depart="103.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="24.00" vehicle="NULL" depart="-1" arrival="127.00" arrivalPos="85.60" duration="127.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="127.00" arrivalPos="60.00" actType="last stage removed"/>
+    </personinfo>
+    <personinfo id="customer_38" depart="125.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="3.00" vehicle="NULL" depart="-1" arrival="128.00" arrivalPos="85.60" duration="128.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="128.00" arrivalPos="81.00" actType="last stage removed"/>
+    </personinfo>
+    <tripinfo id="36" depart="36.00" departLane="gneE485_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="129.00" arrivalLane="-gneE421_0" arrivalPos="85.60" arrivalSpeed="20.93" duration="93.00" routeLength="969.76" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="27.55" rerouteNo="1" devices="tripinfo_36 routing_36" vType="DEFAULT_VEHTYPE" speedFactor="1.11" vaporized=""/>
+    <tripinfo id="54" depart="54.00" departLane="-gneE565_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="131.00" arrivalLane="gneE565_0" arrivalPos="85.60" arrivalSpeed="13.20" duration="77.00" routeLength="768.92" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="20.86" rerouteNo="1" devices="tripinfo_54 routing_54" vType="DEFAULT_VEHTYPE" speedFactor="0.98" vaporized=""/>
+    <tripinfo id="driver_56" depart="112.00" departLane="-gneE304_0" departPos="77.13" departSpeed="0.00" departDelay="0.00" arrival="133.00" arrivalLane="-gneE301_0" arrivalPos="18.39" arrivalSpeed="15.77" duration="21.00" routeLength="241.26" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="4.04" rerouteNo="27" devices="tripinfo_driver_56 taxi_driver_56" vType="driver" speedFactor="1.05" vaporized="traci">
+        <taxi customers="0" occupiedDistance="0.00" occupiedTime="0.00"/>
+    </tripinfo>
+    <personinfo id="customer_37" depart="122.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="13.00" vehicle="NULL" depart="-1" arrival="135.00" arrivalPos="85.60" duration="135.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="135.00" arrivalPos="1.00" actType="last stage removed"/>
+    </personinfo>
+    <tripinfo id="32" depart="33.00" departLane="gneE450_0" departPos="5.10" departSpeed="0.00" departDelay="1.00" arrival="136.00" arrivalLane="gneE382_0" arrivalPos="85.60" arrivalSpeed="15.02" duration="103.00" routeLength="858.81" waitingTime="8.00" waitingCount="1" stopTime="0.00" timeLoss="35.47" rerouteNo="1" devices="tripinfo_32 routing_32" vType="DEFAULT_VEHTYPE" speedFactor="0.92" vaporized=""/>
+    <tripinfo id="59" depart="59.00" departLane="gneE21_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="136.00" arrivalLane="-gneE255_0" arrivalPos="85.60" arrivalSpeed="12.05" duration="77.00" routeLength="869.34" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="20.45" rerouteNo="1" devices="tripinfo_59 routing_59" vType="DEFAULT_VEHTYPE" speedFactor="1.11" vaporized=""/>
+    <personinfo id="customer_39" depart="135.00" type="DEFAULT_PEDTYPE">
+        <ride waitingTime="1.00" vehicle="NULL" depart="-1" arrival="136.00" arrivalPos="85.60" duration="136.00" routeLength="-1.00" timeLoss="-0.00"/>
+        <stop duration="0.00" arrival="136.00" arrivalPos="21.00" actType="last stage removed"/>
+    </personinfo>
+</tripinfos>
+>>>>>>> b3a48549333f0579ab7e32ed21e16698643a4fe6
