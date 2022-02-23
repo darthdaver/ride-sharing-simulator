@@ -35,6 +35,10 @@ def random_choice(p=0.5):
     return random.random() < p
 
 
+def random_value_from_range(min_value, max_value):
+    return random.randint(min_value, max_value)
+
+
 def read_setup(path):
     # net parameters
     with open(Path(path)) as setup_json:

@@ -32,10 +32,10 @@ class Human:
         human_str += f"     ride: {str(self.ride)}\n"
         return human_str
 
-    def accept_ride_choice(self, area, personality_policies):
+    def accept_ride_choice(self, area, personality_policies, bias=0):
         surge_multiplier = area.surge_multiplier
         policy = personality_policies[self.personality]
         for min_surge, max_surge, p in policy:
             if (surge_multiplier >= min_surge and surge_multiplier < max_surge):
-                return utils.random_choice(p)
-        return utils.random_choice(0.5)
+                return utils.random_choice(p + bias)
+        return utils.random_choice(0.5 + bias)

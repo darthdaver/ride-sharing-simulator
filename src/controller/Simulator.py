@@ -1,3 +1,5 @@
+from os import times
+from src.state.RideRequestState import RideRequestState
 from time import time
 from src.model.Customer import Customer
 from src.model.Driver import Driver
@@ -28,8 +30,8 @@ class Simulator:
         uber_setup = utils.read_setup(FileSetup.UBER.value)
         self.uber = Uber(uber_setup["fare"],uber_setup["request"])
         self.net = Net(net_setup["info"], net_setup["areas"])
-        self.printer = Printer()
         self.driver_move_policy = driver_setup["move_policy"]
+        self.driver_stop_work_policy = driver_setup["stop_work_policy"]
         self.customer_personality_policy = customer_setup["personality_policy"]
         self.driver_personality_policy = driver_setup["personality_policy"] 
         self.driver_id_counter = 0
@@ -37,6 +39,7 @@ class Simulator:
         self.timer_remove_driver_idle = simulator_setup["timer_remove_driver_idle"]
         self.type = simulator_setup["type"].upper()
         self.checkpoints = simulator_setup["checkpoints"]
+        self.printer = Printer(self.type)
         self.scenario = dispatch_scenario.dispatch(self.type.upper())
         self.unprocessed_customers = []
         self.debug = Debug(self.uber)
@@ -115,10 +118,14 @@ class Simulator:
                 self.uber.receive_request(ride_request, self.uber.customers[res_customer_id])
 
         if (len(self.unprocessed_customers) > 0):
-            print("Unexpected unprocessed customers")
+            print("Unexpected unprocessed customers:")
             for customer_id in self.unprocessed_customers:
-                self.unprocessed_customers.remove(customer_id)
                 print(customer_id)
+                self.unprocessed_customers.remove(customer_id)
+                try:
+                    self.traci.person.removeStages(customer_id)
+                except:
+                    print(f"Unexpected user {customer_id} not found in create_customer_request")
             #self.debug.print_state(timestamp, self.uber, reservations)
 
 
@@ -143,14 +150,14 @@ class Simulator:
 
 
     # Dispatch pending rides
-    def dispatch_rides(self, timestamp):
+    def process_rides(self, timestamp):
         unprocessed_requests = self.uber.unprocessed_requests.copy()
         for ride in unprocessed_requests:
             cancel_ride = False
             customer = self.uber.customers[ride.customer_id]
             ride_area = self.net.areas[customer.area_id]
+
             if (customer.accept_ride_choice(ride_area, self.customer_personality_policy)):
-                driver_requests = []
                 for driver in self.uber.idle_drivers:
                     # compute waiting time
                     # customer_edge = self.traci.person.getRoadID(customer.id)
@@ -158,18 +165,22 @@ class Simulator:
                     try:
                         if (self.net.is_valid_edge(driver.current_edge) and self.net.is_valid_edge(customer.current_edge)):
                             if (driver.state == DriverState.MOVING.value):
-                                to_area = self.net.edge_area(driver.current_edge)
+                                to_area = self.net.edge_area(driver.to_edge)
                                 if (to_area != ride_area):
                                     continue
                                     
                             waiting_route_stage = self.traci.simulation.findRoute(driver.current_edge, customer.current_edge)
                             expected_waiting_time = waiting_route_stage.travelTime
                             waiting_distance = waiting_route_stage.length
-                            driver_requests.append({
-                                "driver_id": driver.id,
-                                "expected_waiting_time": expected_waiting_time,
-                                "waiting_distance": waiting_distance
-                            })
+
+                            if (waiting_distance < self.uber.request_max_driver_distance):
+                                ride.add_driver_candidate({
+                                    "driver_id": driver.id,
+                                    "expected_waiting_time": expected_waiting_time,
+                                    "waiting_distance": waiting_distance,
+                                    "send_request_back_time": utils.random_value_from_range(0,11),
+                                    "response_countdown": 15
+                                })
                         else:
                             if not (self.net.is_valid_edge(driver.current_edge)):
                                 self.remove_driver(timestamp, driver)
@@ -178,9 +189,10 @@ class Simulator:
                                 cancel_ride = True
                                 break
                     except:
-                        print(f"Unexpected route not found in dispatch_rides (1): {driver.current_edge} - {customer.current_edge}")
+                        print(f"Unexpected route not found in process_rides: {driver.current_edge} - {customer.current_edge}")
                         cancel_ride = True
                         break
+                ride.sort_driver_requests()
 
                 if not (cancel_ride):
                     try:
@@ -191,64 +203,29 @@ class Simulator:
                         customer.update_pending_request(ride)
                         ride.update_pending_request(ride_length, ride_travel_time)
                         self.uber.update_pending_request(ride)
-
-                        if (len(driver_requests) > 0):
-                            driver_requests_sorted = sorted(driver_requests, key=lambda x:x["expected_waiting_time"], reverse=False)
-
-                            # simulate send request to drivers
-                            for driver_ride_request in driver_requests_sorted:
-                                if (driver_ride_request["waiting_distance"] > self.uber.request_max_driver_distance):
-                                    break
-                                
-                                driver_accept_ride = False
-                                driver = self.uber.drivers[driver_ride_request['driver_id']]
-                                driver_accept_ride = driver.accept_ride_choice(ride_area,self.driver_personality_policy)
-                                if (driver_accept_ride):
-                                    try:
-                                        print(f"Dispatch: driver - {driver.id}, customer - {customer.id}, ride - {ride.id}")
-                                        self.traci.vehicle.dispatchTaxi(driver.id, [ride.id])
-                                    except:
-                                        print(f"Unexpected driver {driver.id} not found in dispatch_rides")
-                                        self.remove_driver(timestamp, driver)
-                                        continue
-
-                                    expected_price = self.uber.compute_price(ride_travel_time,ride_length, ride_area.surge_multiplier)
-                                    customer.update_pickup_ride()
-                                    ride.update_pickup(timestamp, driver, driver_ride_request, expected_price, ride_area.surge_multiplier)
-                                    driver.update_pickup_ride(ride)
-                                    self.uber.update_pickup_ride(timestamp, ride, driver, customer)
-                                    break
-                                
-                                if not (driver_accept_ride):
-                                    ride.stats["rejections"] += 1 
-                        
-                        if not (ride.state == RideState.PICKUP.value):
-                            # WARNING: the current version cancel the ride anyway
-                            cancel_ride = utils.random_choice(1)
-                            if not (cancel_ride):
-                                print("Error: why here?")
                     except:
-                        print(f"Unexpected route not found in dispatch_rides (2): {driver.current_edge} - {customer.current_edge}")
+                        print(f"Unexpected route not found in process_rides: {driver.current_edge} - {customer.current_edge}")
+                        ride.update_cancel()
+                        ride_area.update_cancel_ride(customer.id)
                         self.uber.update_cancel_ride(ride)
                         try:
                             self.traci.person.removeStages(customer.id)
                         except:
-                            print(f"Unexpected user {customer.id} not found (2)")
+                            print(f"Unexpected user {customer.id} not found.")
                         continue
-
-                if (cancel_ride):
-                    try:
-                        self.traci.person.removeStages(customer.id)
-                    except:
-                        print(f"Unexpected user {customer.id} not found (2)")
+                else:
                     ride.update_cancel(timestamp)
                     ride_area.update_cancel_ride(customer.id)
                     self.uber.update_cancel_ride(ride)
+                    try:
+                        self.traci.person.removeStages(customer.id)
+                    except:
+                        print(f"Unexpected user {customer.id} not found.")
             else:
                 try:
                     self.traci.person.removeStages(customer.id)
                 except:
-                    print(f"Unexpected user {customer.id} not found (3)")
+                    print(f"Unexpected user {customer.id} not found.")
                 continue
     
 
@@ -275,15 +252,81 @@ class Simulator:
                 if (utils.random_choice(area_data.generation_policy["driver"])):
                     self.create_driver(0, area_id)
 
-            print(f"GENERATE RANDOM CUSTOMERS WITHIN AREA {area_id}")
-            for i in range(10):
-                if (utils.random_choice(area_data.generation_policy["customer"])):
-                    self.create_customer(0, area_id)
+            #print(f"GENERATE RANDOM CUSTOMERS WITHIN AREA {area_id}")
+            #for i in range(10):
+            #    if (utils.random_choice(area_data.generation_policy["customer"])):
+            #        self.create_customer(0, area_id)
 
         print(f"GENERATE ROUTES INTER-AREAS")
         min_edge_num = self.net.min_edge_num
         max_edge_num = self.net.max_edge_num
         self.__init_random_routes(f"inter_areas", min_edge_num, max_edge_num, num_random_routes*5, factor=150)
+
+
+    def manage_pending_requests(self, timestamp):
+        pending_requests_list = self.uber.pending_requests.copy()
+
+        for ride in pending_requests_list:
+            customer = self.uber.customers[ride.customer_id]
+            ride_area = self.net.areas[customer.area_id]
+            if (ride.request_state == RideRequestState.REJECTED.value or ride.request_state == RideRequestState.UNPROCESSED.value):
+                #print(f"Customer {customer.id} - ride request state: PARSE NEW REQUEST")
+                idle_drivers_without_requests = []
+                for driver in self.uber.idle_drivers:
+                    if not(driver.request_pending):
+                        idle_drivers_without_requests.append(driver.id)
+                ride.parse_new_request(idle_drivers_without_requests)
+                if (ride.request_state == RideRequestState.SENT.value):
+                    candidate_driver_id = ride.current_driver_request["driver_id"]
+                    candidate_driver = self.uber.drivers[candidate_driver_id]
+                    candidate_driver.receive_request()
+            elif (ride.request_state == RideRequestState.NONE.value):
+                try:
+                    #print(f"Customer {customer.id} - ride request state: NONE")
+                    self.traci.person.removeStages(customer.id)
+                except:
+                    #print(f"Unexpected user {customer.id} not found in manage_pending_requests.")
+                    ride.update_cancel(timestamp)
+                    ride_area.update_cancel_ride(customer.id)
+                    self.uber.update_cancel_ride(ride)
+            elif (ride.request_state == RideRequestState.SENT.value):
+                #print(f"Customer {customer.id} - ride request state: SENT")
+                current_request = ride.current_driver_request
+                driver = self.uber.drivers[current_request['driver_id']]
+                if (driver in self.uber.idle_drivers and driver.id == current_request["driver_id"]):
+                    if (current_request["response_countdown"] == current_request["send_request_back_time"]):
+                        #print(f"Customer {customer.id} - ride request state: DRIVER RESPONSE")
+                        driver = self.uber.drivers[current_request['driver_id']]
+                        driver_accept_ride = False
+                        driver_accept_ride = driver.accept_ride_choice(ride_area,self.driver_personality_policy)
+
+                        if (driver_accept_ride):
+                            try:
+                                #print(f"Dispatch: driver - {driver.id}, customer - {customer.id}, ride - {ride.id}")
+                                self.traci.vehicle.dispatchTaxi(driver.id, [ride.id])
+                            except:
+                                #print(f"Unexpected driver {driver.id} not found in dispatch_rides")
+                                self.remove_driver(timestamp, driver)
+                                continue
+                            ride_travel_time = ride.stats["expected_ride_length"]
+                            ride_length = ride.stats["expected_ride_time"]
+
+                            expected_price = self.uber.compute_price(ride_travel_time, ride_length, ride_area.surge_multiplier)
+                            customer.update_pickup_ride()
+                            ride.update_pickup(timestamp, driver, current_request, expected_price, ride_area.surge_multiplier)
+                            driver.update_pickup_ride(ride)
+                            self.uber.update_pickup_ride(timestamp, ride, driver, customer)
+                            break                
+                        else:
+                            driver.reject_request()
+                            ride.request_rejected(driver.id, idle_driver=True)
+                    else:
+                        current_request["response_countdown"] -= 1
+                else:
+                    ride.request_rejected(driver.id, idle_driver=False)
+                    customer = self.uber.customers[ride.customer_id]
+                    self.update_ride_requests(timestamp, ride)
+
 
 
     # Move driver to area
@@ -327,38 +370,29 @@ class Simulator:
             timestamp = self.traci.simulation.getTime()
             step += 1
 
-            if (step % self.checkpoints["time_update_surge"] == 0):
-                self.update_surge_multiplier()
-
+            self.update_surge_multiplier()
             self.update_drivers(timestamp)
             self.update_drivers_area(timestamp)
             self.update_rides_state(timestamp, step)
+            self.create_customer_requests(timestamp)
+            self.process_rides(timestamp)
+            self.manage_pending_requests(timestamp)
 
-            driver_generation_checkpoint = (step % self.checkpoints["time_driver_generation"]) == 0
-            customer_generation_checkpoint = (step % self.checkpoints["time_customer_generation"]) == 0
-            dispatch_checkpoint = (step % self.checkpoints["time_dispatch_rides"]) == 0
-            prevent_fault = False
+            for area_id, area in self.net.areas.items():
+                for i in range(area.generation_policy_template["many"][1]):
+                    if (utils.random_choice(area.generation_policy["driver"])):
+                        self.create_driver(timestamp, area_id)
+                        area.reset_generation_policy()
+                    else:
+                        area.increment_generation("driver")
 
-            if (driver_generation_checkpoint):
-                for area_id, area in self.net.areas.items():
-                    for i in range(area.generation_policy["many"][1]):
-                        if (utils.random_choice(area.generation_policy["driver"])):
-                            self.create_driver(timestamp, area_id)
-
-            if (customer_generation_checkpoint):
-                for area_id, area in self.net.areas.items():
-                    for i in range(area.generation_policy["many"][0]):
-                        if (utils.random_choice(area.generation_policy["customer"])):
-                            self.create_customer(timestamp, area_id)
-
-            if (dispatch_checkpoint or prevent_fault):
-                if not (driver_generation_checkpoint or customer_generation_checkpoint):
-                    self.create_customer_requests(timestamp)
-                    self.dispatch_rides(timestamp)
-                    prevent_fault = False
-                else:
-                    prevent_fault = True
-                
+            for area_id, area in self.net.areas.items():
+                for i in range(area.generation_policy["many"][0]):
+                    if (utils.random_choice(area.generation_policy["customer"])):
+                        self.create_customer(timestamp, area_id)
+                        area.reset_generation_policy()
+                    else:
+                        area.increment_generation("customer")
 
             if (step % self.checkpoints["time_move_driver"]) == 0:
                 self.update_drivers_movements()
@@ -366,25 +400,34 @@ class Simulator:
             self.scenario.trigger_scenario(step, self.net)
 #
             if (step == self.checkpoints["simulation_duration"]):
-                self.printer.save_areas_global_stats(step, self.net.areas)
-                self.printer.save_net_global_stats(step, self.net.areas)
                 stop = True
+
+            self.printer.save_areas_global_stats(step, self.net.areas)
+            self.printer.save_net_global_stats(step, self.net.areas)
+
+            for area_id, area in self.net.areas.items():
+                area.stats["last_checkpoint"] = step - 1
 
         self.traci.close()
         sys.stdout.flush()
 
 
     def update_drivers(self, timestamp):
-        #print("update_drivers")
         for driver_id, driver in self.uber.drivers.items():
             surge_multiplier = self.net.areas[driver.area_id].surge_multiplier
             idle_timer_over = (timestamp - driver.last_ride) > self.timer_remove_driver_idle
             traci_remove = driver.id in list(self.traci.simulation.getArrivedIDList())
             traci_list = list(self.traci.vehicle.getTaxiFleet(0)) + list(self.traci.vehicle.getTaxiFleet(1)) + list(self.traci.vehicle.getTaxiFleet(2)) + list(self.traci.vehicle.getTaxiFleet(3))
-            
-            if (driver.state == DriverState.IDLE.value and (idle_timer_over or traci_remove or (not (driver.id in (traci_list))))):
+
+            if (driver.state == DriverState.IDLE.value and not(driver.request_pending) and (idle_timer_over or traci_remove or (not (driver.id in (traci_list))))):
                 #print(driver.id)
                 self.remove_driver(timestamp, driver)
+            elif (driver.state == DriverState.IDLE.value and surge_multiplier < 1.2 and not(driver.request_pending)):
+                stop_policy = self.driver_stop_work_policy[driver.personality]
+                stop_probability = (timestamp - driver.last_ride) * 1/(surge_multiplier * 100)
+                if (utils.random_choice(stop_probability)):
+                    self.remove_driver(timestamp, driver)
+                    
 
 
     def update_drivers_area(self, timestamp):
@@ -441,6 +484,51 @@ class Simulator:
                                 self.move_driver_to_area(driver,area_id)
 
 
+    def update_ride_requests(self, timestamp, ride):
+        customer = self.uber.customers[ride.customer_id]
+        ride_area = self.net.areas[customer.area_id]
+        bias = ride.stats["rejections"] * 0.02
+        drivers_processed = ride.rejections_driver_ids
+
+        for request in ride.driver_requests_list:
+            drivers_processed.append(request["driver_id"])
+
+        if (customer.accept_ride_choice(ride_area, self.customer_personality_policy, bias)):
+            for driver in self.uber.idle_drivers:
+                if (driver.id not in drivers_processed):
+                    try:
+                        if (self.net.is_valid_edge(driver.current_edge) and self.net.is_valid_edge(customer.current_edge)):
+                            if (driver.state == DriverState.MOVING.value):
+                                to_area = self.net.edge_area(driver.to_edge)
+                                if (to_area != ride_area):
+                                    continue
+                                    
+                            waiting_route_stage = self.traci.simulation.findRoute(driver.current_edge, customer.current_edge)
+                            expected_waiting_time = waiting_route_stage.travelTime
+                            waiting_distance = waiting_route_stage.length
+                            if (waiting_distance < self.uber.request_max_driver_distance):
+                                ride.add_driver_candidate({
+                                    "driver_id": driver.id,
+                                    "expected_waiting_time": expected_waiting_time,
+                                    "waiting_distance": waiting_distance,
+                                    "send_request_back_time": utils.random_value_from_range(0,11),
+                                    "response_countdown": 15
+                                })
+                        else:
+                            if not (self.net.is_valid_edge(driver.current_edge)):
+                                self.remove_driver(timestamp, driver)
+                                continue
+                            else:
+                                cancel_ride = True
+                                break
+                    except:
+                        print(f"Unexpected route not found in process_rides: {driver.current_edge} - {customer.current_edge}")
+                        continue
+            ride.sort_driver_requests()
+        else:
+            ride.stop_wait()
+
+
     def update_rides_state(self, timestamp, step):
         #print("update_rides_state")
         traci_idle_drivers = self.traci.vehicle.getTaxiFleet(0)
@@ -479,8 +567,8 @@ class Simulator:
                 self.printer.save_areas_global_stats(step, self.net.areas)
                 self.printer.save_net_global_stats(step, self.net.areas)
 
-                for area_id, area in self.net.areas.items():
-                    area.stats["last_checkpoint"] = area.stats["completed"] - 1
+                #for area_id, area in self.net.areas.items():
+                #    area.stats["last_checkpoint"] = area.stats["completed"] - 1
 
         for ride in self.uber.pickup_rides:
             driver = self.uber.drivers[ride.driver_id]
@@ -532,6 +620,7 @@ class Simulator:
                     break
             
             area.surge_multiplier = max(0.7,min(surge_multiplier,3.5))
+            #print(f"Area {area_id} - surge multiplier: {area.surge_multiplier}")
             area.stats["surge_multipliers"].append(max(0.7,min(surge_multiplier,3.5)))
 
 

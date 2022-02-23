@@ -7,12 +7,16 @@
                 492
             ],
             "generation":{
-                "customer":0.3,
-                "driver":0.2,
+                "customer":0.12,
+                "driver":0.15,
                 "many":[
-                    3,
-                    2
-                ]
+                    1,
+                    1
+                ],
+                "increment": {
+                    "customer": 0.01,
+                    "driver": 0.03
+                }
             },
             "balances":[
                 1.0
@@ -110,12 +114,16 @@
                 219
             ],
             "generation":{
-                "customer":0.3,
-                "driver":0.2,
+                "customer": 0.1,
+                "driver":0.12,
                 "many":[
-                    3,
-                    2
-                ]
+                    1,
+                    1
+                ],
+                "increment": {
+                    "customer": 0.008,
+                    "driver": 0.01
+                }
             },
             "balances":[
                 1.0
@@ -213,12 +221,16 @@
                 296
             ],
             "generation":{
-                "customer":0.25,
-                "driver":0.1,
+                "customer":0.03,
+                "driver":0.05,
                 "many":[
-                    3,
-                    3
-                ]
+                    1,
+                    1
+                ],
+                "increment": {
+                    "customer": 0.002,
+                    "driver": 0.004
+                }
             },
             "balances":[
                 1.0
@@ -316,12 +328,16 @@
                 570
             ],
             "generation":{
-                "customer":0.25,
-                "driver":0.1,
+                "customer":0.005,
+                "driver":0.001,
                 "many":[
-                    2,
-                    2
-                ]
+                    1,
+                    1
+                ],
+                "increment": {
+                    "customer": 0.001,
+                    "driver": 0.001
+                }
             },
             "surge_multipliers":[
                 1.0
