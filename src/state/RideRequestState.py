@@ -1,8 +1,12 @@
 from enum import Enum
 
-class RideRequestState(Enum):
+class RideRequestState(str, Enum):
     UNPROCESSED = "UNPROCESSED"
     SENT = "SENT"
     ACCEPTED = "ACCEPTED"
     REJECTED = "REJECTED"
     NONE = "NONE"
+    CANCELED = "CANCELED"
+    RESPONSE = "RESPONSE"
+    WAITING = "WAITING"
+    SEARCHING_CANDIDATES = "SEARCHING CANDIDATES"

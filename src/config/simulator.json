@@ -1,8 +1,8 @@
 {
-    "timer_remove_driver_idle": 500,
-    "type": "greedy",
+    "timer_remove_idle_driver": 250,
+    "type": "normal",
     "checkpoints": {
-        "simulation_duration": 4500,
+        "simulation_duration": 5000,
         "time_customer_generation": 80,
         "time_driver_generation": 80,
         "time_move_driver": 120,

@@ -1,69 +1,75 @@
-from src.state.DriverState import DriverState
 from src.model.Human import Human
-from src.utils import utils
-
-import random
-
+from src.state.DriverState import DriverState
 
 class Driver(Human):
-    def __init__(self, timestamp, id_num, area_id, num_routes, personality_distribution):
-        super().__init__(timestamp, f"driver_{id_num}", area_id, DriverState.IDLE.value, personality_distribution)
-        route_num = random.randrange(0, num_routes)
-        self.request_pending = False
-        self.route_id = f"area_{area_id}_route_{route_num}"
-        self.last_ride = timestamp
+    def __init__(self, timestamp, id, state, personality_distribution, coordinates):
+        super().__init__(timestamp, id, state, personality_distribution, coordinates)
+        self.__route = None
+        self.__current_distance = None
+        self.__last_ride_timestamp = timestamp
+        self.__pending_request = False
 
-
-    def generate_from_to(self, edge_prefix, edges):
-        min_edge = edges[0]
-        max_edge = edges[1]
-        from_edge = self.current_edge
-        to_edge_num = random.randrange(min_edge, max_edge + 1)
-        prefix_to = "" if utils.random_choice(0.5) else "-"
-        to_edge = f"{prefix_to}{edge_prefix}{to_edge_num}"
-        return (from_edge, to_edge)
-        
-    def remove(self, timestamp):
-        self.state = DriverState.INACTIVE.value
-        self.end = timestamp
-
+    def get_info(self):
+        return {
+            **super().get_info(),
+            "pending_request": self.__pending_request,
+            "route": self.__route.to_dict(),
+            "last_ride_timestamp": self.__last_ride_timestamp,
+            "current_distance": self.__current_distance
+        }
 
     def receive_request(self):
-        self.request_pending = True
-
+        self.state = DriverState.RESPONDING
+        self.__pending_request = True
+        return self.get_info()
 
     def reject_request(self):
-        self.request_pending = False
+        self.__pending_request = False
+        self.state = DriverState.IDLE
+        return self.get_info()
 
+    def set_current_distance(self, current_distance):
+        self.__current_distance = current_distance
+        return self.get_info()
 
-    def update_pickup_ride(self, ride):
-        self.request_pending = False
-        self.state = DriverState.PICKUP.value
-        self.ride = ride
+    def set_coordinates(self, coordinates):
+        self.current_coordinates = coordinates
+        return self.get_info()
 
+    def set_pending_request(self, value):
+        self.__pending_request = value
+        return self.get_info()
 
-    def update_onroad_ride(self):
-        self.state = DriverState.ONROAD.value
+    def set_route(self, route):
+        self.__route = route
+        return self.get_info()
 
+    def set_state(self, state):
+        self.state = state
+        return self.get_info()
+
+    def update_cancel(self):
+        pass
+
+    def update_end(self, timestamp):
+        self.state = DriverState.IDLE
+        self.__route = None
+        self.__last_ride_timestamp = timestamp
+        return self.get_info()
 
     def update_end_moving(self):
-        self.state = DriverState.IDLE.value
+        self.state = DriverState.IDLE
+        self.__route = None
+        return self.get_info()
 
+    def update_on_road(self, destination_route):
+        self.__route = destination_route
+        self.state = DriverState.ONROAD
+        return self.get_info()
 
-    def update_end_ride(self, timestamp):
-        self.state = DriverState.IDLE.value
-        self.last_ride = timestamp
-
-
-    def __str__(self):
-        #driver_str = '-'*6
-        #driver_str += "\nDRIVER\n"
-        #driver_str += '-'*6
-        #driver_str += '\n'
-        driver_str = ""
-        driver_str += super().__str__()
-        driver_str += f"     route id: {self.route_id}\n"
-        driver_str += f"     last ride: {self.last_ride}"
-        #driver_str += '-'*6
-        #driver_str += '\n'
-        return driver_str
+    def update_pickup(self, route):
+        self.state = DriverState.PICKUP
+        self.__pending_request = False
+        self.__route = route
+        return self.get_info()
+    

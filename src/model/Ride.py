@@ -1,114 +1,135 @@
-from os import times
 from src.state.RideState import RideState
 from src.state.RideRequestState import RideRequestState
 
+
 class Ride:
-    def __init__(self, timestamp, reservation):
-        self.id = reservation.id
-        self.customer_id = reservation.persons[0]
-        self.driver_id = ""
-        self.from_edge = reservation.fromEdge
-        self.to_edge = reservation.toEdge
-        self.state = RideState.REQUESTED.value
-        self.traci_reservation = reservation
-        self.driver_requests_list = []
-        self.rejections_driver_ids = []
-        self.current_driver_request = {}
-        self.request_state = RideRequestState.UNPROCESSED.value
-        self.stats = {
-            "timestamp_request": timestamp,
-            "rejections": 0
+    def __init__(self, id, customer_id, meeting_point, destination_point):
+        self.__id = id
+        self.__customer_id = customer_id
+        self.__driver_id = None
+        self.__meeting_point = meeting_point
+        self.__destination_point = destination_point
+        self.__state = RideState.REQUESTED
+        self.__request = {
+            "state": RideRequestState.UNPROCESSED,
+            "drivers_candidates": [],
+            "rejections": [],
+            "current_candidate": None
+        }
+        self.__routes = {
+            "meeting_route": None,
+            "destination_route": None
+        }
+        self.__stats = {}
+
+    def add_driver_candidate(self, driver_candidates):
+        self.__request["drivers_candidates"].extend(driver_candidates)
+
+    def decrement_count_down_request(self):
+        assert self.__request[
+                   "current_candidate"] is not None, "Ride.decrement_count_down_request - candidate is undefined."
+        if self.__request["current_candidate"]:
+            self.request["current_candidate"]["response_count_down"] -= 1
+
+    def get_id(self):
+        return self.__id
+
+    def get_info(self):
+        return {
+            "id": self.id,
+            "customer_id": self.__customer_id,
+            "driver_id": self.__driver_id,
+            "meeting_point": self.__meeting_point,
+            "destination_point": self.__destination_point,
+            "request": {
+                **self.__request
+            },
+            "routes": self.routes_to_dict(),
+            "state": self.__state,
+            "stats": {
+                **self.__stats
+            }
         }
 
-
-    def update_cancel(self, timestamp):
-        self.state = RideState.CANCELED.value
-        self.stats["timestamp_canceled"] = timestamp
-        self.request_state = RideRequestState.NONE.value
-
-
-    def update_end(self, timestamp, step):
-        self.state = RideState.END.value
-        self.stats["end_step"] = step
-        self.stats["timestamp_end"] = timestamp
-        self.stats["ride_time"] = timestamp - self.stats["timestamp_pickup"]
-        # WARNING: for the moment the ride length is equal to the expected one
-        self.stats["ride_length"] = self.stats["expected_ride_length"]
-        # WARNING: for the moment the waiting length is equal to the expected one
-        self.stats["waiting_length"] = self.stats["expected_waiting_length"]
-        self.stats["total_time"] = timestamp - self.stats["timestamp_request"]
-        self.stats["total_length"] = self.stats["waiting_length"] + self.stats["ride_length"]
-
-
-    def update_onroad(self, timestamp):
-        self.stats["timestamp_pickup"] = timestamp
-        self.stats["waiting_time"] = timestamp - self.stats["timestamp_accepted"]
-
-
-    def parse_new_request(self, idle_drivers_without_requests):
-        found = False
-        while (len(self.driver_requests_list) > 0 and not found):
-            driver_candidate = self.driver_requests_list.pop(0)
-            if (driver_candidate["driver_id"] in idle_drivers_without_requests):
-                found = True
-                self.current_driver_request = driver_candidate
-                self.request_state = RideRequestState.SENT.value
-        if not (found):
-            self.request_state = RideRequestState.NONE.value
-
+    def request_canceled(self):
+        self.__request["state"] = RideRequestState.CANCELED
+        return self.get_info()
 
     def request_rejected(self, driver_id, idle_driver=True):
-        if (idle_driver):
-            self.stats["rejections"] += 1
-            self.rejections_driver_ids.append(driver_id)
-        self.request_state = RideRequestState.REJECTED.value
+        if idle_driver:
+            self.__request["rejections"].append(driver_id)
+        self.__request["state"] = RideRequestState.REJECTED
+        return self.get_info()
 
+    def routes_to_dict(self):
+        return {
+            "meeting_route": None if self.__routes["meeting_route"] is None else self.__routes["meeting_route"].to_dict(),
+            "destination_route": None if self.__routes["destination_route"] is None else self.__routes["destination_route"].to_dict()
+        }
 
-    def sort_driver_requests(self):
-        self.driver_requests_list = sorted(self.driver_requests_list, key=lambda driver_request: driver_request["waiting_distance"])
+    def set_candidate(self, candidate):
+        self.__request["current_candidate"] = candidate
+        assert candidate in self.__request[
+            "drivers_candidates"], "Ride.set_candidate - candidate is not included in drivers candidates"
+        self.__request["drivers_candidates"] = filter(lambda d: not d["id"] == candidate["id"], self.__request["drivers_candidates"])
+        return self.get_info()
 
-    def stop_wait(self):
-        self.request_state == RideRequestState.NONE.value
+    def set_driver(self, driver_id):
+        self.__driver_id = driver_id
+        return self.get_info()
 
+    def set_request_state(self, state):
+        self.__request["state"] = state
+        return self.get_info()
 
-    def update_pending_request(self, e_length, e_travel_time):
-        self.state = RideState.PENDING.value
-        self.stats["expected_ride_length"] = e_length
-        self.stats["expected_ride_time"] = e_travel_time
+    def set_state(self, state):
+        self.__state = state
+        return self.get_info()
 
+    def sort_candidates(self):
+        self.request["drivers_candidates"] = sorted(self.__request["drivers_candidate"], key=lambda d: d["expected_duration"])
 
-    def add_driver_candidate(self, driver_request):
-        self.driver_requests_list.append(driver_request)
+    def update_cancel(self):
+        pass
 
+    def update_end(self, stats):
+        self.__state = RideState.END
+        self.set_stats(stats)
+        return self.get_info()
 
-    def update_pickup(self, timestamp, driver, driver_ride_request, e_price, surge):
-        self.driver_id = driver.id
-        self.state = RideState.PICKUP.value
-        self.stats["expected_waiting_length"] = driver_ride_request["waiting_distance"]
-        self.stats["expected_total_length"] = self.stats["expected_ride_length"] + driver_ride_request["waiting_distance"]
-        self.stats["expected_waiting_time"] = driver_ride_request["expected_waiting_time"]
-        self.stats["expected_total_time"] = driver_ride_request["expected_waiting_time"] + self.stats["expected_ride_time"]
-        self.stats["expected_price"] = e_price
-        self.stats["timestamp_accepted"] = timestamp
-        self.stats["surge_multiplier"] = surge
-        self.stats["time_to_accept_request"] = timestamp - self.stats["timestamp_request"]
-        self.request_state = RideRequestState.ACCEPTED.value
+    def update_on_road(self, stats):
+        self.__state = RideState.ONROAD
+        self.set_stats(stats)
+        return self.get_info()
 
-    def __str__(self):
-        #ride_str = '-'*4
-        #ride_str += "\nRide\n"
-        #ride_str += '-'*4
-        #ride_str += '\n'
-        ride_str = "\n"
-        ride_str += f"  - id: {self.id}\n"
-        ride_str += f"  - customer id: {self.customer_id}\n"
-        ride_str += f"  - driver id: {self.driver_id}\n"
-        ride_str += f"  - from: {self.from_edge}\n"
-        ride_str += f"  - to: {self.to_edge}\n"
-        ride_str += f"  - state: {self.state}\n"
-        ride_str += "   - stats:\n"
-        for k, v in self.stats.items():
-            ride_str += f"          - {k}: {v}\n"
-        #ride_str += '-'*4
-        ride_str += '\n'
-        return ride_str
+    def update_pending(self, timestamp):
+        self.__state = RideState.PENDING
+        self.stats["timestamp_request"] = timestamp
+        return self.get_info()
+
+    def update_accepted(self, driver_id, meeting_route, destination_route, stats):
+        self.__driver_id = driver_id
+        self.__set_route("meeting", meeting_route)
+        self.__set_route("destination", destination_route)
+        self.set_stats(stats)
+        self.__request["state"] = RideRequestState.ACCEPTED
+        return self.get_info()
+
+    def update_pickup(self):
+        self.__state = RideState.PICKUP
+        return self.get_info()
+
+    def __set_route(self, route_type, route):
+        if route_type == "meeting":
+            self.routes["meeting_route"] = route
+        if route_type == "destination":
+            self.__routes["destination_route"] = route
+        return self.get_info()
+
+    def __set_stats(self, stats):
+        self.__stats = {
+            **self.__stats,
+            **stats
+        }
+        return self.get_info()
+

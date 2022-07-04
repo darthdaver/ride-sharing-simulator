@@ -3,3 +3,15 @@ __pycache__
 output*
 .*
 !/.gitignore
+
+# dotenv environment variables file
+.env
+.env.test
+
+#data
+**/repos
+
+# .DS_Store
+.DS_Store
+
+dist

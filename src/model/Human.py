@@ -1,41 +1,71 @@
 from src.utils import utils
+from src.state import CustomerState, DriverState
 import random
+import copy
+import traci
 
 class Human:
-    def __init__(self, timestamp, id, area_id, state, personality_distribution):
-        self.id = id
-        self.area_id = area_id
-        self.state = state
-        self.personality = self.__assign_personality(personality_distribution)
-        self.start = timestamp
-        self.current_edge = None
-        self.ride = None
-        self.end = None
+    def __init__(self, timestamp, id, state, personality_distribution, coordinates):
+        print(2)
+        print(coordinates)
+        print(traci.simulation.convertRoad(coordinates[0], coordinates[1], isGeo=True))
+        self._id = id
+        self._state = state
+        self._timestamp = timestamp
+        print(1)
+        print(coordinates)
+        self._personality = self.__assign_personality(personality_distribution)
+        self._current_edge = traci.simulation.convertRoad(coordinates[0], coordinates[1], isGeo=True)
+        self._current_coordinates = coordinates
+
+    @property
+    def id(self):
+        return self._id
+
+    @property
+    def current_coordinates(self):
+        return self._current_coordinates
+
+    @current_coordinates.setter
+    def current_coordinates(self, coordinates):
+        self._current_coordinates = coordinates
+
+    @property
+    def current_edge(self):
+        return self._current_edge
+
+    @current_coordinates.setter
+    def current_edge(self, edge_id):
+        self._current_edge = edge_id
+
+    @property
+    def state(self):
+        return self._state
+
+    @state.setter
+    def state(self, state):
+        self._state = state
+
+    def get_info(self):
+        return {
+            "current_coordinates": self._current_coordinates,
+            "id": self._id,
+            "personality": self._personality,
+            "state": self._state,
+            "timestamp": self._timestamp
+        }
 
     def __assign_personality(self, personality_distribution):
         value = random.random()
-        for threshold, personality in personality_distribution:
-            if (value <= threshold):
+
+        for treshold, personality in personality_distribution:
+            if value <= treshold:
                 return personality
         return "normal"
 
-
-    def __str__(self):
-        human_str = ""
-        human_str += f"     id: {self.id}\n"
-        human_str += f"     area id: {self.area_id}\n"
-        human_str += f"     personality: {self.personality}\n"
-        human_str += f"     state: {self.state}\n"
-        human_str += f"     start: {self.start}\n"
-        human_str += f"     current edge: {self.current_edge}\n"
-        human_str += f"     end: {self.end}\n"
-        human_str += f"     ride: {str(self.ride)}\n"
-        return human_str
-
-    def accept_ride_choice(self, area, personality_policies, bias=0):
-        surge_multiplier = area.surge_multiplier
-        policy = personality_policies[self.personality]
-        for min_surge, max_surge, p in policy:
-            if (surge_multiplier >= min_surge and surge_multiplier < max_surge):
-                return utils.random_choice(p + bias)
+    def accept_ride_conditions(self, surge_multiplier, policy, bias=0):
+        for min_surge, max_surge, probability in policy:
+            if min_surge <= surge_multiplier < max_surge:
+                return utils.random_choice(probability + bias)
         return utils.random_choice(0.5 + bias)
+

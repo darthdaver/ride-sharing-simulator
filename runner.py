@@ -42,14 +42,10 @@ if __name__ == "__main__":
     else:
         sumoBinary = checkBinary('sumo-gui')
 
-    #traci.start([sumoBinary, "-c", "net_config/sumo.sumocfg",
-    #             "--tripinfo-output", "net_config/tripinfo.xml"])
-
-    traci.start(["sumo", "-c", "net_config/sumo.sumocfg",
+    traci.start(["sumo-gui", "-c", "net_config/sumo.sumocfg",
                  "--tripinfo-output", "net_config/tripinfo.xml"])
-
     print('INIT')
-    simulator = Simulator(traci)
-    simulator.init_scenario()
+    simulator = Simulator()
+    #simulator.init_scenario()
     print(f"INIT SIMULATOR")
     simulator.run()

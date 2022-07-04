@@ -1,681 +1,485 @@
-from os import times
+import math
+
+from dotenv import load_dotenv
+from src.state.FileSetup import FileSetup
+from src.state.CustomerState import CustomerState
+from src.state.DriverState import DriverState
+from src.state.RideState import RideState
 from src.state.RideRequestState import RideRequestState
-from time import time
+from src.state.HumanType import HumanType
+from src.state.HumanPersonality import HumanPersonality
+from src.state.HumanType import HumanType
+from src.utils import utils
+from src.model.Scenario import Scenario
+from src.model.Provider import Provider
+from src.model.Map import Map
+from src.model.Ride import Ride
 from src.model.Customer import Customer
 from src.model.Driver import Driver
-from src.model.Net import Net
-from src.model.Uber import Uber
-from src.model.Ride import Ride
-from src.debug.Debug import Debug
-from src.controller.Printer import Printer
-from src.state.RideState import RideState
-from src.state.DriverState import DriverState
-from src.state.FileSetup import FileSetup
-from src.state.SimulationType import SimulationType
-from src.utils import utils
-from src.scenario import dispatch_scenario
-
-import random
+import os
+import json
+import traci
 import sys
 
+load_dotenv()
+
+H3_RESOLUTION = os.environ["H3_RESOLUTION"]
 
 class Simulator:
-    def __init__(self, traci):
-        self.traci = traci
+    def __init__(self):
+        self.__customer_setup = utils.read_setup(FileSetup.CUSTOMER.value)
+        self.__driver_setup = utils.read_setup(FileSetup.DRIVER.value)
+        self.__tuning_setup = utils.read_setup(FileSetup.TUNING.value)
+        self.__simulator_setup = utils.read_setup(FileSetup.SIMULATOR.value)
+        self.__scenario = Scenario(utils.read_setup(FileSetup.SCENARIO.value))
+        self.__provider = Provider(utils.read_setup(FileSetup.PROVIDER.value))
+        self.__map = Map(utils.read_setup(FileSetup.MAP.value), H3_RESOLUTION)
+        self.__driver_id_counter = 0
+        self.__customer_id_counter = 0
+        self.__ride_id_counter = 0
+        self.__unprocessed_customers = []
+        self.__drivers = {}
+        self.__customers = {}
+        self.__timestamp = 0
 
-        customer_setup = utils.read_setup(FileSetup.CUSTOMER.value)
-        driver_setup = utils.read_setup(FileSetup.DRIVER.value)
-        net_setup = utils.read_setup(FileSetup.NET.value)
-        simulator_setup = utils.read_setup(FileSetup.SIMULATOR.value)
-        uber_setup = utils.read_setup(FileSetup.UBER.value)
-        self.uber = Uber(uber_setup["fare"],uber_setup["request"])
-        self.net = Net(net_setup["info"], net_setup["areas"])
-        self.driver_move_policy = driver_setup["move_policy"]
-        self.driver_stop_work_policy = driver_setup["stop_work_policy"]
-        self.customer_personality_policy = customer_setup["personality_policy"]
-        self.driver_personality_policy = driver_setup["personality_policy"] 
-        self.driver_id_counter = 0
-        self.customer_id_counter = 0
-        self.timer_remove_driver_idle = simulator_setup["timer_remove_driver_idle"]
-        self.type = simulator_setup["type"].upper()
-        self.checkpoints = simulator_setup["checkpoints"]
-        self.printer = Printer(self.type)
-        self.scenario = dispatch_scenario.dispatch(self.type.upper())
-        self.unprocessed_customers = []
-        self.debug = Debug(self.uber)
+    def __check_area_id(self, agent_info, area_id, type):
+        hexagon_id = self.__map.get_hexagon_id_from_coordinates(agent_info["current_coordinates"])
+        if type == "driver":
+            driver_state = agent_info["state"]
+            if not driver_state in [DriverState.ONROAD, DriverState.PICKUP, DriverState.MOVING] and area_id == "unknown":
+                new_coordinates = self.__map.find_near_hexagon(hexagon_id)
+                if new_coordinates is not None:
+                    driver = self.__drivers[agent_info["id"]]
+                    agent_info = driver.set_coordinates(new_coordinates)
+                    return self.__map.get_area_from_coordinates(new_coordinates)
+                else:
+                    raise Exception(f"Unknown area id ({agent_info['current_coordinates']}) for driver ${agent_info['id']} in state ${agent_info['state']} not busy - 1")
+        else:
+            customer_state = agent_info["state"]
+            if customer_state == CustomerState.ACTIVE:
+                new_coordinates = self.__map.find_near_hexagon(hexagon_id)
+                if new_coordinates is not None:
+                    customer = self.__customers[agent_info["id"]]
+                    agent_info = customer.set_coordinates(new_coordinates)
+                    return self.__map.get_area_from_coordinates(new_coordinates)
+                else:
+                    raise Exception(f"Unknown area id ({agent_info['current_coordinates']}) for customer ${agent_info['id']} in state ${agent_info['state']} not busy [1]")
+
+            elif customer_state == CustomerState.PENDING and area_id == "unknown":
+                raise Exception(f"Unknown area id ({agent_info['current_coordinates']}) for customer ${agent_info['id']} in state ${agent_info['state']} not busy [2]")
+        return self.__map.get_area_from_coordinates(agent_info["current_coordinates"])
+
+    def __generate_agent_id(self, agent_type):
+        assert agent_type in [HumanType.DRIVER, HumanType.CUSTOMER], "Simulator.generateAgentId - unknown agentType"
+        counter = 0
+        if agent_type == HumanType.CUSTOMER:
+            counter = self.__customer_id_counter
+            self.__customer_id_counter += 1
+        else:
+            counter = self.__driver_id_counter
+            self.__driver_id_counter += 1
+        return f"{agent_type.value.lower()}_{counter}"
+
+    def __generate_customer(self, timestamp, area_id, hexagon_id="random"):
+        area_info = self.__map.get_area_info(area_id)
+        coordinates = self.__map.generate_coordinates_from_hexagon(area_id, hexagon_id)
+        customer_personality_distribution = area_info["personality_policy"]["customer"]
+        customer_id = self.__generate_agent_id(HumanType.CUSTOMER)
+        customer = Customer(timestamp, customer_id, CustomerState.ACTIVE, customer_personality_distribution, coordinates)
+        self.__customers[customer_id] = customer
+        self.__unprocessed_customers.append(customer_id)
+        edge_id, lane_position, _ = Map.sumo_edge_from_coordinates(coordinates)
+        traci.person.add(customer_id, edge_id, lane_position)
 
 
-    # Initialize edges speed
-    def __init_net_edges_speed(self):
-        edge_prefix = self.net.edge_prefix
-        for i in range(self.net.min_edge_num, self.net.max_edge_num + 1):
-            # random speed betweeen 9 and 21 m/s
-            speed = random.randrange(9, 21)
-            # set edge speed in both directions
-            self.traci.edge.setMaxSpeed(f"{edge_prefix}{i}", speed)
-            self.traci.edge.setMaxSpeed(f"-{edge_prefix}{i}", random.randrange(9, 21))
+    def __generate_customer_requests(self, timestamp):
+        for customer_id in self.__unprocessed_customers:
+            ride_id = f"ride_{self.__ride_id_counter}"
+            self.__ride_id_counter += 1
+            meeting_coordinates = self.__customers[customer_id].get_info()["current_coordinates"]
+            route_length = utils.select_from_distribution(self.__customer_setup["route_length_distribution"])
+            destination_coordinates = self.__map.generate_destination_point(meeting_coordinates, route_length)
+            ride = Ride(ride_id, customer_id, meeting_coordinates, destination_coordinates)
+            self.__provider.receive_request(ride)
+            self.__unprocessed_customers = filter(lambda i: not i == customer_id, self.__unprocessed_customers)
 
+    def __generate_driver(self, timestamp, area_id, hexagon_id="random"):
+        area_info = self.__map.get_area_info(area_id)
+        coordinates = self.__map.generate_coordinates_from_hexagon(area_id, hexagon_id)
+        driver_personality_distribution = area_info["personality_policy"]["driver"]
+        driver_id = self.__generate_agent_id(HumanType.DRIVER)
+        driver = Driver(timestamp, driver_id, DriverState.IDLE, driver_personality_distribution, coordinates)
+        self.__drivers[driver_id] = driver
+        edge_id, lane_position, _ = Map.sumo_edge_from_coordinates(coordinates)
+        traci.person.add(driver_id, edge_id, lane_position)
 
-    # Generate random routes
-    def __init_random_routes(self, route_prefix, min_edge_num, max_edge_num, num_routes, factor=5):
-        for i in range(num_routes):
-            # set route id
-            route_id = f"{route_prefix}_route_{i}"
-            # set route endpoints
-            from_edge = random.randrange(min_edge_num, max_edge_num + 1)
-            to_edge = random.randrange(min_edge_num, max_edge_num + 1)
-            prefix_from = "" if utils.random_choice(0.5) else "-"
-            prefix_to = "" if utils.random_choice(0.5) else "-"
-            # check the endpoints have a distance greater than the factor (es. factor = 5 means the distance between the starting edge
-            # and the ending edge is of at least 5 edges)
-            while(abs(to_edge - from_edge) < factor):
-                to_edge = random.randrange(min_edge_num, max_edge_num)
-            # generate fastest route
-            edge_prefix = self.net.edge_prefix
-            route_stage = self.traci.simulation.findRoute(f"{prefix_from}{edge_prefix}{from_edge}", f"{prefix_to}{edge_prefix}{to_edge}")
-            # add route
-            self.traci.route.add(route_id, route_stage.edges)
+    def __get_available_drivers(self, area_id):
+        idle_drivers = self.__get_drivers_by_states([DriverState.IDLE])
+        drivers_moving_in_area = self.__get_drivers_moving_in_area(area_id)
+        available_drivers = {
+            **idle_drivers,
+            **drivers_moving_in_area
+        }
+        return available_drivers
 
+    def __get_drivers_in_area(self, area_id):
+        drivers_in_area = {}
+        for driver in self.drivers.values():
+            driver_info = driver.get_info()
+            driver_area_id = self.__check_area_id(driver_info, self.__map.get_area_from_coordinates(driver_info["current_coordinates"]), "driver")
+            if area_id == driver_area_id:
+                drivers_in_area[driver_info["id"]] = driver_info
+        return drivers_in_area
 
-    # Create customer
-    def create_customer(self, timestamp, area_id):
-        # print("create_customer")
-        edges = self.net.areas[area_id].edges
-        customer_personality_distribution = self.net.areas[area_id].customer_personality_distribution
-        # create new customer instance
-        new_customer = Customer(timestamp, self.customer_id_counter, area_id, edges, self.net.edge_prefix, customer_personality_distribution)
-        # set customer position
-        new_customer.pos = random.randrange(int(self.traci.lane.getLength(f'{new_customer.from_edge}_0')))
-        # add customer in the scene
-        self.traci.person.add(new_customer.id, new_customer.from_edge, new_customer.pos, depart=timestamp)
-        # update id generator counter
-        self.customer_id_counter += 1
-        # append customer to corresponding area and update counter
-        self.net.areas[area_id].customers.append(new_customer.id)
+    def __get_drivers_moving_in_area(self, area_id):
+        drivers_moving_in_area = {}
+        for driver in self.drivers.values():
+            driver_info = driver.get_info()
+            if driver_info["state"] == DriverState.MOVING:
+                assert driver_info["route"] is not None, "Simulator.__get_drivers_moving_in_area - driver route not found"
+                destination_coordinates = driver_info["route"]["destination_point"]
+                destination_area_id = self.__check_area_id(driver_info, self.__map.get_area_from_coordinates(destination_coordinates), 'driver')
+                if area_id == destination_area_id:
+                    drivers_moving_in_area[driver_info["id"]] = driver_info
 
-        self.traci.person.appendDrivingStage(new_customer.id, new_customer.to_edge,'taxi')
-        self.uber.customers[new_customer.id] = new_customer
-        self.unprocessed_customers.append(new_customer.id)
+        return drivers_moving_in_area
 
-        # WARNING: the current version generate a request immediately
-        # self.create_customer_request(timestamp, new_customer)
+    def __get_drivers_info(self):
+        drivers_info = {}
+        for driver_id, driver in self.__drivers.items():
+            drivers_info[driver_id] = driver.get_info()
+        return drivers_info
 
-    # Create customer request
-    def create_customer_requests(self, timestamp):
-        # print("create_customer_requests")
-        reservations = self.traci.person.getTaxiReservations(1)
-        for reservation in reservations:
-            res_customer_id = reservation.persons[0]
-            if (len(self.unprocessed_customers) == 0):
-                print("Unexpected reservation with no unprocessed customers")
-            elif not (res_customer_id in self.unprocessed_customers):
-                print("Unexpected reservation with no corresponding customer")
+    def __get_drivers_by_states(self, states):
+        drivers_info = {}
+        for driver_id, driver in self.__drivers.items():
+            driver_info = driver.get_info()
+            if driver_info["state"] in states:
+                drivers_info[driver_id] = driver_info
+        drivers_info
+
+    def __get_human_policy(self, policy, personality):
+        assert personality in [HumanPersonality.HURRY.value, HumanPersonality.NORMAL.value, HumanPersonality.GREEDY.value], f"Simulator.__get_human_policy - Unknown personality: {personality}"
+        return policy[personality]
+
+    def __manage_pending_request(self, timestamp):
+        pending_requests = self.__provider.get_rides_info_by_state(RideState.PENDING)
+        for ride_info in pending_requests:
+            driver_acceptance_policy = self.__tuning_setup["driver_acceptance_policy"]
+            customer_info = self.__customers[ride_info["customer_id"]].get_info()
+            area_id = self.__check_area_id(customer_info, self.__map.get_area_from_coordinates(ride_info["meeting_point"]), 'customer')
+            assert (not area_id == 'unknown') and type(area_id) is str, f"Simulator.__manage_pending_request - Unexpected unknown id area ({customer_info['current_coordinates']}) for customer {ride_info['id_customer']}."
+            area_info = self.__map.get_area_info(area_id)
+            surge_multiplier = area_info["surge_multiplier"][0]
+            drivers_info = self.__get_drivers_info()
+            ride_request_state, driver_id, customer_id = self.__provider.manage_pending_request(timestamp, ride_info, drivers_info)
+            if ride_request_state in RideRequestState.SENT:
+                assert driver_id is not None, "Simulator.__manage_pending_request - Unexpected undefined driver id when request state has been sent."
+                driver = self.__drivers[driver_id]
+                driver_info = driver.get_info()
+                personality = driver_info["personality"]
+                driver_policy = self.__get_human_policy(driver_acceptance_policy, personality)
+                accept = driver.accept_ride_conditions(surge_multiplier, driver_policy)
+                if accept:
+                    destination_route = Map.generate_sumo_route_from_coordinates([ride_info["meeting_point"], ride_info["destination_point"]])
+                    assert ride_info["request"]["current_candidate"] is not None, "Simulator.__manage_pending_request - candidate undefined on ride request response"
+                    current_candidate = ride_info["request"]["current_candidate"]
+                    customer = self.__customers[ride_info["customer_id"]]
+                    customer_info = customer.update_pickup()
+                    driver_info = driver.update_pickup(current_candidate["meeting_route"])
+                    # TODO
+                    expected_ride_duration = Map.get_sumo_route_duration(destination_route)
+                    expected_ride_length = Map.get_sumo_route_distance(destination_route)
+                    expected_price = self.__provider.compute_price(expected_ride_duration, expected_ride_length, surge_multiplier)
+                    stats = {
+                        "timestamp_pickup": timestamp,
+                        "expected_meeting_length": current_candidate["expected_distance"],
+                        "expected_meeting_duration": current_candidate["expected_duration"],
+                        "expected_price": expected_price,
+                        "expected_ride_duration": expected_ride_duration,
+                        "expected_ride_length": expected_ride_length,
+                        "surge_multiplier": surge_multiplier
+                    }
+                    ride_info = self.__provider.update_ride_accepted(ride_info["id"], current_candidate["id"], current_candidate["meeting_route"], destination_route, stats)
+                    ride_info = self.__provider.set_ride_request_state(ride_info["id"], RideRequestState.ACCEPTED)
+                else:
+                    driver_info = driver.reject_request()
+                    ride_info = self.__provider.ride_request_rejected(ride_info["id"], driver_id)
+                    ride_info = self.__provider.set_ride_request_state(ride_info["id"], RideRequestState.REJECTED)
+            elif ride_request_state == RideRequestState.ACCEPTED:
+                assert driver_id is not None, "Simulator.__manage_pending_request - id Driver undefined on ride requested accepted."
+                driver = self.__drivers[driver_id]
+                driver_info = driver.set_current_distance((math.inf, math.inf))
+                # check
+                self.start_route(driver_id, ride_info["id"])
+                self.__provider.update_ride_pickup(ride_info["id"])
+                self.__print_ride_assignation(timestamp, ride_info["id"], customer_info["id"], driver_id)
+            elif ride_request_state == RideRequestState.NONE:
+                assert customer_id is not None, "Simulator.managePendingRequest - id customer undefined on ride request canceled or not accomplished."
+                customer = self.__customers[customer_id]
+                customer_info = customer.set_state(CustomerState.INACTIVE)
+                self.__provider.set_ride_request_state(ride_info["id"], RideRequestState.CANCELED)
+
+    def __map_pending_request_area(self, r):
+        customer_info = self.__customers[r["customer_id"]].get_info()
+        coordinates_request = customer_info["current_coordinates"]
+        area_request_id = self.__map.get_area_from_coordinates(coordinates_request)
+        return {
+            **r,
+            "area_request_id": area_request_id
+        }
+
+    def __move_driver_to_area(self, driver_id, area_id):
+        driver = self.__drivers[driver_id]
+        driver_info = driver.get_info()
+        driver_area = self.__check_area_id(driver_info, self.__map.get_area_from_coordinates(driver_info["current_coordinates"]), 'driver')
+        assert (not driver_area == "unknown") and type(driver_area) == str, f"Simulator.move_driver_to_area - Unexpected unknown id area ({driver_info['current_coordinates']}) for customer {driver_info['id_customer']}."
+        assert not driver_area == area_id, "Simulator.moveDriverToArea - driver area is equal to area where the driver have to move"
+        area_info = self.__map.get_area_info(area_id)
+        hexagon_random_id = utils.select_from_list(area_info["hexagons"])
+        ways = self.__map.get_hexagon_info(hexagon_random_id)["ways"]
+        way_random_id = utils.select_from_list(ways)
+        destination_position = self.__map.get_random_position_from_way(way_random_id)
+        route = Map.generate_sumo_route_from_coordinates([driver_info["current_coordinates"], destination_position])
+        driver_info = driver.set_route(route)
+        driver_info = driver.set_state(DriverState.MOVING)
+        # check
+        self.start_route(driver_id)
+
+    def __print_ride_assignation(self, timestamp, ride_id, customer_id, driver_id):
+        path = f"{os.getcwd()}/../output/ride_assignations.json"
+        data = {
+            "timestamp": timestamp,
+            "ride_id": ride_id,
+            "customer_id": customer_id,
+            "driver_id": driver_id
+        }
+        with open(path, 'w') as outfile:
+            json.dump(data, outfile)
+
+    def __process_rides(self, timestamp):
+        unprocessed_requests = self.__provider.get_unprocessed_requests()
+
+        for ride_id in unprocessed_requests:
+            ride_info = self.__provider.get_ride_info(ride_id)
+            customer = self.__customers[ride_info["customer_id"]]
+            customer_info = customer.get_info()
+            customer_acceptance_policy = self.__tuning_setup["customer_acceptance_policy"]
+            personality = customer.get_info()["personality"]
+            area_id = self.__check_area_id(customer_info, self.__map.get_area_from_coordinates(customer_info["current_coordinates"]), "customer")
+            assert (not area_id == 'unknown') and type(area_id) == str, f"Simulator.process_rides - Unexpected unknown id area ({customer_info['current_coordinates']}) fo customer {ride_info['customer_id']}"
+            area_info = self.__map.get_area_info(area_id)
+            surge_multiplier = area_info["surge_multipliers"][0]
+            customer_policy = self.__get_human_policy(customer_acceptance_policy, personality)
+            accept = customer.accept_ride_conditions(surge_multiplier, customer_policy)
+
+            if accept:
+                customer_info = customer.update_pending()
+                available_drivers_info = self.__get_available_drivers(area_id)
+                self.__provider.process_customer_request(timestamp, ride_info, customer.current_coordinates), available_drivers_info
             else:
-                self.unprocessed_customers.remove(res_customer_id)
-                # create ride request
-                ride_request = Ride(timestamp, reservation)
-                # send request to Uber
-                self.uber.receive_request(ride_request, self.uber.customers[res_customer_id])
+                customer_info = customer.set_state(CustomerState.INACTIVE)
+                ride_info = self.__provider.ride_request_canceled(ride_id)
+                ride_info = self.__provider.set_ride_state(ride_id, RideState.CANCELED)
 
-        if (len(self.unprocessed_customers) > 0):
-            print("Unexpected unprocessed customers:")
-            for customer_id in self.unprocessed_customers:
-                print(customer_id)
-                self.unprocessed_customers.remove(customer_id)
-                try:
-                    self.traci.person.removeStages(customer_id)
-                except:
-                    print(f"Unexpected user {customer_id} not found in create_customer_request")
-            #self.debug.print_state(timestamp, self.uber, reservations)
+    def __remove_customer(self, customer_id):
+        # check
+        customer = self.__customers[customer_id]
+        customer.set_state(CustomerState.INACTIVE)
 
+    def __remove_driver(self, driver_id):
+        # check
+        driver = self.__drivers[driver_id]
+        driver.set_state(DriverState.INACTIVE)
 
-    # Create driver - add vehicle to the network. Simulate a driver that becomes active
-    def create_driver(self, timestamp, area_id):
-        # print("create_driver")
-        driver_personality_distribution = self.net.areas[area_id].driver_personality_distribution
+    def __send_request_to_driver(self, driver_id):
+        driver = self.drivers[driver_id]
+        return driver.reject_request()
 
-        # create new driver instance
-        new_driver = Driver(timestamp, self.driver_id_counter, area_id, self.net.num_random_routes, driver_personality_distribution)
-        # add driver to the scene
-        self.traci.vehicle.add(new_driver.id, new_driver.route_id, "driver", depart=f'{timestamp}', departPos="random", line="taxi")
-        # set driver current edge position
-        new_driver.current_edge = self.traci.vehicle.getRoute(new_driver.id)[-1]
-        # update driver list and id generator counter
-        self.uber.idle_drivers.append(new_driver)
-        self.uber.drivers[new_driver.id] = new_driver
-        self.driver_id_counter += 1
+    def start_route(self, driver_id, ride_id=None, route_type=None):
+        pass
 
-        # append driver to corresponding area and update counter
-        self.net.areas[area_id].drivers.append(new_driver.id)
+    def __trigger_event(self, e):
+        self.__map.update_generation_policy(e["area_id"], e["generation_policy"])
 
+    def __update_drivers(self, timestamp):
+        for driver in self.drivers.values():
+            driver_info = driver.get_info()
+            if driver_info["state"] == DriverState.MOVING:
+                assert not driver_info["route"] == None, "Simulator.updateDrivers - unexpected moving driver without route"
+                assert not driver_info["current_distance"] == None, "Simulator.updateDrivers - unexpected driver distance undefined"
+                destination_point = driver_info["route"].get_destination_point()
+                if Map.is_arrived(driver_info["current_distance"], destination_point, driver_info["current_coordinates"]):
+                    driver_info = driver.update_end_moving()
+                driver_info = driver.set_current_distance(Map.compute_distance(driver_info["current_coordinates"], destination_point))
+            elif driver_info["state"] == DriverState.IDLE:
+                area_id = self.__check_area_id(driver_info, self.__map.get_area_from_coordinates(driver.current_coordinates), 'driver')
+                assert (not area_id == 'unknown') and type(area_id) == str, f"Simulator.__update_drivers - Unexpected unknown id area ({driver_info['current_coordinates']}) for driver {driver_info['id']}"
+                area_info = self.__map.get_area_info(area_id)
+                surge_multiplier = area_info["surge_multipliers"][0]
+                last_ride_timestamp = driver.get_info()["last_ride_timestamp"]
+                idle_time_over = (timestamp - last_ride_timestamp) > self.__simulator_setup["timer_remove_idle_driver"]
+                if idle_time_over:
+                    assert driver_info["pending_request"] == False, f"Simulator.__update_drivers - unexpected idle driver {driver_info['id']} pending request. [1]"
+                    self.__remove_driver(driver_info["id"])
+                elif surge_multiplier < 1.2:
+                    assert driver_info["pending_request"] == False, f"Simulator.__update_drivers - unexpected idle driver {driver_info['id']} pending request. [2]"
+                    stop_policy = self.__driver_setup["stop_work_policy"]
+                    stop_probability = (timestamp - last_ride_timestamp) * self.__get_human_policy(stop_policy, driver_info["personality"])
+                    if utils.random_choice(stop_probability):
+                        self.__remove_driver(driver_info["id"])
 
-    # Dispatch pending rides
-    def process_rides(self, timestamp):
-        unprocessed_requests = self.uber.unprocessed_requests.copy()
-        for ride in unprocessed_requests:
-            cancel_ride = False
-            customer = self.uber.customers[ride.customer_id]
-            ride_area = self.net.areas[customer.area_id]
+    def __update_driver_movements(self):
+        active_drivers = filter(lambda d: d.get_info()["state"] == DriverState.IDLE, self.__drivers.values())
+        if len(active_drivers) > 0:
+            for area_id in self.__map.get_area_ids():
+                area_info = self.__map.get_area_info(area_id)
+                move_probability = 0
 
-            if (customer.accept_ride_choice(ride_area, self.customer_personality_policy)):
-                for driver in self.uber.idle_drivers:
-                    # compute waiting time
-                    # customer_edge = self.traci.person.getRoadID(customer.id)
-                    # driver_edge = self.traci.vehicle.getRoadID(driver.id)
-                    try:
-                        if (self.net.is_valid_edge(driver.current_edge) and self.net.is_valid_edge(customer.current_edge)):
-                            if (driver.state == DriverState.MOVING.value):
-                                to_area = self.net.edge_area(driver.to_edge)
-                                if (to_area != ride_area):
-                                    continue
-                                    
-                            waiting_route_stage = self.traci.simulation.findRoute(driver.current_edge, customer.current_edge)
-                            expected_waiting_time = waiting_route_stage.travelTime
-                            waiting_distance = waiting_route_stage.length
-
-                            if (waiting_distance < self.uber.request_max_driver_distance):
-                                ride.add_driver_candidate({
-                                    "driver_id": driver.id,
-                                    "expected_waiting_time": expected_waiting_time,
-                                    "waiting_distance": waiting_distance,
-                                    "send_request_back_time": utils.random_value_from_range(0,11),
-                                    "response_countdown": 15
-                                })
-                        else:
-                            if not (self.net.is_valid_edge(driver.current_edge)):
-                                self.remove_driver(timestamp, driver)
-                                continue
-                            else:
-                                cancel_ride = True
+                for other_area_id in self.__map.get_area_ids():
+                    if not area_id == other_area_id:
+                        other_area_info = self.__map.get_area_info(area_id)
+                        for min_diff, max_diff, probability in self.__driver_setup["move_policy"]["move_diff_probabilities"]:
+                            surge_multiplier_area = area_info["surge_multipliers"][0]
+                            surge_multiplier_other_area = other_area_info["surge_multipliers"][0]
+                            diff_surge_multiplier = surge_multiplier_area - surge_multiplier_other_area
+                            if min_diff < diff_surge_multiplier < max_diff:
+                                move_probability = probability
                                 break
-                    except:
-                        print(f"Unexpected route not found in process_rides: {driver.current_edge} - {customer.current_edge}")
-                        cancel_ride = True
-                        break
-                ride.sort_driver_requests()
+                        for driver_id in self.__get_drivers_in_area(other_area_id):
+                            driver_info = self.__drivers[driver_id].get_info()
+                            if driver_info["state"] == DriverState.IDLE:
+                                if utils.random_choice(move_probability):
+                                    self.__move_driver_to_area(driver_id, area_id)
 
-                if not (cancel_ride):
-                    try:
-                        ride_route_stage = self.traci.simulation.findRoute(ride.from_edge, ride.to_edge) 
-                        ride_travel_time = ride_route_stage.travelTime
-                        ride_length = ride_route_stage.length
+    def __update_rides_state(self, timestamp):
+        pickup_rides = self.__provider.get_rides_info_by_state(RideState.PICKUP)
+        on_road_rides = self.__provider.get_rides_info_by_state(RideState.ONROAD)
 
-                        customer.update_pending_request(ride)
-                        ride.update_pending_request(ride_length, ride_travel_time)
-                        self.uber.update_pending_request(ride)
-                    except:
-                        print(f"Unexpected route not found in process_rides: {driver.current_edge} - {customer.current_edge}")
-                        ride.update_cancel()
-                        ride_area.update_cancel_ride(customer.id)
-                        self.uber.update_cancel_ride(ride)
-                        try:
-                            self.traci.person.removeStages(customer.id)
-                        except:
-                            print(f"Unexpected user {customer.id} not found.")
-                        continue
+        for ride_info in pickup_rides:
+            assert not ride_info["driver_id"] == None, "Simulator.__update_rides_state - unexpected id driver undefined [1]"
+            driver = self.__drivers["ride_info"]["driver_id"]
+            driver_info = driver.get_info()
+            assert not driver_info["current_distance"] == None, "Simulator.__update_rides_state - unexpected driver distance undefined. [1]"
+            if Map.is_arrived(driver_info["current_coordinates"], ride_info["meeting_point"], driver_info["current_distance"]):
+                customer = self.__customers[ride_info["customer_id"]]
+                customer_info = customer.update_on_road()
+                assert not ride_info["routes"]["destination_route"] == None, "Simulator.__update_rides_state - destination route not found on pickup."
+                driver_info = driver.update_on_road(ride_info["routes"]["destination_route"])
+                assert (not ride_info["stats"]["timestamp_pickup"] == None) and type(ride_info["stats"]["timestamp_pickup"]) == int, "Simulator.__update_rides_state - statistic [timestampPickup] not found or wrong type"
+                meeting_duration = timestamp - ride_info["stats"]["timestamp_pickup"]
+                assert not ride_info["routes"]["meeting_route"] == None, "Simulator.__update_rides_state - meeting route not found on pickup."
+                # this should be change according to an algorithm that compute the actual distance covered
+                meeting_distance = ride_info["rotues"]["meeting_route"].get_original_distance()
+                stats = {
+                    "timestamp_on_road": timestamp,
+                    "meeting_duration": meeting_duration,
+                    "meeting_distance": meeting_distance
+                }
+                ride_info = self.__provider.update_ride_on_road(ride_info["id"], stats)
+                driver_info = driver.set_current_distance((math.inf, math.inf))
+                self.start_route(driver_info["id"], ride_info["id"], 'destination')
+            driver_info = driver.set_current_distance(Map.compute_distance(driver_info["current_coordinates"], ride_info["meeting_point"]))
+
+        for ride_info in on_road_rides:
+            assert not ride_info["driver_id"] == None, "Simulator.__update_rides_state - unexpected id driver distance undefined [2]"
+            driver = self.__drivers[ride_info["driver_id"]]
+            driver_info = driver.get_info()
+            assert not driver_info["current_distance"] == None, "Simulator.__update_rides_state - unexpected driver distance undefined. [2]"
+            if Map.is_arrived(driver_info["current_coordinates"], ride_info["destination_point"], driver_info["current_coordinates"]):
+                customer = self.__customers[ride_info["customer_id"]]
+                customer_info = customer.update_end()
+                driver_info = driver.update_end(timestamp)
+                assert (not ride_info["stats"]["timestamp_on_road"] == None) and type(ride_info["stats"]["timestamp_on_road"]) == int, "Simulator.__update_rides_state - statistic [timestampOnRoad] not found or wrong type"
+                destination_duration = timestamp - ride_info["stats"]["timestamp_on_road"]
+                assert not ride_info["routes"]["destination_route"] == None, "Simulator.__update_rides_state - destination route not found on road."
+                # this should be change according to an algorithm that compute the actual distance covered
+                destination_distance = ride_info["routes"]["destination_route"].get_original_distance()
+                assert not ride_info["stats"]["surge_multiplier"] == None, "Simulator.__update_rides_state - surge multiplier undefined."
+                surge_multiplier = ride_info["stats"]["surge_multiplier"]
+                price = self.__provider.compute_price(destination_duration, destination_distance, surge_multiplier)
+                stats = {
+                    "timestamp_end": timestamp,
+                    "ride_length": destination_distance,
+                    "ride_duration": destination_duration,
+                    "price": price
+                }
+                ride_info = self.__provider.update_ride_end(ride_info["id"], stats)
+                # TODO Printer
+            driver_info = driver.set_current_distance(Map.compute_distance(driver_info["current_coordinates"], ride_info["destination_point"]))
+
+    def __update_surge_multiplier(self):
+        area_ids = self.__map.get_area_ids()
+        pending_rides = self.__provider.get_pending_rides()
+        pending_request_areas = map(lambda r: self.__map_pending_request_area(r), pending_rides)
+        for area_id in area_ids:
+            area_info = self.__map.get_area_info(area_id)
+            drivers_in_area = self.__get_drivers_in_area(area_id)
+            idle_drivers_in_area = filter(lambda d: d["state"] in [DriverState.IDLE, DriverState.RESPONDING],drivers_in_area.values())
+            balance = 0
+            surge_multiplier = area_info["surge_multipliers"][0]
+            idle_customers = filter(lambda r: r["request_area_id"] == area_id, pending_request_areas)
+            if idle_customers > 0:
+                if len(idle_drivers_in_area) == 0:
+                    balance = 1/(len(idle_customers) + 0.1)
                 else:
-                    ride.update_cancel(timestamp)
-                    ride_area.update_cancel_ride(customer.id)
-                    self.uber.update_cancel_ride(ride)
-                    try:
-                        self.traci.person.removeStages(customer.id)
-                    except:
-                        print(f"Unexpected user {customer.id} not found.")
+                    balance = len(idle_drivers_in_area)/idle_customers
             else:
-                try:
-                    self.traci.person.removeStages(customer.id)
-                except:
-                    print(f"Unexpected user {customer.id} not found.")
-                continue
-    
+                balance = len(idle_drivers_in_area)
+        self.__map.update_area_balance(area_id, balance)
+        for min_balance, max_balance, value in self.__tuning_setup["surge_multiplier_policy"]:
+            if min_balance <= balance < max_balance:
+                surge_multiplier += value
+        new_surge_multiplier = max(0.7, min(surge_multiplier, 3.5))
+        self.__map.update_area_surge_multiplier(area_id, new_surge_multiplier)
 
-    def expected_travel_time(self, edges):
-        print("expected_travel_time")
-        travel_time = 0
-        for edge_id in edges:
-            travel_time += self.traci.edge.getTraveltime(edge_id)
-        return travel_time
-
-
-    def init_scenario(self):
-        self.__init_net_edges_speed()
-        num_random_routes = self.net.num_random_routes
-        for area_id, area_data in self.net.areas.items():
-            min_edge_num = area_data.edges[0]
-            max_edge_num = area_data.edges[1]
-
-            print(f"GENERATE ROUTES WITHIN AREA {area_id}")
-            self.__init_random_routes(f"area_{area_id}", min_edge_num, max_edge_num, num_random_routes)
-
-            print(f"GENERATE RANDOM DRIVERS WITHIN AREA {area_id}")
-            for i in range(10):
-                if (utils.random_choice(area_data.generation_policy["driver"])):
-                    self.create_driver(0, area_id)
-
-            #print(f"GENERATE RANDOM CUSTOMERS WITHIN AREA {area_id}")
-            #for i in range(10):
-            #    if (utils.random_choice(area_data.generation_policy["customer"])):
-            #        self.create_customer(0, area_id)
-
-        print(f"GENERATE ROUTES INTER-AREAS")
-        min_edge_num = self.net.min_edge_num
-        max_edge_num = self.net.max_edge_num
-        self.__init_random_routes(f"inter_areas", min_edge_num, max_edge_num, num_random_routes*5, factor=150)
-
-
-    def manage_pending_requests(self, timestamp):
-        pending_requests_list = self.uber.pending_requests.copy()
-
-        for ride in pending_requests_list:
-            customer = self.uber.customers[ride.customer_id]
-            ride_area = self.net.areas[customer.area_id]
-            if (ride.request_state == RideRequestState.REJECTED.value or ride.request_state == RideRequestState.UNPROCESSED.value):
-                #print(f"Customer {customer.id} - ride request state: PARSE NEW REQUEST")
-                idle_drivers_without_requests = []
-                for driver in self.uber.idle_drivers:
-                    if not(driver.request_pending):
-                        idle_drivers_without_requests.append(driver.id)
-                ride.parse_new_request(idle_drivers_without_requests)
-                if (ride.request_state == RideRequestState.SENT.value):
-                    candidate_driver_id = ride.current_driver_request["driver_id"]
-                    candidate_driver = self.uber.drivers[candidate_driver_id]
-                    candidate_driver.receive_request()
-            elif (ride.request_state == RideRequestState.NONE.value):
-                try:
-                    #print(f"Customer {customer.id} - ride request state: NONE")
-                    self.traci.person.removeStages(customer.id)
-                except:
-                    #print(f"Unexpected user {customer.id} not found in manage_pending_requests.")
-                    ride.update_cancel(timestamp)
-                    ride_area.update_cancel_ride(customer.id)
-                    self.uber.update_cancel_ride(ride)
-            elif (ride.request_state == RideRequestState.SENT.value):
-                #print(f"Customer {customer.id} - ride request state: SENT")
-                current_request = ride.current_driver_request
-                driver = self.uber.drivers[current_request['driver_id']]
-                if (driver in self.uber.idle_drivers and driver.id == current_request["driver_id"]):
-                    if (current_request["response_countdown"] == current_request["send_request_back_time"]):
-                        #print(f"Customer {customer.id} - ride request state: DRIVER RESPONSE")
-                        driver = self.uber.drivers[current_request['driver_id']]
-                        driver_accept_ride = False
-                        driver_accept_ride = driver.accept_ride_choice(ride_area,self.driver_personality_policy)
-
-                        if (driver_accept_ride):
-                            try:
-                                #print(f"Dispatch: driver - {driver.id}, customer - {customer.id}, ride - {ride.id}")
-                                self.traci.vehicle.dispatchTaxi(driver.id, [ride.id])
-                            except:
-                                #print(f"Unexpected driver {driver.id} not found in dispatch_rides")
-                                self.remove_driver(timestamp, driver)
-                                continue
-                            ride_travel_time = ride.stats["expected_ride_length"]
-                            ride_length = ride.stats["expected_ride_time"]
-
-                            expected_price = self.uber.compute_price(ride_travel_time, ride_length, ride_area.surge_multiplier)
-                            customer.update_pickup_ride()
-                            ride.update_pickup(timestamp, driver, current_request, expected_price, ride_area.surge_multiplier)
-                            driver.update_pickup_ride(ride)
-                            self.uber.update_pickup_ride(timestamp, ride, driver, customer)
-                            break                
-                        else:
-                            driver.reject_request()
-                            ride.request_rejected(driver.id, idle_driver=True)
-                    else:
-                        current_request["response_countdown"] -= 1
-                else:
-                    ride.request_rejected(driver.id, idle_driver=False)
-                    customer = self.uber.customers[ride.customer_id]
-                    self.update_ride_requests(timestamp, ride)
-
-
-
-    # Move driver to area
-    def move_driver_to_area(self, driver, area_id):
-        # print("move_driver_to_different_area")
-        edges = self.net.areas[area_id].edges
-        from_edge, to_edge = driver.generate_from_to(self.net.edge_prefix, edges)
-        if not (from_edge == "") and not (("gneJ" in from_edge) or ("-gneJ" in from_edge)):
-            try:
-                route_stage = self.simulation.findRoute(from_edge, to_edge)
-                self.traci.vehicle.setRoute(driver.id, route_stage.edges)
-                driver.route_id = "moving_route"
-            except:
-                print("Unexpected route not found in move_driver_to_area")
-                pass
-
-    
-    # Remove driver
-    def remove_driver(self, timestamp, driver):
-        # print("remove_driver")
-        driver.remove(timestamp)
-        self.uber.update_remove_driver(driver)
-        for area_id, area in self.net.areas.items():
-            if (driver.id in area.drivers):
-                area.remove_driver(driver.id)
-                break
-        try:
-            # remove vehicle from the scene
-            self.traci.vehicle.remove(driver.id)
-        except:
-            print(f"Unexpected driver {driver.id} not found in remove_driver")
-
-
-    def run(self):
-        print('RUN')
+    def run(self, timestamp=0):
+        self.__timestamp = timestamp
         step = 0
         stop = False
-
         while not stop:
-            self.traci.simulationStep()
-            timestamp = self.traci.simulation.getTime()
+            traci.simulationStep()
+            timestamp_traci = traci.simulation.getTime()
+            print(timestamp_traci)
             step += 1
-
-            self.update_surge_multiplier()
-            self.update_drivers(timestamp)
-            self.update_drivers_area(timestamp)
-            self.update_rides_state(timestamp, step)
-            self.create_customer_requests(timestamp)
-            self.process_rides(timestamp)
-            self.manage_pending_requests(timestamp)
-
-            for area_id, area in self.net.areas.items():
-                for i in range(area.generation_policy_template["many"][1]):
-                    if (utils.random_choice(area.generation_policy["driver"])):
-                        self.create_driver(timestamp, area_id)
-                        area.reset_generation_policy()
-                    else:
-                        area.increment_generation("driver")
-
-            for area_id, area in self.net.areas.items():
-                for i in range(area.generation_policy["many"][0]):
-                    if (utils.random_choice(area.generation_policy["customer"])):
-                        self.create_customer(timestamp, area_id)
-                        area.reset_generation_policy()
-                    else:
-                        area.increment_generation("customer")
-
-            if (step % self.checkpoints["time_move_driver"]) == 0:
-                self.update_drivers_movements()
-
-            self.scenario.trigger_scenario(step, self.net)
-#
-            if (step == self.checkpoints["simulation_duration"]):
-                stop = True
-
-            self.printer.save_areas_global_stats(step, self.net.areas)
-            self.printer.save_net_global_stats(step, self.net.areas)
-
-            for area_id, area in self.net.areas.items():
-                area.stats["last_checkpoint"] = step - 1
-
-        self.traci.close(False)
-        sys.stdout.flush()
-
-
-    def update_drivers(self, timestamp):
-        for driver_id, driver in self.uber.drivers.items():
-            surge_multiplier = self.net.areas[driver.area_id].surge_multiplier
-            idle_timer_over = (timestamp - driver.last_ride) > self.timer_remove_driver_idle
-            traci_remove = driver.id in list(self.traci.simulation.getArrivedIDList())
-            traci_list = list(self.traci.vehicle.getTaxiFleet(0)) + list(self.traci.vehicle.getTaxiFleet(1)) + list(self.traci.vehicle.getTaxiFleet(2)) + list(self.traci.vehicle.getTaxiFleet(3))
-
-            if (driver.state == DriverState.IDLE.value and not(driver.request_pending) and (idle_timer_over or traci_remove or (not (driver.id in (traci_list))))):
-                #print(driver.id)
-                self.remove_driver(timestamp, driver)
-            elif (driver.state == DriverState.IDLE.value and surge_multiplier < 1.2 and not(driver.request_pending)):
-                stop_policy = self.driver_stop_work_policy[driver.personality]
-                stop_probability = (timestamp - driver.last_ride) * 1/(surge_multiplier * 100)
-                if (utils.random_choice(stop_probability)):
-                    self.remove_driver(timestamp, driver)
-                    
-
-
-    def update_drivers_area(self, timestamp):
-        #print("update_drivers_area")
-        for driver_id, driver in self.uber.drivers.items():
-            if not (driver.state == DriverState.INACTIVE.value):
-                try:
-                    current_edge = self.traci.vehicle.getRoadID(driver.id)
-                    if (self.net.is_valid_edge(current_edge)):
-                        driver.current_edge = current_edge
-
-                    area_id = self.net.edge_area(driver.current_edge)
-
-                    if (not ((area_id == "")) and not (driver.area_id == area_id)):
-                        self.net.areas[driver.area_id].drivers.remove(driver.id)
-                        self.net.areas[area_id].drivers.append(driver.id)
-                        driver.area_id = area_id
-
-                        if (driver.state == DriverState.MOVING.value):
-                            try:
-                                to_area = self.traci.vehicle.getRoute(driver.id)[-1]
-                            except:
-                                print("Unexpected route not found in update_drivers_area")
-                            
-                            if not (to_area == "" and to_area == driver.id):
-                                driver.update_end_moving()
-                except:
-                    print(f"Unexpected driver {driver.id} not found in update_drivers_area\n")
-                    if not (driver.state in [DriverState.IDLE.value,DriverState.MOVING.value]):
-                        #self.debug.print_state(timestamp, self.uber)
-                        print(f"Unexpected removed driver {driver.id} while in action.")
-                        #raise Exception(f"Unexpected removed driver {driver.id} while in action.")
-                    else:
-                        self.remove_driver(timestamp, driver)
-                        pass
-
-    
-    def update_drivers_movements(self):
-        #print("update_drivers_movements")
-        for area_id, area in self.net.areas.items():
-            move_probability = 0
-            for other_area_id, other_area in self.net.areas.items(): 
-                if not (other_area_id == area_id):
-                    for min_diff, max_diff, p in self.driver_move_policy["move_diff_probabilities"]:
-                        if (((area.surge_multiplier - other_area.surge_multiplier) > min_diff) and ((area.surge_multiplier - other_area.surge_multiplier) <= max_diff)):
-                            move_probability = p
-                            break
-
-                    for driver_id in other_area.drivers:
-                        driver = self.uber.drivers[driver_id]
-                        if (driver.state == DriverState.IDLE.value):
-                            if (utils.random_choice(move_probability)):
-                                print(f"Move driver {driver_id} from area {other_area_id} to area {area_id}")
-                                self.move_driver_to_area(driver,area_id)
-
-
-    def update_ride_requests(self, timestamp, ride):
-        customer = self.uber.customers[ride.customer_id]
-        ride_area = self.net.areas[customer.area_id]
-        bias = ride.stats["rejections"] * 0.02
-        drivers_processed = ride.rejections_driver_ids
-
-        for request in ride.driver_requests_list:
-            drivers_processed.append(request["driver_id"])
-
-        if (customer.accept_ride_choice(ride_area, self.customer_personality_policy, bias)):
-            for driver in self.uber.idle_drivers:
-                if (driver.id not in drivers_processed):
-                    try:
-                        if (self.net.is_valid_edge(driver.current_edge) and self.net.is_valid_edge(customer.current_edge)):
-                            if (driver.state == DriverState.MOVING.value):
-                                to_area = self.net.edge_area(driver.to_edge)
-                                if (to_area != ride_area):
-                                    continue
-                                    
-                            waiting_route_stage = self.traci.simulation.findRoute(driver.current_edge, customer.current_edge)
-                            expected_waiting_time = waiting_route_stage.travelTime
-                            waiting_distance = waiting_route_stage.length
-                            if (waiting_distance < self.uber.request_max_driver_distance):
-                                ride.add_driver_candidate({
-                                    "driver_id": driver.id,
-                                    "expected_waiting_time": expected_waiting_time,
-                                    "waiting_distance": waiting_distance,
-                                    "send_request_back_time": utils.random_value_from_range(0,11),
-                                    "response_countdown": 15
-                                })
+            try:
+                if timestamp % 1 == 0:
+                    for area_id, area_info in self.__map.get_areas_info().items():
+                        customer_generation_probability = area_info["current_generation_probability"]["customer"][0]
+                        driver_generation_probability = area_info["current_generation_probability"]["driver"][0]
+                        if utils.random_choice(customer_generation_probability):
+                            self.__generate_customer(timestamp, area_id)
+                            self.__map.reset_generation_policy(area_id)
                         else:
-                            if not (self.net.is_valid_edge(driver.current_edge)):
-                                self.remove_driver(timestamp, driver)
-                                continue
-                            else:
-                                cancel_ride = True
-                                break
-                    except:
-                        print(f"Unexpected route not found in process_rides: {driver.current_edge} - {customer.current_edge}")
-                        continue
-            ride.sort_driver_requests()
-        else:
-            ride.stop_wait()
-
-
-    def update_rides_state(self, timestamp, step):
-        #print("update_rides_state")
-        traci_idle_drivers = self.traci.vehicle.getTaxiFleet(0)
-
-        for ride in self.uber.onroad_rides:
-            driver = self.uber.drivers[ride.driver_id]
-            customer = self.uber.customers[ride.customer_id]
-
-            if (ride.driver_id in traci_idle_drivers):
-                from_edge_area_id = self.net.edge_area(ride.from_edge)
-                from_area = self.net.areas[from_edge_area_id]
-                to_edge_area_id = self.net.edge_area(ride.to_edge)
-                to_area = self.net.areas[to_edge_area_id]
-
-                # update ride stats
-                ride.update_end(timestamp, step)
-                ride.stats["price"] = self.uber.compute_price(ride.stats["ride_time"], ride.stats["ride_length"], from_area.surge_multiplier)
-                # update area
-                from_area.update_end_ride(ride)
-                # update driver
-                driver = self.uber.drivers[ride.driver_id]
-                driver.update_end_ride(timestamp)
-                # update customer
-                customer.update_end_ride()
-
-                # update uber
-                self.uber.update_end_ride(ride, driver)
-
-                if (timestamp - driver.start > 3600):
-                    stop_drive = utils.random_choice(0.6)
-                    if (stop_drive or to_area.surge_multiplier <= 0.6):
-                        self.remove_driver(timestamp, driver)
-
-                # save statistics
-                self.printer.save_ride_stats(ride)
-                self.printer.save_areas_global_stats(step, self.net.areas)
-                self.printer.save_net_global_stats(step, self.net.areas)
-
-                #for area_id, area in self.net.areas.items():
-                #    area.stats["last_checkpoint"] = area.stats["completed"] - 1
-
-        for ride in self.uber.pickup_rides:
-            driver = self.uber.drivers[ride.driver_id]
-            customer = self.uber.customers[ride.customer_id]
-            if driver.current_edge == customer.current_edge:
-                ride.update_onroad(timestamp)
-                customer.update_onroad_ride()
-                driver.update_onroad_ride()
-                self.uber.update_onroad_ride(ride, driver)
-
-
-    def update_surge_multiplier(self):
-        #print("update_surge_multiplier")
-        for area_id, area in self.net.areas.items():
-            idle_drivers_in_area = 0
-            for driver in self.uber.idle_drivers:
-                if (driver.state == DriverState.MOVING.value):
-                    to_area = self.net.edge_area(driver.current_edge)
-                    if (to_area == area_id):
-                        idle_drivers_in_area += 1
-                elif (driver.area_id == area_id and driver.state == DriverState.IDLE.value):
-                    idle_drivers_in_area += 1
-
-            balance = 0
-            idle_customers = 0
-
-            for customer_id in area.customers:
-                if not (customer_id in self.uber.customers):
-                    idle_customers += 1
-                elif (customer_id in self.uber.rides):
-                    ride = self.uber.rides[customer_id]
-                    if (ride.state in [RideState.PENDING.value, RideState.REQUESTED.value]):
-                        idle_customers += 1
-
-            if (idle_customers > 0):
-                if (idle_drivers_in_area == 0):
-                    balance = 1/(idle_customers + 0.1)
-                else:
-                    balance = (idle_drivers_in_area)/(idle_customers)
-            else:
-                balance = idle_drivers_in_area
-
-            area.stats["balances"].append(balance)
-            surge_multiplier = area.surge_multiplier
-
-            for min_balance, max_balance, value in self.uber.surge_multiplier_policy:
-                if (balance >= min_balance and balance < max_balance):
-                    surge_multiplier += value
-                    break
-            
-            area.surge_multiplier = max(0.7,min(surge_multiplier,3.5))
-            #print(f"Area {area_id} - surge multiplier: {area.surge_multiplier}")
-            area.stats["surge_multipliers"].append(max(0.7,min(surge_multiplier,3.5)))
-
-
-    def __str__(self):
-        simulator_str = "*"*10
-        simulator_str += "\nSIMULATION\n"
-        simulator_str += "*"*10
-        simulator_str += '\n\n'
-        simulator_str = "-"*9
-        simulator_str += "\nSIMULATOR\n"
-        simulator_str += "-"*9
-        simulator_str += '\n\n'
-        simulator_str += f"type: {self.type}\n"
-        simulator_str += f"duration: {self.checkpoints['simulation_duration']}\n"
-        
-        simulator_str += f"checkpoints: \n"
-        for key, value in self.checkpoints.items():
-            key_str = key.replace("_"," ")
-            simulator_str += f"     - {key_str}: {value}\n"
-
-        simulator_str += f"driver mobility policies: \n"
-        for key, value_list in self.driver_move_policy.items():
-            key_str = key.replace("_"," ")
-            simulator_str += f"     - {key_str}:\n"
-            for min_surge, max_surge, probability in value_list:
-                simulator_str += f"        - [{min_surge},{max_surge}] --> {probability}\n"
-
-        simulator_str += f"driver personality policy: \n"
-        for key, value_list in self.driver_personality_policy.items():
-            key_str = key.replace("_"," ")
-            simulator_str += f"     - {key_str}:\n"
-            for min_surge, max_surge, probability in value_list:
-                simulator_str += f"        - [{min_surge},{max_surge}] --> {probability}\n"
-
-        simulator_str += f"timer remove idle driver: {self.timer_remove_driver_idle}\n"
-        
-        simulator_str += f"customer personality policy: \n"
-        for key, value_list in self.customer_personality_policy.items():
-            key_str = key.replace("_"," ")
-            simulator_str += f"     - {key_str}:\n"
-            for min_surge, max_surge, probability in value_list:
-                simulator_str += f"        - [{min_surge},{max_surge}] --> {probability}\n"
-
-        simulator_str += f" personality policy: \n"
-        for key, value_list in self.customer_personality_policy.items():
-            key_str = key.replace("_"," ")
-            simulator_str += f"     - {key_str}:\n"
-            for min_surge, max_surge, probability in value_list:
-                simulator_str += f"        - [{min_surge},{max_surge}] --> {probability}\n"
-
-
-        simulator_str += "\n"
-        simulator_str += str(self.uber)
-        simulator_str += "\n"
-        simulator_str += str(self.net)
-        simulator_str += "\n"
-        simulator_str += "*"*10
-        return simulator_str
+                            self.__map.increment_generation_probability(area_id, HumanType.CUSTOMER)
+                        if utils.random_choice(driver_generation_probability):
+                            self.__generate_driver(timestamp, area_id)
+                            self.__map.reset_generation_policy(area_id)
+                        else:
+                            self.__map.increment_generation_probability(area_id, HumanType.DRIVER)
+                """self.__generate_customer_requests(timestamp)
+                self.__process_rides(timestamp)
+                self.__manage_pending_request(timestamp)
+                if timestamp % 20 == 0:
+                    self.__update_surge_multiplier()
+                self.__update_drivers(timestamp)
+                self.__update_rides_state(timestamp)
+                if timestamp % self.__simulator_setup["checkpoints"]["time_move_driver"] == 0:
+                    self.__update_driver_movements()
+                scenario_events = self.__scenario.checkEvents(timestamp)
+                if not scenario_events == None:
+                    print("TRIGGER")
+                    for e in scenario_events:
+                        self.__trigger_event(e)"""
+                if timestamp % 10 == 0:
+                    stop = True
+                    print("STOP")
+                # TODO Printer
+                if timestamp == 0:
+                    #TODO Printer
+                    pass
+                timestamp += 1
+            except:
+                raise Exception("A Fatal error occurred in Simulator.run")
+        traci.close(False)
+        sys.stdout.flush()
