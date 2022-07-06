@@ -6,16 +6,10 @@ import traci
 
 class Human:
     def __init__(self, timestamp, id, state, personality_distribution, coordinates):
-        print(2)
-        print(coordinates)
-        print(traci.simulation.convertRoad(coordinates[0], coordinates[1], isGeo=True))
         self._id = id
         self._state = state
         self._timestamp = timestamp
-        print(1)
-        print(coordinates)
         self._personality = self.__assign_personality(personality_distribution)
-        self._current_edge = traci.simulation.convertRoad(coordinates[0], coordinates[1], isGeo=True)
         self._current_coordinates = coordinates
 
     @property
@@ -30,13 +24,6 @@ class Human:
     def current_coordinates(self, coordinates):
         self._current_coordinates = coordinates
 
-    @property
-    def current_edge(self):
-        return self._current_edge
-
-    @current_coordinates.setter
-    def current_edge(self, edge_id):
-        self._current_edge = edge_id
 
     @property
     def state(self):

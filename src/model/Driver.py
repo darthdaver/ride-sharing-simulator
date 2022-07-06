@@ -13,7 +13,7 @@ class Driver(Human):
         return {
             **super().get_info(),
             "pending_request": self.__pending_request,
-            "route": self.__route.to_dict(),
+            "route": None if self.__route is None else self.__route.to_dict(),
             "last_ride_timestamp": self.__last_ride_timestamp,
             "current_distance": self.__current_distance
         }

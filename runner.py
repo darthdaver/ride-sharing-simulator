@@ -27,8 +27,7 @@ from src.controller.Simulator import Simulator
 
 def get_options():
     optParser = optparse.OptionParser()
-    optParser.add_option("--nogui", action="store_true",
-                         default=False, help="run the commandline version of sumo")
+    optParser.add_option("--nogui", action="store_true", default=False, help="run the commandline version of sumo")
     options, args = optParser.parse_args()
     return options
 
@@ -37,13 +36,19 @@ if __name__ == "__main__":
     options = get_options()
     # If you want to run this tutorial please uncomment following lines, that define the sumoBinary
     # and delete the line before traci.start, to use the gui
-    if options.nogui:
+    """if options.nogui:
         sumoBinary = checkBinary('sumo')
     else:
         sumoBinary = checkBinary('sumo-gui')
 
     traci.start(["sumo-gui", "-c", "net_config/sumo.sumocfg",
+                 "--tripinfo-output", "net_config/tripinfo.xml"])"""
+
+    sumoBinary = checkBinary('sumo')
+
+    traci.start(["sumo", "-c", "net_config/sumo.sumocfg",
                  "--tripinfo-output", "net_config/tripinfo.xml"])
+
     print('INIT')
     simulator = Simulator()
     #simulator.init_scenario()

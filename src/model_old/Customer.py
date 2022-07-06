@@ -46,7 +46,6 @@ class Customer(Human):
     def update_onroad_ride(self):
         self.state = CustomerState.ONROAD.value
 
-
     def update_end_ride(self):
         self.state = CustomerState.INACTIVE.value
 

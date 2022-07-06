@@ -574,7 +574,7 @@ class Simulator:
             driver = self.uber.drivers[ride.driver_id]
             customer = self.uber.customers[ride.customer_id]
             if driver.current_edge == customer.current_edge:
-                ride.update_onroad(timestamp)
+                ride.update_on_road(timestamp)
                 customer.update_onroad_ride()
                 driver.update_onroad_ride()
                 self.uber.update_onroad_ride(ride, driver)

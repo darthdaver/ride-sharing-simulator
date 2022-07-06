@@ -1,7 +1,7 @@
 <configuration>
     <input>
         <net-file value="san-francisco.net.xml"/>
-        <route-files value="random_trips.trips.xml"/>
+        <route-files value="sf_random_trips.trips.xml"/>
         <additional-files value="add.add.xml"/>
         <time-to-teleport value="0"/>
         <device.taxi.dispatch-algorithm value="traci"/>

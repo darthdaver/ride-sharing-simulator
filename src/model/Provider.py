@@ -33,13 +33,13 @@ class Provider:
     @staticmethod
     def get_idle_drivers_info(drivers_info):
         drivers_info_array = drivers_info.values()
-        idle_drivers_info = filter(lambda d: d.state in [DriverState.IDLE, DriverState.MOVING])
+        idle_drivers_info = list(filter(lambda d: d.state in [DriverState.IDLE, DriverState.MOVING]))
         return idle_drivers_info
 
     def get_pending_rides(self):
         rides_array = self.__rides.values()
-        pending_rides = filter(lambda r: not (r.get_info["request"]["state"] in [RideRequestState.CANCELED, RideRequestState.ACCEPTED]))
-        pending_rides_info = map(lambda r: r.get_info())
+        pending_rides = list(filter(lambda r: not (r.get_info["request"]["state"] in [RideRequestState.CANCELED, RideRequestState.ACCEPTED])))
+        pending_rides_info = list(map(lambda r: r.get_info()))
         return pending_rides_info
 
     def get_ride_info(self, ride_id):
@@ -48,17 +48,17 @@ class Provider:
 
     def get_rides_info_by_state(self, state="all"):
         if state == "all":
-            rides_info = map(lambda r: r.get_info(), self.__rides.values())
+            rides_info = list(map(lambda r: r.get_info(), self.__rides.values()))
             return rides_info
         filtered_rides_info = []
         for ride in self.__rides.values():
             ride_info = ride.get_info()
-            if ride_info.state == state:
+            if ride_info["state"] == state:
                 filtered_rides_info.append(ride.get_info())
         return filtered_rides_info
 
     def get_ride_info_by_customer_id(self, customer_id):
-        filtered_rides = filter(lambda r: r.get_info()["customer_id"] == customer_id, self.__rides)
+        filtered_rides = list(filter(lambda r: r.get_info()["customer_id"] == customer_id, self.__rides))
         assert filtered_rides == 1, "Provider.get_ride_info_by_customer_id - unknown number of rides associated to the same customer"
         return filtered_rides[0].get_info()
 
@@ -73,33 +73,33 @@ class Provider:
             self.set_ride_request_state(ride_info["id"], RideRequestState.SEARCHING_CANDIDATES)
             free_drivers_info = self.__free_drivers_info(drivers_info)
             self.__pending_customers.append(ride_info["customer_id"])
-            free_drivers_ids = map(lambda d: d["id"], free_drivers_info)
-            candidate = self.select_driver_candidate(ride_info, drivers_info, free_drivers_ids)
+            free_drivers_ids = list(map(lambda d: d["id"], free_drivers_info))
+            candidate = self.__select_driver_candidate(ride_info, drivers_info, free_drivers_ids)
             if candidate:
                 ride_info = ride.set_candidate(candidate)
                 ride_info = ride.set_request_state(RideRequestState.SENT)
-                return (RideRequestState.SENT, candidate["id"], None)
+                return (ride_info, RideRequestState.SENT, candidate["id"], None)
             else:
                 if ride_info["customer_id"] in self.__pending_customers:
                     ride_info = ride.set_request_state(RideRequestState.NONE)
-                    return [RideRequestState.NONE, None, ride_info["customer_id"]]
+                    return [ride_info, RideRequestState.NONE, None, ride_info["customer_id"]]
         elif ride_info["request"]["state"] == RideRequestState.SEARCHING_CANDIDATES:
-            return (RideRequestState.SEARCHING_CANDIDATES, None, ride_info["customer_id"])
+            return (ride_info, RideRequestState.SEARCHING_CANDIDATES, None, ride_info["customer_id"])
         elif ride_info["request"]["state"] == RideRequestState.NONE:
             self.__ride_not_accomplished(ride)
-            return [RideRequestState.SEARCHING_CANDIDATES, None, ride_info["customer_id"]]
+            return [ride_info, RideRequestState.SEARCHING_CANDIDATES, None, ride_info["customer_id"]]
         elif ride_info["request"]["state"] in [RideRequestState.SENT, RideRequestState.WAITING]:
             current_candidate = ride_info["request"]["current_candidate"]
             assert current_candidate is not None, "Provider.manage_pending_request - candidate undefined [1]"
             if current_candidate and current_candidate["response_count_down"] == current_candidate["sent_request_back_timer"]:
-                return (RideRequestState.RESPONSE, current_candidate["id"], None)
+                return (ride_info, RideRequestState.RESPONSE, current_candidate["id"], None)
             else:
                 ride.decrement_count_down_request()
                 assert current_candidate is not None, "Provider.manage_pending_request - candidate undefined [2]"
-                return (RideRequestState.WAITING, current_candidate["id"], None)
+                return (ride_info, RideRequestState.WAITING, current_candidate["id"], None)
         elif ride_info["request"]["state"] == RideRequestState.ACCEPTED:
-            return (RideRequestState.ACCEPTED, ride_info["driver_id"], None)
-        return (RideRequestState.NONE, None, ride_info["customer_id"])
+            return (ride_info, RideRequestState.ACCEPTED, ride_info["driver_id"], None)
+        return (ride_info, RideRequestState.NONE, None, ride_info["customer_id"])
 
     def print_rides(self, timestamp):
         path = f"{os.getcwd()}/../output/rides_{timestamp}.json"
@@ -115,10 +115,10 @@ class Provider:
                 "request": {
                     "state": ride_info["request"]["state"],
                     "current_candidate": ride_info["request"]["current_candidate"],
-                    "driver_candidates": map(lambda r: {
+                    "driver_candidates": list(map(lambda r: {
                         **r,
                         "meeting_route": r["meeting_route"],
-                    }, ride_info["request"]),
+                    }, ride_info["request"])),
                 },
                 "routes": {
                     "meeting_route": ride_info["routes"]["meeting_route"],
@@ -129,19 +129,19 @@ class Provider:
             with open(path, 'w') as outfile:
                 json.dump(data, outfile)
 
-    def process_customer_request(self, timestamp, ride_info, meeting_point, available_drivers_info):
+    def process_customer_request(self, timestamp, sumo_net, ride_info, meeting_point, available_drivers_info):
         ride = self.__rides[ride_info["id"]]
         ride_info = ride.update_pending(timestamp)
-        self.__nearby_drivers(ride_info, meeting_point, available_drivers_info)
-        assert(ride_info["id"] in self.__unprocessed_requests, "Provider.process_customer_request - ride request not included in unprocessed request")
-        self.__unprocessed_requests = filter(lambda r: not(r == ride_info["id"], self.__unprocessed_requests))
+        self.__nearby_drivers(timestamp, sumo_net, ride_info, meeting_point, available_drivers_info)
+        assert ride_info["id"] in self.__unprocessed_requests, "Provider.process_customer_request - ride request not included in unprocessed request"
+        self.__unprocessed_requests = list(filter(lambda r: not r == ride_info["id"], self.__unprocessed_requests))
 
     def receive_request(self, ride):
         self.__rides[ride.get_info()["id"]] = ride
         self.__unprocessed_requests.append(ride.get_id())
 
     def ride_request_canceled(self, ride_id):
-        self.__unprocessed_requests = filter(lambda r_id: not r_id == ride_id, self.__unprocessed_requests)
+        self.__unprocessed_requests = list(filter(lambda r_id: not r_id == ride_id, self.__unprocessed_requests))
         ride = self.__rides[ride_id]
         return ride.request_canceled()
 
@@ -158,7 +158,7 @@ class Provider:
         return ride.set_state(ride_state)
 
     def update_ride_accepted(self, ride_id, driver_id, meeting_route, destination_route, stats):
-        ride = self.rides[ride_id]
+        ride = self.__rides[ride_id]
         return ride.update_accepted(driver_id, meeting_route, destination_route, stats)
 
     def update_ride_pickup(self, ride_id):
@@ -188,23 +188,27 @@ class Provider:
                 filtered_rides.append(ride)
         return filtered_rides
 
-    def __nearby_drivers(self, ride_info, meeting_point, drivers_info):
+    def __nearby_drivers(self, timestamp, sumo_net, ride_info, meeting_point, drivers_info):
         drivers_info_array = drivers_info.values()
         for driver_info in drivers_info_array:
-            route = Map.generate_sumo_route_from_coordinates([driver_info["current_coordinates"], meeting_point])
-            self.__pending_customers = filter(lambda c_id: not c_id == ride_info["customer_id"])
-            expected_route_distance = Map.get_sumo_route_distance(route)
-            expected_route_duration = Map.get_sumo_route_duration(route)
+            try:
+                route = Map.generate_sumo_route_from_coordinates(timestamp, sumo_net, [driver_info["current_coordinates"], meeting_point])
+                expected_route_distance = route.get_original_distance()
+                expected_route_duration = route.get_original_duration()
 
-            if expected_route_distance <= self.__request["max_driver_distance"]:
-                self.add_candidate_to_ride(ride_info["id"], {
-                    "id": driver_info["id"],
-                    "response_count_down": 15,
-                    "meeting_route": route,
-                    "send_request_back_timer": utils.random_int_from_range(0, 11),
-                    "expected_distance": expected_route_distance,
-                    "expected_duration": expected_route_duration
-                })
+                if expected_route_distance <= self.__request["max_driver_distance"]:
+                    self.add_candidate_to_ride(ride_info["id"], {
+                        "id": driver_info["id"],
+                        "response_count_down": 15,
+                        "meeting_route": route,
+                        "send_request_back_timer": utils.random_int_from_range(0, 11),
+                        "expected_distance": expected_route_distance,
+                        "expected_duration": expected_route_duration
+                    })
+            except:
+                print(f"Provider.__nearby_drivers - Impossbile to generate route for driver {driver_info['id']}")
+                continue
+        self.__pending_customers = list(filter(lambda c_id: not c_id == ride_info["customer_id"], self.__pending_customers))
         self.__rides[ride_info["id"]].sort_candidates()
 
     def __ride_not_accomplished(self, ride):
