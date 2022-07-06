@@ -308,17 +308,21 @@ class Simulator:
         # check
         customer = self.__customers[customer_id]
         customer.set_state(CustomerState.INACTIVE)
+        traci.person.remove(customer_id)
 
     def __remove_driver(self, driver_id):
         # check
         driver = self.__drivers[driver_id]
         driver.set_state(DriverState.INACTIVE)
+        traci.vehicle.remove(driver_id)
 
     def __send_request_to_driver(self, driver_id):
         driver = self.__drivers[driver_id]
         return driver.reject_request()
 
     def start_route(self, driver_id, ride_id=None, route_type=None):
+        driver = self.__drivers[driver_id]
+
         pass
 
     def __trigger_event(self, e):
@@ -331,7 +335,7 @@ class Simulator:
                 assert not driver_info["route"] == None, "Simulator.updateDrivers - unexpected moving driver without route"
                 assert not driver_info["current_distance"] == None, "Simulator.updateDrivers - unexpected driver distance undefined"
                 destination_point = driver_info["route"].get_destination_point()
-                if Map.is_arrived(driver_info["current_distance"], destination_point, driver_info["current_coordinates"]):
+                if Map.is_arrived_by_sumo_edge(driver_info["id"]):
                     driver_info = driver.update_end_moving()
                 driver_info = driver.set_current_distance(Map.compute_distance(driver_info["current_coordinates"], destination_point))
             elif driver_info["state"] == DriverState.IDLE:
@@ -344,12 +348,21 @@ class Simulator:
                 if idle_time_over:
                     assert driver_info["pending_request"] == False, f"Simulator.__update_drivers - unexpected idle driver {driver_info['id']} pending request. [1]"
                     self.__remove_driver(driver_info["id"])
+                    continue
                 elif surge_multiplier < 1.2:
                     assert driver_info["pending_request"] == False, f"Simulator.__update_drivers - unexpected idle driver {driver_info['id']} pending request. [2]"
                     stop_policy = self.__driver_setup["stop_work_policy"]
                     stop_probability = (timestamp - last_ride_timestamp) * self.__get_human_policy(stop_policy, driver_info["personality"])
                     if utils.random_choice(stop_probability):
                         self.__remove_driver(driver_info["id"])
+                        continue
+                if Map.is_arrived_by_sumo_edge(driver_info["id"]):
+                    try:
+                        random_route = Map.generate_random_sumo_route_in_area(timestamp, self.__sumo_net, driver_info["current_coordinates"])
+                        traci.vehicle.setRoute(driver_info["id"], random_route.get_route().edges)
+                    except:
+                        self.__remove_driver(driver_info["driver_id"])
+
 
     def __update_driver_movements(self, timestamp):
         active_drivers = list(filter(lambda d: d.get_info()["state"] == DriverState.IDLE, self.__drivers.values()))
@@ -382,7 +395,7 @@ class Simulator:
             driver = self.__drivers[ride_info["driver_id"]]
             driver_info = driver.get_info()
             assert not driver_info["current_distance"] == None, "Simulator.__update_rides_state - unexpected driver distance undefined. [1]"
-            if Map.is_arrived(driver_info["current_coordinates"], ride_info["meeting_point"], driver_info["current_distance"]):
+            if Map.is_arrived_by_sumo_edge(driver_info["id"]):
                 customer = self.__customers[ride_info["customer_id"]]
                 customer_info = customer.update_on_road()
                 assert not ride_info["routes"]["destination_route"] == None, "Simulator.__update_rides_state - destination route not found on pickup."
@@ -407,7 +420,7 @@ class Simulator:
             driver = self.__drivers[ride_info["driver_id"]]
             driver_info = driver.get_info()
             assert not driver_info["current_distance"] == None, "Simulator.__update_rides_state - unexpected driver distance undefined. [2]"
-            if Map.is_arrived(driver_info["current_coordinates"], ride_info["destination_point"], driver_info["current_coordinates"]):
+            if Map.is_arrived_by_sumo_edge(driver_info["id"]):
                 customer = self.__customers[ride_info["customer_id"]]
                 customer_info = customer.update_end()
                 driver_info = driver.update_end(timestamp)

@@ -240,8 +240,10 @@ class Map:
     @staticmethod
     def is_arrived_by_sumo_edge(driver_id):
         destination_edge = traci.vehicle.getRoute(driver_id)[-1]
-        distance = traci.vehicle.getDrivingDistance(driver_id, destination_edge,)
-        if
+        distance = traci.vehicle.getDrivingDistance(driver_id, destination_edge, 0)
+        if distance <= 0:
+            return True
+        return False
 
     def is_valid_sumo_route(self, sumo_route):
         return len(sumo_route.edges) > 0
