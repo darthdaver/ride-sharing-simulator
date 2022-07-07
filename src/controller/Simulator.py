@@ -91,8 +91,8 @@ class Simulator:
         self.__unprocessed_customers.append(customer_id)
         edge_id = Map.get_sumo_edge_id_from_coordinates(self.__sumo_net, coordinates)
         pos = Map.get_sumo_lane_position_from_coordinates(self.__sumo_net, coordinates)
-        print(f"generate customer - edge_id: {edge_id}")
-        print(f"generate customer - lane_position: {pos}")
+        #print(f"generate customer - edge_id: {edge_id}")
+        #print(f"generate customer - lane_position: {pos}")
         traci.person.add(customer_id, edge_id, pos, depart=timestamp)
         traci.person.appendWaitingStage(customer_id, 600)
 
@@ -116,7 +116,7 @@ class Simulator:
         driver = Driver(timestamp, driver_id, DriverState.IDLE, driver_personality_distribution, coordinates)
         self.__drivers[driver_id] = driver
         try:
-            random_route = self.__map.generate_random_sumo_route_in_area(timestamp, self.__sumo_net, coordinates)
+            random_route = self.__map.generate_random_route_in_area(timestamp, self.__sumo_net, coordinates)
             traci.vehicle.add(driver_id, random_route.get_route_id())
             print(random_route.get_route_id())
             print(random_route.get_route().edges)
@@ -184,7 +184,8 @@ class Simulator:
             area_info = self.__map.get_area_info(area_id)
             surge_multiplier = area_info["surge_multipliers"][0]
             drivers_info = self.__get_drivers_info()
-            ride_info, ride_request_state, driver_id, customer_id = self.__provider.manage_pending_request(timestamp, ride_info, drivers_info)
+            ride_info, ride_request_state, driver_id = self.__provider.manage_pending_request(timestamp, ride_info, drivers_info)
+            customer_id = ride_info["customer_id"]
             if ride_request_state in RideRequestState.SENT:
                 assert driver_id is not None, "Simulator.__manage_pending_request - Unexpected undefined driver id when request state has been sent."
                 driver = self.__drivers[driver_id]
@@ -194,31 +195,31 @@ class Simulator:
                 accept = driver.accept_ride_conditions(surge_multiplier, driver_policy)
                 if accept:
                     try:
-                        destination_route = Map.generate_sumo_route_from_coordinates(timestamp, self.__sumo_net, [ride_info["meeting_point"], ride_info["destination_point"]])
+                        meeting_route = Map.generate_route_from_coordinates(timestamp, self.__sumo_net, [driver_info["current_coordinates"], ride_info["meeting_point"]])
+                        destination_route = Map.generate_route_from_coordinates(timestamp, self.__sumo_net, [ride_info["meeting_point"], ride_info["destination_point"]])
                     except:
                         driver_info = driver.reject_request()
                         ride_info = self.__provider.ride_request_rejected(ride_info["id"], driver_id)
                         ride_info = self.__provider.set_ride_request_state(ride_info["id"], RideRequestState.REJECTED)
                         break
                     assert ride_info["request"]["current_candidate"] is not None, "Simulator.__manage_pending_request - candidate undefined on ride request response"
-                    current_candidate = ride_info["request"]["current_candidate"]
-                    customer = self.__customers[ride_info["customer_id"]]
+                    customer = self.__customers[customer_id]
                     customer_info = customer.update_pickup()
-                    driver_info = driver.update_pickup(current_candidate["meeting_route"])
+                    driver_info = driver.update_pickup(meeting_route)
                     # TODO
                     expected_ride_duration = destination_route.get_original_duration()
                     expected_ride_length = destination_route.get_original_distance()
                     expected_price = self.__provider.compute_price(expected_ride_duration, expected_ride_length, surge_multiplier)
                     stats = {
                         "timestamp_pickup": timestamp,
-                        "expected_meeting_length": current_candidate["expected_distance"],
-                        "expected_meeting_duration": current_candidate["expected_duration"],
+                        "expected_meeting_length": meeting_route.get_original_distance(),
+                        "expected_meeting_duration": meeting_route.get_original_duration(),
                         "expected_price": expected_price,
                         "expected_ride_duration": expected_ride_duration,
                         "expected_ride_length": expected_ride_length,
                         "surge_multiplier": surge_multiplier
                     }
-                    ride_info = self.__provider.update_ride_accepted(ride_info["id"], current_candidate["id"], current_candidate["meeting_route"], destination_route, stats)
+                    ride_info = self.__provider.update_ride_accepted(ride_info["id"], driver_id, meeting_route, destination_route, stats)
                     ride_info = self.__provider.set_ride_request_state(ride_info["id"], RideRequestState.ACCEPTED)
                 else:
                     driver_info = driver.reject_request()
@@ -229,7 +230,7 @@ class Simulator:
                 driver = self.__drivers[driver_id]
                 driver_info = driver.set_current_distance((math.inf, math.inf))
                 # check
-                self.start_route(driver_id, ride_info["id"])
+                self.start_sumo_route(timestamp, driver_id, customer_id)
                 self.__provider.update_ride_pickup(ride_info["id"])
                 self.__print_ride_assignation(timestamp, ride_info["id"], customer_info["id"], driver_id)
             elif ride_request_state == RideRequestState.NONE:
@@ -248,27 +249,13 @@ class Simulator:
         }
 
     def __move_driver_to_area(self, timestamp, driver_id, area_id):
-        driver = self.__drivers[driver_id]
-        driver_info = driver.get_info()
-        driver_area = self.__check_area_id(driver_info, self.__map.get_area_from_coordinates(driver_info["current_coordinates"]), 'driver')
-        assert (not driver_area == "unknown") and type(driver_area) == str, f"Simulator.move_driver_to_area - Unexpected unknown id area ({driver_info['current_coordinates']}) for customer {driver_info['id_customer']}."
-        assert not driver_area == area_id, "Simulator.moveDriverToArea - driver area is equal to area where the driver have to move"
-        area_info = self.__map.get_area_info(area_id)
-        hexagon_random_id = utils.select_from_list(area_info["hexagons"])
-        ways = self.__map.get_hexagon_info(hexagon_random_id)["ways"]
-        way_random_id = utils.select_from_list(ways)
-        destination_position = self.__map.get_random_position_from_way(way_random_id)
         try:
-            route = Map.generate_sumo_route_from_coordinates(timestamp, self.__sumo_net, [driver_info["current_coordinates"], destination_position])
-            driver_info = driver.set_route(route)
-            driver_info = driver.set_state(DriverState.MOVING)
-            # check
-            self.start_route(driver_id)
+            self.start_sumo_route(timestamp, driver_id, area_id)
         except:
-            print(f"Impossible to move driver {driver_id} from area {driver_area} to area {area_id}")
-            pass
+            print(f"Impossible to move driver {driver_id} to area {area_id}")
 
-    def __print_ride_assignation(self, timestamp, ride_id, customer_id, driver_id):
+    @staticmethod
+    def __print_ride_assignation(timestamp, ride_id, customer_id, driver_id):
         path = f"{os.getcwd()}/output/ride_assignations.json"
         data = {
             "timestamp": timestamp,
@@ -320,10 +307,45 @@ class Simulator:
         driver = self.__drivers[driver_id]
         return driver.reject_request()
 
-    def start_route(self, driver_id, ride_id=None, route_type=None):
+    def start_sumo_route(self, timestamp, driver_id, customer_id=None, area_id=None):
         driver = self.__drivers[driver_id]
+        driver_info = driver.get_info()
 
-        pass
+        if driver_info["state"] == DriverState.PICKUP:
+            assert customer_id is not None, "Simulator.start_sumo_route - customer id is None."
+            destination_edge_id = traci.person.getEdges(customer_id)[0]
+            destination_position = traci.person.getLanePosition(customer_id)
+            destination_position = destination_position if destination_position > 0 else 0.0001
+            print(f"edge: {destination_edge_id}")
+            print(f"position: {destination_position}")
+            traci.vehicle.setRouteID(driver_id, driver_info["route"]["id"])
+            traci.vehicle.setStop(driver_id, destination_edge_id, destination_position, duration=10)
+        elif driver_info["state"] == DriverState.ONROAD:
+            #traci.vehicle.setRouteID(driver_id, driver_info["route"].get_route_id())
+            destination_route = driver_info["route"].get_route_id()
+            traci.person.appendDrivingStage(customer_id, destination_route[-1], driver_id)
+        elif driver_info["state"] == DriverState.IDLE:
+            assert customer_id is not None, "Simulator.start_sumo_route - customer id is None."
+            driver = self.__drivers[driver_id]
+            driver_info = driver.get_info()
+            driver_area = self.__check_area_id(driver_info,self.__map.get_area_from_coordinates(driver_info["current_coordinates"]), 'driver')
+            assert area_id is not None, f"Simulator.start_sumo route - destination area is None."
+            assert (not driver_area == "unknown") and type(driver_area) == str, f"Simulator.start_sumo_route - Unexpected unknown id area ({driver_info['current_coordinates']}) for customer {driver_info['id_customer']}."
+            assert not driver_area == area_id, "Simulator.start_sumo_route - driver area is equal to area where the driver have to move"
+            area_info = self.__map.get_area_info(area_id)
+            hexagon_random_id = utils.select_from_list(area_info["hexagons"])
+            ways = self.__map.get_hexagon_info(hexagon_random_id)["ways"]
+            way_random_id = utils.select_from_list(ways)
+            destination_position = self.__map.get_random_position_from_way(way_random_id)
+            try:
+                route = Map.generate_route_from_coordinates(timestamp, self.__sumo_net, [driver_info["current_coordinates"], destination_position])
+                driver.set_route(route)
+                driver.set_state(DriverState.MOVING)
+            except:
+                raise Exception("Simulator.start_sumo_route - Impossible to move driver to the destination area.")
+                pass
+        else:
+            raise Exception(f"Simulator.start_sumo_route - unexpected driver state {driver_info['state']}")
 
     def __trigger_event(self, e):
         self.__map.update_generation_policy(e["area_id"], e["generation_policy"])
@@ -358,7 +380,7 @@ class Simulator:
                         continue
                 if Map.is_arrived_by_sumo_edge(driver_info["id"]):
                     try:
-                        random_route = Map.generate_random_sumo_route_in_area(timestamp, self.__sumo_net, driver_info["current_coordinates"])
+                        random_route = self.__map.generate_random_route_in_area(timestamp, self.__sumo_net, driver_info["current_coordinates"])
                         traci.vehicle.setRoute(driver_info["id"], random_route.get_route().edges)
                     except:
                         self.__remove_driver(driver_info["driver_id"])
@@ -412,7 +434,7 @@ class Simulator:
                 }
                 ride_info = self.__provider.update_ride_on_road(ride_info["id"], stats)
                 driver_info = driver.set_current_distance((math.inf, math.inf))
-                self.start_route(driver_info["id"], ride_info["id"], 'destination')
+                self.start_sumo_route(timestamp, driver_info["id"], customer_info["id"])
             driver_info = driver.set_current_distance(Map.compute_distance(driver_info["current_coordinates"], ride_info["meeting_point"]))
 
         for ride_info in on_road_rides:
@@ -491,7 +513,7 @@ class Simulator:
                             self.__map.reset_generation_policy(area_id)
                         else:
                             self.__map.increment_generation_probability(area_id, HumanType.DRIVER)
-                """self.__generate_customer_requests(timestamp)
+                self.__generate_customer_requests(timestamp)
                 self.__process_rides(timestamp)
                 self.__manage_pending_request(timestamp)
                 if timestamp % 20.0 == 0:
@@ -512,7 +534,7 @@ class Simulator:
                 if timestamp == 1.0:
                     #TODO Printer
                     pass
-                timestamp += 1"""
+                timestamp += 1
             except:
                 raise Exception("A Fatal error occurred in Simulator.run")
         traci.close(False)

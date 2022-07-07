@@ -83,16 +83,16 @@ class Map:
         position_destination = self.get_random_position_from_way(id_destination_way)
         return position_destination
 
-    def generate_random_sumo_route_in_area(self, timestamp, sumo_net, start_point):
+    def generate_random_route_in_area(self, timestamp, sumo_net, start_point):
         area_id = self.get_area_from_coordinates(start_point)
         start_hexagon = self.get_hexagon_id_from_coordinates(start_point)
         destination_hexagon = self.get_random_hexagon_from_area(area_id, exclude_hexagons=[start_hexagon])
         destination_point = self.generate_destination_point_from_hexagon(start_point, destination_hexagon)
-        random_route = self.generate_sumo_route_from_coordinates(timestamp, sumo_net, [start_point, destination_point])
+        random_route = self.generate_route_from_coordinates(timestamp, sumo_net, [start_point, destination_point])
         return random_route
 
     @staticmethod
-    def generate_sumo_route_from_coordinates(timestamp, sumo_net, waypoints):
+    def generate_route_from_coordinates(timestamp, sumo_net, waypoints):
         from_edge_id = Map.get_sumo_edge_id_from_coordinates(sumo_net, waypoints[0])
         to_edge_id = Map.get_sumo_edge_id_from_coordinates(sumo_net, waypoints[1])
         sumo_route = traci.simulation.findRoute(from_edge_id, to_edge_id)
@@ -103,7 +103,19 @@ class Map:
             traci.route.add(sumo_route_id, sumo_route.edges)
             return Route(timestamp, waypoints[0], waypoints[1], "sumo", sumo_route_id, sumo_route, sumo_route_distance, sumo_route_duration)
         else:
-            error_msg =f"Map.generate_sumo_route_from_coordinates - Route impossible: no connection between the source {waypoints[0]} and the desitnation {waypoints[1]}."
+            error_msg =f"Map.generate_route_from_coordinates - Route impossible: no connection between the source {waypoints[0]} and the desitnation {waypoints[1]}."
+            print(error_msg)
+            raise Exception(error_msg)
+
+    @staticmethod
+    def generate_sumo_route_from_edge_ids(from_edge_id, to_edge_id):
+        sumo_route = traci.simulation.findRoute(from_edge_id, to_edge_id)
+        sumo_route_id = f"route_from_{from_edge_id}_to_{to_edge_id}"
+        if len(sumo_route.edges) > 0:
+            traci.route.add(sumo_route_id, sumo_route.edges)
+            return (sumo_route_id, sumo_route)
+        else:
+            error_msg = f"Map.generate_route_from_coordinates - Route impossible: no connection between the source {waypoints[0]} and the desitnation {waypoints[1]}."
             print(error_msg)
             raise Exception(error_msg)
 

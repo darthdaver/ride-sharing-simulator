@@ -1,5 +1,8 @@
 import json
 import os
+
+import traci
+
 from src.model.Map import Map
 from src.state.DriverState import DriverState
 from src.state.RideState import RideState
@@ -78,28 +81,28 @@ class Provider:
             if candidate:
                 ride_info = ride.set_candidate(candidate)
                 ride_info = ride.set_request_state(RideRequestState.SENT)
-                return (ride_info, RideRequestState.SENT, candidate["id"], None)
+                return (ride_info, RideRequestState.SENT, candidate["id"])
             else:
                 if ride_info["customer_id"] in self.__pending_customers:
                     ride_info = ride.set_request_state(RideRequestState.NONE)
-                    return [ride_info, RideRequestState.NONE, None, ride_info["customer_id"]]
+                    return [ride_info, RideRequestState.NONE, None]
         elif ride_info["request"]["state"] == RideRequestState.SEARCHING_CANDIDATES:
-            return (ride_info, RideRequestState.SEARCHING_CANDIDATES, None, ride_info["customer_id"])
+            return (ride_info, RideRequestState.SEARCHING_CANDIDATES, None)
         elif ride_info["request"]["state"] == RideRequestState.NONE:
             self.__ride_not_accomplished(ride)
-            return [ride_info, RideRequestState.SEARCHING_CANDIDATES, None, ride_info["customer_id"]]
+            return [ride_info, RideRequestState.SEARCHING_CANDIDATES, None]
         elif ride_info["request"]["state"] in [RideRequestState.SENT, RideRequestState.WAITING]:
             current_candidate = ride_info["request"]["current_candidate"]
             assert current_candidate is not None, "Provider.manage_pending_request - candidate undefined [1]"
             if current_candidate and current_candidate["response_count_down"] == current_candidate["sent_request_back_timer"]:
-                return (ride_info, RideRequestState.RESPONSE, current_candidate["id"], None)
+                return (ride_info, RideRequestState.RESPONSE, current_candidate["id"])
             else:
                 ride.decrement_count_down_request()
                 assert current_candidate is not None, "Provider.manage_pending_request - candidate undefined [2]"
-                return (ride_info, RideRequestState.WAITING, current_candidate["id"], None)
+                return (ride_info, RideRequestState.WAITING, current_candidate["id"])
         elif ride_info["request"]["state"] == RideRequestState.ACCEPTED:
-            return (ride_info, RideRequestState.ACCEPTED, ride_info["driver_id"], None)
-        return (ride_info, RideRequestState.NONE, None, ride_info["customer_id"])
+            return (ride_info, RideRequestState.ACCEPTED, ride_info["driver_id"])
+        return (ride_info, RideRequestState.NONE, None)
 
     def print_rides(self, timestamp):
         path = f"{os.getcwd()}/../output/rides_{timestamp}.json"
@@ -191,8 +194,9 @@ class Provider:
     def __nearby_drivers(self, timestamp, sumo_net, ride_info, meeting_point, drivers_info):
         drivers_info_array = drivers_info.values()
         for driver_info in drivers_info_array:
+            driver_id = driver_info["id"]
             try:
-                route = Map.generate_sumo_route_from_coordinates(timestamp, sumo_net, [driver_info["current_coordinates"], meeting_point])
+                route = Map.generate_route_from_coordinates(timestamp, sumo_net, [driver_info["current_coordinates"], meeting_point])
                 expected_route_distance = route.get_original_distance()
                 expected_route_duration = route.get_original_duration()
 
