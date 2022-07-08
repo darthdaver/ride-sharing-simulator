@@ -31,29 +31,38 @@ class Map:
         for ring in hexagon_ring:
             for near_hexagon in ring:
                 if not self.get_area_from_hexagon(near_hexagon) == "unknown":
-                    return Map.get_coordinates_from_hexagon_id(near_hexagon)
+                    try:
+                        return Map.generate_coordinates_from_hexagon(near_hexagon)
+                    except:
+                        print(f"Map.find_near_hexagon - New coordinates in near hexagon {near_hexagon} not found.")
+                        continue
+        print("Map.find_near_hexagon - New coordinates not found")
         return None
 
-    def generate_coordinates_from_hexagon(self, area_id, hexagon_id="random"):
+    def generate_coordinates_from_hexagon(self, sumo_net, area_id, hexagon_id="random", must_be_edge=True):
         area = self.__areas[area_id]
-        if hexagon_id == "random":
-            hexagons = copy.deepcopy(area["hexagons"])
-            while True:
-                hexagon_id = utils.select_from_list(hexagons)
-                hexagons.remove(hexagon_id)
-                hexagon_ways = self.__hexagons[hexagon_id]["ways"]
-                if len(hexagon_ways) > 0:
-                    break
-                assert len(hexagons) > 0, "Map.generate_coordinates_from_hexagon - no way found"
-
-        else:
+        is_random = True
+        if not hexagon_id == "random":
             assert hexagon_id in area["hexagons"], "Map.generate_coordinates_from_hexagon - Id hexagon dose not belong to area"
+        hexagons = copy.deepcopy(area["hexagons"])
+        while len(hexagons) > 0:
+            if hexagon_id == "random":
+                hexagon_id = utils.select_from_list(hexagons)
+            else:
+                is_random = False
+            hexagons.remove(hexagon_id)
+            hexagon_ways = [*self.__hexagons[hexagon_id]["ways"]]
+            while len(hexagon_ways) > 0:
+                way_id = utils.select_from_list(self.__hexagons[hexagon_id]["ways"])
+                hexagon_ways.remove(way_id)
+                position = self.get_random_position_from_way(sumo_net, way_id, must_be_edge=must_be_edge)
+                if position is not None:
+                    return position
+            if not is_random:
+                raise Exception("Map.generate_coordinates_from_hexagon - no way found")
+        raise Exception("Map.generate_coordinates_from_hexagon - no way found")
 
-        way_id = utils.select_from_list(self.__hexagons[hexagon_id]["ways"])
-        position = self.get_random_position_from_way(way_id)
-        return position
-
-    def generate_destination_point(self, start_point, distance):
+    def generate_destination_point(self, sumo_net, start_point, distance):
         start_hexagon = h3.geo_to_h3(start_point[1], start_point[0], self.__resolution)
         ring_distance = distance - math.floor(random.random() * 2)
         if ring_distance < 1:
@@ -69,27 +78,32 @@ class Map:
                     found = True
                     candidate_ways = self.__hexagons[id_destination_hexagon]["ways"]
                     id_destination_way = utils.select_from_list(candidate_ways)
-                    position_destination = self.get_random_position_from_way(id_destination_way)
+                    position_destination = self.get_random_position_from_way(sumo_net, id_destination_way)
                     return position_destination
         assert False, "Map.generate_destination_point - destination not found"
         return start_point
 
-    def generate_destination_point_from_hexagon(self, start_point, destination_hexagon):
+    def generate_destination_point_from_hexagon(self, sumo_net, start_point, destination_hexagon):
         start_hexagon = h3.geo_to_h3(start_point[1], start_point[0], self.__resolution)
         assert destination_hexagon in self.__hexagons, "Map.generate_destination_point_from_hexagon - destination hexagon not found"
         assert len(self.__hexagons[destination_hexagon]["ways"]) > 0 , "Map.generate_destination_point_from_hexagon - destination hexagon has not ways"
         candidate_ways = self.__hexagons[destination_hexagon]["ways"]
         id_destination_way = utils.select_from_list(candidate_ways)
-        position_destination = self.get_random_position_from_way(id_destination_way)
+        position_destination = self.get_random_position_from_way(sumo_net, id_destination_way)
         return position_destination
 
     def generate_random_route_in_area(self, timestamp, sumo_net, start_point):
         area_id = self.get_area_from_coordinates(start_point)
         start_hexagon = self.get_hexagon_id_from_coordinates(start_point)
         destination_hexagon = self.get_random_hexagon_from_area(area_id, exclude_hexagons=[start_hexagon])
-        destination_point = self.generate_destination_point_from_hexagon(start_point, destination_hexagon)
-        random_route = self.generate_route_from_coordinates(timestamp, sumo_net, [start_point, destination_point])
-        return random_route
+        destination_point = self.generate_destination_point_from_hexagon(sumo_net, start_point, destination_hexagon)
+        try:
+            random_route = self.generate_route_from_coordinates(timestamp, sumo_net, [start_point, destination_point])
+            return random_route
+        except:
+            error_msg = f"Map.generate_random_route_in_area - Route impossible: no connection between the source {start_point} and the desitnation {destination_point}."
+            print(error_msg)
+            raise Exception(error_msg)
 
     @staticmethod
     def generate_route_from_coordinates(timestamp, sumo_net, waypoints):
@@ -100,7 +114,10 @@ class Map:
         sumo_route_duration = sumo_route.travelTime
         sumo_route_id = f"route_from_{from_edge_id}_to_{to_edge_id}"
         if len(sumo_route.edges) > 0:
-            traci.route.add(sumo_route_id, sumo_route.edges)
+            if not(sumo_route_id in traci.route.getIDList()):
+                traci.route.add(sumo_route_id, sumo_route.edges)
+            else:
+                print("Route id already exist")
             return Route(timestamp, waypoints[0], waypoints[1], "sumo", sumo_route_id, sumo_route, sumo_route_distance, sumo_route_duration)
         else:
             error_msg =f"Map.generate_route_from_coordinates - Route impossible: no connection between the source {waypoints[0]} and the desitnation {waypoints[1]}."
@@ -111,11 +128,11 @@ class Map:
     def generate_sumo_route_from_edge_ids(from_edge_id, to_edge_id):
         sumo_route = traci.simulation.findRoute(from_edge_id, to_edge_id)
         sumo_route_id = f"route_from_{from_edge_id}_to_{to_edge_id}"
-        if len(sumo_route.edges) > 0:
+        if len(sumo_route.edges) > 0 and not(sumo_route_id in traci.route.getIDList()):
             traci.route.add(sumo_route_id, sumo_route.edges)
             return (sumo_route_id, sumo_route)
         else:
-            error_msg = f"Map.generate_route_from_coordinates - Route impossible: no connection between the source {waypoints[0]} and the desitnation {waypoints[1]}."
+            error_msg = f"Map.generate_route_from_coordinates - Route impossible: no connection between the source {from_edge_id} and the desitnation {to_edge_id}."
             print(error_msg)
             raise Exception(error_msg)
 
@@ -179,31 +196,64 @@ class Map:
                 return random_hexagon
         assert False, "Map.get_random_hexagon_from_area - No hexagon with ways eligible to be selected."
 
-    def get_random_position_from_way(self, way_id):
+    def get_random_position_from_way(self, sumo_net, way_id, must_be_edge=True):
         assert way_id in self.__ways, "Map.get_random_position_from_way - undefined way"
         way = self.__ways[way_id]
         way_type = way["feature"]["geometry"]["type"]
         assert way_type in ["Point", "LineString"], "Map.get_random_position_from_way- unknown way type"
-        if way_type == "Point":
-            way_geometry = way["feature"]["geometry"]
-            return (way_geometry["coordinates"][0], way_geometry["coordinates"][1])
         way_geometry = way["feature"]["geometry"]
-        return utils.select_from_list(way_geometry["coordinates"])
+        if must_be_edge:
+            if way_type == "Point":
+                way_coordinates = way_geometry["coordinates"]
+                way_edge = Map.get_sumo_edge_id_from_coordinates(sumo_net, way_coordinates)
+                if Map.is_sumo_edge(sumo_net, way_edge) and Map.is_traversable(sumo_net, way_edge):
+                    return way_coordinates
+                return None
+            way_coordinates_list = [*way_geometry["coordinates"]]
+            while len(way_coordinates_list) > 0:
+                way_coordinates = utils.select_from_list(way_coordinates_list)
+                way_coordinates_list.remove(way_coordinates)
+                way_edge = Map.get_sumo_edge_id_from_coordinates(sumo_net, way_coordinates)
+                if Map.is_sumo_edge(sumo_net, way_edge) and Map.is_traversable(sumo_net, way_edge):
+                    return way_coordinates
+            return None
+        else:
+            if way_type == "Point":
+                return (way_geometry["coordinates"][0], way_geometry["coordinates"][1])
+            return utils.select_from_list(way_geometry["coordinates"])
 
     @staticmethod
-    def get_sumo_edge_id_from_coordinates(net, coordinates):
+    def get_sumo_current_coordinates(agent_info, agent_type):
+        sumo_position = None
+        if (agent_type == HumanType.DRIVER):
+            sumo_position = traci.vehicle.getPosition(agent_info["id"])
+        elif agent_type == HumanType.CUSTOMER:
+            sumo_position = traci.person.getPosition(agent_info["id"])
+        else:
+            raise Exception(f"Map.get_sumo_current_coordinates - Agent type {agent_type} unknown.")
+
+        coordinates = traci.simulation.convertGeo(sumo_position[0], sumo_position[1])
+        if not coordinates == (math.inf, math.inf):
+            return coordinates
+        else:
+            print(f"Infinite coordinates for driver {agent_info['id']} - returned current coordinates {agent_info['current_coordinates']}.")
+            return agent_info['current_coordinates']
+
+
+    @staticmethod
+    def get_sumo_edge_id_from_coordinates(sumo_net, coordinates):
         id, _, _ = traci.simulation.convertRoad(coordinates[0], coordinates[1], isGeo=True)
         id = re.findall("[\-A-Za-z0-9#]+", id)[0]
-        if id in list(map(lambda e: e.getID(), net.getEdges())):
-            edge = net.getEdge(id)
+        if Map.is_sumo_edge(sumo_net, id):
+            edge = sumo_net.getEdge(id)
             return edge.getID()
-        elif id in list(map(lambda n: n.getID(), net.getNodes())):
-            node = net.getNode(id)
+        elif Map.is_sumo_node(sumo_net, id):
+            node = sumo_net.getNode(id)
             outgoings = node.getOutgoing()
             edge = outgoings[0]
             return edge.getID()
         else:
-            raise Exception("Map.get_sumo_edge_from_coordinates - Impossible to generate edge from coordinates")
+            raise Exception(f"Map.get_sumo_edge_from_coordinates {coordinates} - Impossible to generate edge from coordinates")
 
     @staticmethod
     def get_sumo_lane_position_from_coordinates(net, coordinates):
@@ -250,12 +300,27 @@ class Map:
         return False
 
     @staticmethod
-    def is_arrived_by_sumo_edge(driver_id):
-        destination_edge = traci.vehicle.getRoute(driver_id)[-1]
-        distance = traci.vehicle.getDrivingDistance(driver_id, destination_edge, 0)
-        if distance <= 0:
+    def is_arrived_by_sumo_edge(sumo_net, driver_info):
+        destination_edge = traci.vehicle.getRoute(driver_info["id"])[-1]
+        current_edge = Map.get_sumo_edge_id_from_coordinates(sumo_net, driver_info["current_coordinates"])
+        distance = round(traci.vehicle.getDrivingDistance(driver_info["id"], destination_edge, 0))
+        if destination_edge == current_edge and distance == 0:
             return True
         return False
+
+    @staticmethod
+    def is_sumo_edge(sumo_net, id):
+        return id in list(map(lambda e: e.getID(), sumo_net.getEdges()))
+
+    @staticmethod
+    def is_sumo_node(sumo_net, id):
+        return id in list(map(lambda n: n.getID(), sumo_net.getNodes()))
+
+    @staticmethod
+    def is_traversable(sumo_net, edge_id):
+        edge = sumo_net.getEdge(edge_id)
+        traversable = edge.allows("private")
+        return traversable
 
     def is_valid_sumo_route(self, sumo_route):
         return len(sumo_route.edges) > 0

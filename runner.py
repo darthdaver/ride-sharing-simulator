@@ -42,7 +42,7 @@ if __name__ == "__main__":
         sumoBinary = checkBinary('sumo-gui')
 
     traci.start(["sumo-gui", "-c", "net_config/sumo.sumocfg",
-                 "--tripinfo-output", "net_config/tripinfo.xml"])"""
+                 "--tripinfo-output", "net_config/tripinfo.xml", "--log", f"{os.getcwd()}/logfile.txt"])"""
 
     sumoBinary = checkBinary('sumo')
 

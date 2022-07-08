@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2022-07-07 17:06:45 by Eclipse SUMO sumo Version 1.12.0
+<!-- generated on 2022-07-08 11:41:21 by Eclipse SUMO sumo Version 1.12.0
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
-        <net-file value="net_config/san-francisco.net.xml"/>
-        <route-files value="net_config/sf_random_trips.trips.xml"/>
+        <net-file value="net_config/schaffhausen.net.xml"/>
         <additional-files value="net_config/add.add.xml"/>
     </input>
 
@@ -25,13 +24,8 @@
         <log value="/Users/davidemolinelli/Documents/phd/repositories/ride-sharing-simulator/logfile.txt"/>
     </report>
 
-    <taxi_device>
-        <device.taxi.dispatch-algorithm value="traci"/>
-        <device.taxi.idle-algorithm value="randomCircling"/>
-    </taxi_device>
-
     <traci_server>
-        <remote-port value="51582"/>
+        <remote-port value="60148"/>
     </traci_server>
 
     <gui_only>

@@ -8,4 +8,4 @@ class FileSetup(str, Enum):
     SCENARIO = "src/config/scenario.json"
     TUNING = "src/config/tuning.json"
     MAP = "src/repos/city-mapdict.json"
-    NET = "net_config/san-francisco.net.xml"
+    NET = "net_config/schaffhausen.net.xml"

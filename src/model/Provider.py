@@ -35,14 +35,14 @@ class Provider:
 
     @staticmethod
     def get_idle_drivers_info(drivers_info):
-        drivers_info_array = drivers_info.values()
-        idle_drivers_info = list(filter(lambda d: d.state in [DriverState.IDLE, DriverState.MOVING]))
+        drivers_info_array = list(drivers_info.values())
+        idle_drivers_info = list(filter(lambda d: d.state in [DriverState.IDLE, DriverState.MOVING]), drivers_info_array)
         return idle_drivers_info
 
     def get_pending_rides(self):
-        rides_array = self.__rides.values()
-        pending_rides = list(filter(lambda r: not (r.get_info["request"]["state"] in [RideRequestState.CANCELED, RideRequestState.ACCEPTED])))
-        pending_rides_info = list(map(lambda r: r.get_info()))
+        rides_array = list(self.__rides.values())
+        pending_rides = list(filter(lambda r: not (r.get_info["request"]["state"] in [RideRequestState.CANCELED, RideRequestState.ACCEPTED]), rides_array))
+        pending_rides_info = list(map(lambda r: r.get_info(), pending_rides))
         return pending_rides_info
 
     def get_ride_info(self, ride_id):
@@ -51,7 +51,8 @@ class Provider:
 
     def get_rides_info_by_state(self, state="all"):
         if state == "all":
-            rides_info = list(map(lambda r: r.get_info(), self.__rides.values()))
+            rides_array = list(self.__rides.values())
+            rides_info = list(map(lambda r: r.get_info(), rides_array))
             return rides_info
         filtered_rides_info = []
         for ride in self.__rides.values():
@@ -192,10 +193,11 @@ class Provider:
         return filtered_rides
 
     def __nearby_drivers(self, timestamp, sumo_net, ride_info, meeting_point, drivers_info):
-        drivers_info_array = drivers_info.values()
+        drivers_info_array = list(drivers_info.values())
         for driver_info in drivers_info_array:
             driver_id = driver_info["id"]
             try:
+                print(f"Map.__nearby_drivers | Driver {driver_info['id']} - generate route from {driver_info['current_coordinates']} to destination {meeting_point}")
                 route = Map.generate_route_from_coordinates(timestamp, sumo_net, [driver_info["current_coordinates"], meeting_point])
                 expected_route_distance = route.get_original_distance()
                 expected_route_duration = route.get_original_duration()

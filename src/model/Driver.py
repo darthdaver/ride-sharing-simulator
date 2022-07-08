@@ -2,9 +2,9 @@ from src.model.Human import Human
 from src.state.DriverState import DriverState
 
 class Driver(Human):
-    def __init__(self, timestamp, id, state, personality_distribution, coordinates):
+    def __init__(self, timestamp, id, state, personality_distribution, coordinates, route):
         super().__init__(timestamp, id, state, personality_distribution, coordinates)
-        self.__route = None
+        self.__route = route
         self.__current_distance = None
         self.__last_ride_timestamp = timestamp
         self.__pending_request = False
@@ -51,15 +51,15 @@ class Driver(Human):
     def update_cancel(self):
         pass
 
-    def update_end(self, timestamp):
+    def update_end(self, timestamp, route):
         self.state = DriverState.IDLE
-        self.__route = None
+        self.__route = route
         self.__last_ride_timestamp = timestamp
         return self.get_info()
 
-    def update_end_moving(self):
+    def update_end_moving(self, route):
         self.state = DriverState.IDLE
-        self.__route = None
+        self.__route = route
         return self.get_info()
 
     def update_on_road(self, destination_route):
