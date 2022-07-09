@@ -41,7 +41,7 @@ class Provider:
 
     def get_pending_rides(self):
         rides_array = list(self.__rides.values())
-        pending_rides = list(filter(lambda r: not (r.get_info["request"]["state"] in [RideRequestState.CANCELED, RideRequestState.ACCEPTED]), rides_array))
+        pending_rides = list(filter(lambda r: not (r.get_info()["request"]["state"] in [RideRequestState.CANCELED, RideRequestState.ACCEPTED]), rides_array))
         pending_rides_info = list(map(lambda r: r.get_info(), pending_rides))
         return pending_rides_info
 
@@ -144,6 +144,10 @@ class Provider:
         self.__rides[ride.get_info()["id"]] = ride
         self.__unprocessed_requests.append(ride.get_id())
 
+    def remove_ride(self, ride_id):
+        del self.__rides[ride_id]
+        return
+
     def ride_request_canceled(self, ride_id):
         self.__unprocessed_requests = list(filter(lambda r_id: not r_id == ride_id, self.__unprocessed_requests))
         ride = self.__rides[ride_id]
@@ -180,7 +184,7 @@ class Provider:
     def __free_drivers_info(self, drivers_info):
         free_drivers = []
         for driver_info in drivers_info.values():
-            if not (driver_info["pending_request"] or driver_info["state"] in [DriverState.MOVING, DriverState.ONROAD, DriverState.PICKUP, DriverState.RESPONDING]):
+            if not (driver_info["pending_request"] or driver_info["state"] in [DriverState.MOVING, DriverState.ONROAD, DriverState.PICKUP, DriverState.RESPONDING, DriverState.INACTIVE]):
                 free_drivers.append(driver_info)
         return free_drivers
 

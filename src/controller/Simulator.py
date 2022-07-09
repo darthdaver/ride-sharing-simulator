@@ -1,4 +1,5 @@
 import math
+import random
 
 from src.state.FileSetup import FileSetup
 from src.state.CustomerState import CustomerState
@@ -48,26 +49,26 @@ class Simulator:
         if type == "driver":
             driver_state = agent_info["state"]
             if not driver_state in [DriverState.ONROAD, DriverState.PICKUP, DriverState.MOVING] and area_id == "unknown":
-                new_coordinates = self.__map.find_near_hexagon(hexagon_id)
+                new_coordinates = self.__map.find_near_hexagon(self.__sumo_net, hexagon_id)
                 if new_coordinates is not None:
                     driver = self.__drivers[agent_info["id"]]
-                    agent_info = driver.set_coordinates(new_coordinates)
+                    #agent_info = driver.set_coordinates(new_coordinates)
                     return self.__map.get_area_from_coordinates(new_coordinates)
                 else:
-                    raise Exception(f"Unknown area id ({agent_info['current_coordinates']}) for driver ${agent_info['id']} in state ${agent_info['state']} not busy - 1")
+                    raise Exception(f"Unknown area id ({agent_info['current_coordinates']}) for driver {agent_info['id']} in state {agent_info['state']} not busy - 1")
         else:
             customer_state = agent_info["state"]
             if customer_state == CustomerState.ACTIVE and area_id == "unknown":
-                new_coordinates = self.__map.find_near_hexagon(hexagon_id)
+                new_coordinates = self.__map.find_near_hexagon(self.__sumo_net, hexagon_id)
                 if new_coordinates is not None:
                     customer = self.__customers[agent_info["id"]]
-                    agent_info = customer.set_coordinates(new_coordinates)
+                    #agent_info = customer.set_coordinates(new_coordinates)
                     return self.__map.get_area_from_coordinates(new_coordinates)
                 else:
-                    raise Exception(f"Unknown area id ({agent_info['current_coordinates']}) for customer ${agent_info['id']} in state ${agent_info['state']} not busy [1]")
+                    raise Exception(f"Unknown area id ({agent_info['current_coordinates']}) for customer {agent_info['id']} in state {agent_info['state']} not busy [1]")
 
             elif customer_state == CustomerState.PENDING and area_id == "unknown":
-                raise Exception(f"Unknown area id ({agent_info['current_coordinates']}) for customer ${agent_info['id']} in state ${agent_info['state']} not busy [2]")
+                raise Exception(f"Unknown area id ({agent_info['current_coordinates']}) for customer {agent_info['id']} in state {agent_info['state']} not busy [2]")
         return self.__map.get_area_from_coordinates(agent_info["current_coordinates"])
 
     def __generate_agent_id(self, agent_type):
@@ -94,7 +95,7 @@ class Simulator:
         #print(f"generate customer - edge_id: {edge_id}")
         #print(f"generate customer - lane_position: {pos}")
         traci.person.add(customer_id, edge_id, pos, depart=timestamp)
-        traci.person.appendWaitingStage(customer_id, 600)
+        traci.person.appendWaitingStage(customer_id, 10000)
 
 
     def __generate_customer_requests(self, timestamp):
@@ -136,9 +137,10 @@ class Simulator:
         drivers_in_area = {}
         for driver in self.__drivers.values():
             driver_info = driver.get_info()
-            driver_area_id = self.__check_area_id(driver_info, self.__map.get_area_from_coordinates(driver_info["current_coordinates"]), "driver")
-            if area_id == driver_area_id:
-                drivers_in_area[driver_info["id"]] = driver_info
+            if not driver_info["state"] == DriverState.INACTIVE:
+                driver_area_id = self.__check_area_id(driver_info, self.__map.get_area_from_coordinates(driver_info["current_coordinates"]), "driver")
+                if area_id == driver_area_id:
+                    drivers_in_area[driver_info["id"]] = driver_info
         return drivers_in_area
 
     def __get_drivers_moving_in_area(self, area_id):
@@ -191,10 +193,10 @@ class Simulator:
                 personality = driver_info["personality"]
                 driver_policy = self.__get_human_policy(driver_acceptance_policy, personality)
                 accept = driver.accept_ride_conditions(surge_multiplier, driver_policy)
-                if accept:
+                if 1:#accept:
                     try:
-                        meeting_route = Map.generate_route_from_coordinates(timestamp, self.__sumo_net, [driver_info["current_coordinates"], ride_info["meeting_point"]])
-                        destination_route = Map.generate_route_from_coordinates(timestamp, self.__sumo_net, [ride_info["meeting_point"], ride_info["destination_point"]])
+                        meeting_route = Map.generate_route_from_agents(timestamp, driver_info, HumanType.DRIVER, customer_info, HumanType.CUSTOMER)
+                        destination_route = Map.generate_route_from_agent_to_destination_point(timestamp, self.__sumo_net, customer_info, HumanType.CUSTOMER, ride_info["destination_point"])
                     except:
                         driver_info = driver.reject_request()
                         ride_info = self.__provider.ride_request_rejected(ride_info["id"], driver_id)
@@ -228,7 +230,7 @@ class Simulator:
                 driver = self.__drivers[driver_id]
                 driver_info = driver.set_current_distance((math.inf, math.inf))
                 # check
-                self.start_sumo_route(timestamp, driver_id, customer_id)
+                self.start_sumo_route(timestamp, driver_id, customer_id, ride_info["id"])
                 self.__provider.update_ride_pickup(ride_info["id"])
                 self.__print_ride_assignation(timestamp, ride_info["id"], customer_info["id"], driver_id)
             elif ride_request_state == RideRequestState.NONE:
@@ -305,7 +307,17 @@ class Simulator:
         driver = self.__drivers[driver_id]
         return driver.reject_request()
 
-    def start_sumo_route(self, timestamp, driver_id, customer_id=None, area_id=None):
+    def __set_driver_route(self, driver_id, route_id, stop_pos=-1):
+        route = traci.route.getEdges(route_id)
+        destination_edge_id = route[-1]
+        if stop_pos == -1:
+            destination_edge = self.__sumo_net.getEdge(destination_edge_id)
+            edge_length = destination_edge.getLength()
+            stop_pos = random.random() * edge_length
+        traci.vehicle.setRouteID(driver_id, route_id)
+        traci.vehicle.setStop(driver_id, destination_edge_id, stop_pos, duration=600)
+
+    def start_sumo_route(self, timestamp, driver_id, customer_id=None, ride_id=None, area_id=None):
         driver = self.__drivers[driver_id]
         driver_info = driver.get_info()
 
@@ -313,17 +325,27 @@ class Simulator:
             assert customer_id is not None, "Simulator.start_sumo_route - customer id is None."
             destination_edge_id = traci.person.getEdges(customer_id)[0]
             edge_length = self.__sumo_net.getEdge(destination_edge_id).getLength()
-            destination_position = traci.person.getLanePosition(customer_id) if traci.person.getLanePosition(customer_id) > 0 else min(0.2, edge_length)
-            print(f"edge: {destination_edge_id}")
-            print(f"position: {destination_position}")
-            print(f"Edge length: {edge_length}")
-            traci.vehicle.setRouteID(driver_id, driver_info["route"]["id"])
-            print(f"Pickup route for driver {driver_info['id']}")
-            traci.vehicle.setStop(driver_id, destination_edge_id, destination_position, duration=10)
+            try:
+                destination_position = traci.person.getLanePosition(customer_id) if traci.person.getLanePosition(customer_id) > 0 else min(0.2, edge_length)
+                #print(f"edge: {destination_edge_id}")
+                #print(f"position: {destination_position}")
+                #print(f"Edge length: {edge_length}")
+                print(f"Pickup route for driver {driver_info['id']} and customer {customer_id}.")
+                self.__set_driver_route(driver_id, driver_info["route"]["id"], destination_position)
+            except Exception as e:
+                print(e)
+                print("Simulator.start_sumo_route - ride removed because of error in generating route.")
+                assert ride_id is not None, "Simulator.start_sumo_route - ride id is None."
+                self.__remove_driver(driver_id)
+                self.__remove_customer(customer_id)
+                self.__provider.remove_ride(ride_id)
         elif driver_info["state"] == DriverState.ONROAD:
-            #traci.vehicle.setRouteID(driver_id, driver_info["route"].get_route_id())
             destination_route = driver_info["route"].get_route_id()
+            destination_edge_id = destination_route[-1]
+            destination_edge = self.__sumo_net.getEdge(destination_edge_id)
+            random_position = random.random() * destination_edge.getLength()
             traci.person.appendDrivingStage(customer_id, destination_route[-1], driver_id)
+            traci.vehicle.setStop(driver_id, destination_edge_id, random_position, duration=600)
         elif driver_info["state"] == DriverState.IDLE:
             assert customer_id is not None, "Simulator.start_sumo_route - customer id is None."
             driver = self.__drivers[driver_id]
@@ -338,11 +360,12 @@ class Simulator:
             way_random_id = utils.select_from_list(ways)
             destination_position = self.__map.get_random_position_from_way(way_random_id)
             try:
-                route = Map.generate_route_from_coordinates(timestamp, self.__sumo_net, [driver_info["current_coordinates"], destination_position])
+                route = Map.generate_route_from_agent_to_destination_point(timestamp, self.__sumo_net, driver_info, HumanType.DRIVER, destination_position)
                 driver.set_route(route)
                 driver.set_state(DriverState.MOVING)
             except:
-                raise Exception("Simulator.start_sumo_route - Impossible to move driver to the destination area.")
+                print("Simulator.start_sumo_route - Impossible to move driver to the destination area.")
+                self.__remove_driver(driver_id)
                 pass
         else:
             raise Exception(f"Simulator.start_sumo_route - unexpected driver state {driver_info['state']}")
@@ -353,15 +376,17 @@ class Simulator:
     def __update_coordinates_and_distance(self):
         for driver in self.__drivers.values():
             driver_info = driver.get_info()
-            destination_point = driver_info["route"]["destination_point"]
-            current_coordinates = Map.get_sumo_current_coordinates(driver_info, HumanType.DRIVER)
-            driver.set_coordinates(current_coordinates)
-            driver_info = driver.set_current_distance(Map.compute_distance(current_coordinates, destination_point))
+            if not driver_info["state"] == DriverState.INACTIVE:
+                destination_point = driver_info["route"]["destination_point"]
+                current_coordinates = Map.get_sumo_current_coordinates(driver_info, HumanType.DRIVER)
+                driver.set_coordinates(current_coordinates)
+                driver_info = driver.set_current_distance(Map.compute_distance(current_coordinates, destination_point))
 
         for customer in self.__customers.values():
             customer_info = customer.get_info()
-            current_coordinates = Map.get_sumo_current_coordinates(customer_info, HumanType.CUSTOMER)
-            customer.set_coordinates(current_coordinates)
+            if not customer_info["state"] == CustomerState.INACTIVE:
+                current_coordinates = Map.get_sumo_current_coordinates(customer_info, HumanType.CUSTOMER)
+                customer.set_coordinates(current_coordinates)
 
 
     def __update_drivers(self, timestamp):
@@ -374,8 +399,8 @@ class Simulator:
                     print(f"Route completed for driver {driver_info['id']} - [1]")
                     try:
                         print(f"Simulator.__update_drivers | Driver {driver_info['id']} - generate random route [1]")
-                        random_route = self.__map.generate_random_route_in_area(timestamp, self.__sumo_net, driver_info["current_coordinates"])
-                        traci.vehicle.setRoute(driver_info["id"], random_route.get_route().edges)
+                        random_route = self.__map.generate_random_route_in_area_from_agent(timestamp, self.__sumo_net, driver_info, HumanType.DRIVER)
+                        self.__set_driver_route(driver_info["id"], random_route.get_route_id())
                         driver_info = driver.update_end_moving(random_route)
                     except:
                         print(f"Simulator.__update_drivers - Impossible to find route. Driver {driver_info['id']} removed.")
@@ -401,11 +426,12 @@ class Simulator:
                 if Map.is_arrived_by_sumo_edge(self.__sumo_net, driver_info):
                     try:
                         print(f"Simulator.__update_drivers | Driver {driver_info['id']} - generate random route [2]")
-                        random_route = self.__map.generate_random_route_in_area(timestamp, self.__sumo_net, driver_info["current_coordinates"])
-                        traci.vehicle.setRoute(driver_info["id"], random_route.get_route().edges)
+                        random_route = self.__map.generate_random_route_in_area_from_agent(timestamp, self.__sumo_net, driver_info, HumanType.DRIVER)
+                        self.__set_driver_route(driver_info["id"], random_route.get_route_id())
                         print(f"Route completed for driver {driver_info['id']} [2]")
                         print(f"New random route for driver {driver_info['id']}")
-                    except:
+                    except Exception as e:
+                        print(e)
                         self.__remove_driver(driver_info["id"])
 
 
@@ -446,12 +472,12 @@ class Simulator:
                 customer = self.__customers[ride_info["customer_id"]]
                 customer_info = customer.update_on_road()
                 assert not ride_info["routes"]["destination_route"] == None, "Simulator.__update_rides_state - destination route not found on pickup."
-                driver_info = driver.update_on_road(ride_info["routes"]["destination_route"])
+                driver_info = driver.update_on_road(ride_info["routes"]["destination_route"]["route"])
                 assert (not ride_info["stats"]["timestamp_pickup"] == None) and type(ride_info["stats"]["timestamp_pickup"]) == int, "Simulator.__update_rides_state - statistic [timestampPickup] not found or wrong type"
                 meeting_duration = timestamp - ride_info["stats"]["timestamp_pickup"]
                 assert not ride_info["routes"]["meeting_route"] == None, "Simulator.__update_rides_state - meeting route not found on pickup."
                 # this should be change according to an algorithm that compute the actual distance covered
-                meeting_distance = ride_info["rotues"]["meeting_route"].get_original_distance()
+                meeting_distance = ride_info["rotues"]["meeting_route"]["route"].get_original_distance()
                 stats = {
                     "timestamp_on_road": timestamp,
                     "meeting_duration": meeting_duration,
@@ -459,7 +485,7 @@ class Simulator:
                 }
                 ride_info = self.__provider.update_ride_on_road(ride_info["id"], stats)
                 driver_info = driver.set_current_distance((math.inf, math.inf))
-                self.start_sumo_route(timestamp, driver_info["id"], customer_info["id"])
+                self.start_sumo_route(timestamp, driver_info["id"], customer_info["id"], ride_info["id"])
             driver_info = driver.set_current_distance(Map.compute_distance(driver_info["current_coordinates"], ride_info["meeting_point"]))
 
         for ride_info in on_road_rides:
@@ -471,19 +497,11 @@ class Simulator:
                 print(f"Route completed for driver {driver_info['id']} [4]")
                 customer = self.__customers[ride_info["customer_id"]]
                 customer_info = customer.update_end()
-                try:
-                    print(f"Simulator.__update_rides_state | Driver {driver_info['id']} - generate random route")
-                    random_route = self.__map.generate_random_route_in_area(timestamp, self.__sumo_net, driver_info["crrent_coordinates"])
-                    traci.vehicle.setRoute(driver_info["id"], random_route.get_route().edges)
-                    driver_info = driver.update_end(timestamp, random_route)
-                except:
-                    print(f"Simulator.__update_ride_stats - Impossible to find route. Driver {driver_info['id']} removed.")
-                    self.__remove_driver(driver_info["id"])
                 assert (not ride_info["stats"]["timestamp_on_road"] == None) and type(ride_info["stats"]["timestamp_on_road"]) == int, "Simulator.__update_rides_state - statistic [timestampOnRoad] not found or wrong type"
                 destination_duration = timestamp - ride_info["stats"]["timestamp_on_road"]
                 assert not ride_info["routes"]["destination_route"] == None, "Simulator.__update_rides_state - destination route not found on road."
                 # this should be change according to an algorithm that compute the actual distance covered
-                destination_distance = ride_info["routes"]["destination_route"].get_original_distance()
+                destination_distance = ride_info["routes"]["destination_route"]["route"].get_original_distance()
                 assert not ride_info["stats"]["surge_multiplier"] == None, "Simulator.__update_rides_state - surge multiplier undefined."
                 surge_multiplier = ride_info["stats"]["surge_multiplier"]
                 price = self.__provider.compute_price(destination_duration, destination_distance, surge_multiplier)
@@ -494,6 +512,15 @@ class Simulator:
                     "price": price
                 }
                 ride_info = self.__provider.update_ride_end(ride_info["id"], stats)
+                try:
+                    print(f"Simulator.__update_rides_state | Driver {driver_info['id']} - generate random route")
+                    random_route = self.__map.generate_random_route_in_area_from_agent(timestamp, self.__sumo_net, driver_info, HumanType.DRIVER)
+                    self.__set_driver_route(driver_info["id"], random_route.get_route_id())
+                    driver_info = driver.update_end(timestamp, random_route)
+                except Exception as e:
+                    print(e)
+                    print(f"Simulator.__update_ride_stats - Impossible to find route. Driver {driver_info['id']} removed.")
+                    self.__remove_driver(driver_info["id"])
                 # TODO Printer
             driver_info = driver.set_current_distance(Map.compute_distance(driver_info["current_coordinates"], ride_info["destination_point"]))
 
@@ -508,12 +535,12 @@ class Simulator:
             idle_drivers_in_area = list(filter(lambda d: d["state"] in [DriverState.IDLE, DriverState.RESPONDING], drivers_in_area_array))
             balance = 0
             surge_multiplier = area_info["surge_multipliers"][0]
-            idle_customers = list(filter(lambda r: r["request_area_id"] == area_id, pending_request_areas))
-            if idle_customers > 0:
+            idle_customers = list(filter(lambda r: r["area_request_id"] == area_id, pending_request_areas))
+            if len(idle_customers) > 0:
                 if len(idle_drivers_in_area) == 0:
                     balance = 1/(len(idle_customers) + 0.1)
                 else:
-                    balance = len(idle_drivers_in_area)/idle_customers
+                    balance = len(idle_drivers_in_area)/len(idle_customers)
             else:
                 balance = len(idle_drivers_in_area)
         self.__map.update_area_balance(area_id, balance)
@@ -533,36 +560,84 @@ class Simulator:
             print(f"timestamp: {timestamp}")
             step += 1
             try:
-                if timestamp % 1 == 0:
+                if timestamp == 1: # % 1 == 0:
                     for area_id, area_info in self.__map.get_areas_info().items():
                         customer_generation_probability = area_info["current_generation_probability"]["customer"][0]
                         driver_generation_probability = area_info["current_generation_probability"]["driver"][0]
-                        if utils.random_choice(customer_generation_probability):
+                        if 1: #utils.random_choice(customer_generation_probability):
                             self.__generate_customer(timestamp, area_id)
                             self.__map.reset_generation_policy(area_id)
                         else:
                             self.__map.increment_generation_probability(area_id, HumanType.CUSTOMER)
-                        if utils.random_choice(driver_generation_probability):
+                        if 1: #utils.random_choice(driver_generation_probability):
                             self.__generate_driver(timestamp, area_id)
                             self.__map.reset_generation_policy(area_id)
                         else:
                             self.__map.increment_generation_probability(area_id, HumanType.DRIVER)
-                self.__update_coordinates_and_distance()
-                self.__generate_customer_requests(timestamp)
-                self.__process_rides(timestamp)
-                self.__manage_pending_request(timestamp)
+                try:
+                    print(traci.vehicle.getIDList())
+                    self.print_drivers()
+                    self.__update_coordinates_and_distance()
+                    print(traci.vehicle.getIDList())
+                    self.print_drivers()
+                except Exception as e:
+                    print(traci.vehicle.getIDList())
+                    self.print_drivers()
+                    print(e)
+                try:
+                    self.__generate_customer_requests(timestamp)
+                    print(traci.vehicle.getIDList())
+                    self.print_drivers()
+                except Exception as e:
+                    print(traci.vehicle.getIDList())
+                    self.print_drivers()
+                    print(e)
+                try:
+                    self.__process_rides(timestamp)
+                    print(traci.vehicle.getIDList())
+                    self.print_drivers()
+                except Exception as e:
+                    print(e)
+                try:
+                    self.__manage_pending_request(timestamp)
+                    print(traci.vehicle.getIDList())
+                    self.print_drivers()
+                except Exception as e:
+                    print(traci.vehicle.getIDList())
+                    self.print_drivers()
+                    print(e)
                 if timestamp % 20.0 == 0:
                     self.__update_surge_multiplier()
-                self.__update_drivers(timestamp)
-                self.__update_rides_state(timestamp)
+                    print(traci.vehicle.getIDList())
+                    self.print_drivers()
+                try:
+                    self.__update_drivers(timestamp)
+                    print(traci.vehicle.getIDList())
+                    self.print_drivers()
+                except Exception as e:
+                    print(traci.vehicle.getIDList())
+                    self.print_drivers()
+                    print(e)
+                try:
+                    self.__update_rides_state(timestamp)
+                    print(traci.vehicle.getIDList())
+                    self.print_drivers()
+                except Exception as e:
+                    self.print_drivers()
+                    print(e)
                 if timestamp % self.__simulator_setup["checkpoints"]["time_move_driver"] == 0:
-                    self.__update_driver_movements(timestamp)
+                    try:
+                        self.__update_driver_movements(timestamp)
+                        print(traci.vehicle.getIDList())
+                    except Exception as e:
+                        print(traci.vehicle.getIDList())
+                        print(e)
                 scenario_events = self.__scenario.checkEvents(timestamp)
                 if not scenario_events == None:
                     print("TRIGGER")
                     for e in scenario_events:
                         self.__trigger_event(e)
-                if timestamp % 100.0 == 0:
+                if timestamp % 2000.0 == 0:
                     stop = True
                     print("STOP")
                 # TODO Printer
@@ -571,7 +646,9 @@ class Simulator:
                     pass
                 timestamp += 1
                 self.print_customers()
-            except:
+            except Exception as e:
+                print(e)
+                self.print_drivers()
                 raise Exception("A Fatal error occurred in Simulator.run")
         traci.close(False)
         sys.stdout.flush()
@@ -582,6 +659,20 @@ class Simulator:
         for customer in self.__customers.values():
             customers_info.append(customer.get_info())
         print(customers_info)
+
+    def print_drivers(self):
+        for driver in self.__drivers.values():
+            driver_info = driver.get_info()
+            print(f"Driver info: {driver_info}")
+            if driver_info["id"] in traci.vehicle.getIDList():
+                print(f"Driver route: {traci.vehicle.getRoute(driver_info['id'])}")
+                print(f"Driver route index: {traci.vehicle.getRouteIndex(driver_info['id'])}")
+            #if len(traci.vehicle.getRoute(driver_info['id'])) > 0:
+                #print(f"Driver current edge: {traci.vehicle.getRoute(driver_info['id'])[traci.vehicle.getRouteIndex(driver_info['id'])]}")
+
+    def print_person(self):
+        for person_id in traci.person.getIDList():
+            print(f"Person current edge: {traci.person.getEdges(person_id)}")
 
     def get_drivers(self):
         return self.__drivers

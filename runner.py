@@ -36,18 +36,18 @@ if __name__ == "__main__":
     options = get_options()
     # If you want to run this tutorial please uncomment following lines, that define the sumoBinary
     # and delete the line before traci.start, to use the gui
-    """if options.nogui:
+    if options.nogui:
         sumoBinary = checkBinary('sumo')
     else:
         sumoBinary = checkBinary('sumo-gui')
 
     traci.start(["sumo-gui", "-c", "net_config/sumo.sumocfg",
-                 "--tripinfo-output", "net_config/tripinfo.xml", "--log", f"{os.getcwd()}/logfile.txt"])"""
+                 "--tripinfo-output", "net_config/tripinfo.xml", "--log", f"{os.getcwd()}/logfile.txt"])
 
-    sumoBinary = checkBinary('sumo')
+    """sumoBinary = checkBinary('sumo')
 
     traci.start(["sumo", "-c", "net_config/sumo.sumocfg",
-                 "--tripinfo-output", "net_config/tripinfo.xml","--log", f"{os.getcwd()}/logfile.txt"])
+                 "--tripinfo-output", "net_config/tripinfo.xml","--log", f"{os.getcwd()}/logfile.txt"])"""
 
     print('INIT')
     simulator = Simulator()

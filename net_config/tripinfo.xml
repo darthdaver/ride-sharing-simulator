@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2022-07-08 11:41:21 by Eclipse SUMO sumo Version 1.12.0
+<!-- generated on 2022-07-10 00:02:25 by Eclipse SUMO GUI Version 1.12.0
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
@@ -25,7 +25,7 @@
     </report>
 
     <traci_server>
-        <remote-port value="60148"/>
+        <remote-port value="61285"/>
     </traci_server>
 
     <gui_only>
@@ -37,3 +37,25 @@
 -->
 
 <tripinfos xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/tripinfo_file.xsd">
+    <tripinfo id="driver_1" depart="1.00" departLane="-25461949#1_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3.00" arrivalLane="-25461949#1_0" arrivalPos="7.23" arrivalSpeed="2.13" duration="2.00" routeLength="2.13" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.86" rerouteNo="0" devices="tripinfo_driver_1" vType="DEFAULT_VEHTYPE" speedFactor="1.08" vaporized="traci"/>
+    <tripinfo id="driver_3" depart="1.00" departLane="-4698444#12_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="9.00" arrivalLane="-4698444#12_0" arrivalPos="61.93" arrivalSpeed="13.83" duration="8.00" routeLength="56.83" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="4.11" rerouteNo="0" devices="tripinfo_driver_3" vType="DEFAULT_VEHTYPE" speedFactor="0.89" vaporized="traci"/>
+    <tripinfo id="driver_5" depart="1.00" departLane="-4690602#5_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="14.00" arrivalLane="-4690602#3_0" arrivalPos="21.57" arrivalSpeed="7.81" duration="13.00" routeLength="82.02" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="2.41" rerouteNo="0" devices="tripinfo_driver_5" vType="DEFAULT_VEHTYPE" speedFactor="1.03" vaporized="traci"/>
+    <personinfo id="customer_0" depart="1.00" type="DEFAULT_PEDTYPE">
+        <stop duration="600.00" arrival="601.00" arrivalPos="83.00" actType="waiting"/>
+    </personinfo>
+    <personinfo id="customer_1" depart="1.00" type="DEFAULT_PEDTYPE">
+        <stop duration="600.00" arrival="601.00" arrivalPos="0.00" actType="waiting"/>
+    </personinfo>
+    <personinfo id="customer_2" depart="1.00" type="DEFAULT_PEDTYPE">
+        <stop duration="600.00" arrival="601.00" arrivalPos="0.00" actType="waiting"/>
+    </personinfo>
+    <personinfo id="customer_3" depart="1.00" type="DEFAULT_PEDTYPE">
+        <stop duration="600.00" arrival="601.00" arrivalPos="51.32" actType="waiting"/>
+    </personinfo>
+    <personinfo id="customer_4" depart="1.00" type="DEFAULT_PEDTYPE">
+        <stop duration="600.00" arrival="601.00" arrivalPos="0.00" actType="waiting"/>
+    </personinfo>
+    <personinfo id="customer_5" depart="1.00" type="DEFAULT_PEDTYPE">
+        <stop duration="600.00" arrival="601.00" arrivalPos="0.00" actType="waiting"/>
+    </personinfo>
+</tripinfos>

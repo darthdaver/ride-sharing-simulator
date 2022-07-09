@@ -26,13 +26,14 @@ class Map:
             abs(current_coordinates[1] - reference_coordinates[1])
         )
 
-    def find_near_hexagon(self, hexagon_id):
+    def find_near_hexagon(self, sumo_net, hexagon_id):
         hexagon_ring = self.get_near_hexagons(hexagon_id, 20)
         for ring in hexagon_ring:
             for near_hexagon in ring:
-                if not self.get_area_from_hexagon(near_hexagon) == "unknown":
+                area_id = self.get_area_from_hexagon(near_hexagon)
+                if not area_id == "unknown":
                     try:
-                        return Map.generate_coordinates_from_hexagon(near_hexagon)
+                        return self.generate_coordinates_from_hexagon(sumo_net, area_id, near_hexagon)
                     except:
                         print(f"Map.find_near_hexagon - New coordinates in near hexagon {near_hexagon} not found.")
                         continue
@@ -53,7 +54,7 @@ class Map:
             hexagons.remove(hexagon_id)
             hexagon_ways = [*self.__hexagons[hexagon_id]["ways"]]
             while len(hexagon_ways) > 0:
-                way_id = utils.select_from_list(self.__hexagons[hexagon_id]["ways"])
+                way_id = utils.select_from_list(hexagon_ways)
                 hexagon_ways.remove(way_id)
                 position = self.get_random_position_from_way(sumo_net, way_id, must_be_edge=must_be_edge)
                 if position is not None:
@@ -83,8 +84,7 @@ class Map:
         assert False, "Map.generate_destination_point - destination not found"
         return start_point
 
-    def generate_destination_point_from_hexagon(self, sumo_net, start_point, destination_hexagon):
-        start_hexagon = h3.geo_to_h3(start_point[1], start_point[0], self.__resolution)
+    def generate_destination_point_from_hexagon(self, sumo_net, destination_hexagon):
         assert destination_hexagon in self.__hexagons, "Map.generate_destination_point_from_hexagon - destination hexagon not found"
         assert len(self.__hexagons[destination_hexagon]["ways"]) > 0 , "Map.generate_destination_point_from_hexagon - destination hexagon has not ways"
         candidate_ways = self.__hexagons[destination_hexagon]["ways"]
@@ -96,7 +96,7 @@ class Map:
         area_id = self.get_area_from_coordinates(start_point)
         start_hexagon = self.get_hexagon_id_from_coordinates(start_point)
         destination_hexagon = self.get_random_hexagon_from_area(area_id, exclude_hexagons=[start_hexagon])
-        destination_point = self.generate_destination_point_from_hexagon(sumo_net, start_point, destination_hexagon)
+        destination_point = self.generate_destination_point_from_hexagon(sumo_net, destination_hexagon)
         try:
             random_route = self.generate_route_from_coordinates(timestamp, sumo_net, [start_point, destination_point])
             return random_route
@@ -104,6 +104,18 @@ class Map:
             error_msg = f"Map.generate_random_route_in_area - Route impossible: no connection between the source {start_point} and the desitnation {destination_point}."
             print(error_msg)
             raise Exception(error_msg)
+
+    def generate_random_route_in_area_from_agent(self, timestamp, sumo_net, agent_info, agent_type):
+        area_id = self.get_area_from_coordinates(agent_info["current_coordinates"])
+        start_hexagon = self.get_hexagon_id_from_coordinates(agent_info["current_coordinates"])
+        destination_hexagon = self.get_random_hexagon_from_area(area_id, exclude_hexagons=[start_hexagon])
+        destination_point = self.generate_destination_point_from_hexagon(sumo_net, destination_hexagon)
+        try:
+            return self.generate_route_from_agent_to_destination_point(timestamp, sumo_net, agent_info, agent_type, destination_point)
+        except:
+            raise Exception(f"Map.generate_random_route_in_area_from_agent - Impossible to generate route from agent {agent_info} to coordinates {destination_point}")
+
+
 
     @staticmethod
     def generate_route_from_coordinates(timestamp, sumo_net, waypoints):
@@ -125,26 +137,53 @@ class Map:
             raise Exception(error_msg)
 
     @staticmethod
+    def generate_route_from_agents(timestamp, from_agent_info, from_agent_type, to_agent_info, to_agent_type):
+        from_edge_id = Map.get_edge_id_from_agent(from_agent_info, from_agent_type)
+        to_edge_id = Map.get_edge_id_from_agent(to_agent_info, to_agent_type)
+        try:
+            sumo_route_id, sumo_route = Map.generate_sumo_route_from_edge_ids(from_edge_id, to_edge_id)
+            sumo_route_distance = sumo_route.length
+            sumo_route_duration = sumo_route.travelTime
+            return Route(timestamp, from_agent_info["current_coordinates"], to_agent_info["current_coordinates"], 'sumo', sumo_route_id, sumo_route.edges, sumo_route_distance, sumo_route_duration)
+        except:
+            raise Exception(f"Map.generate_route_from_agents - Impossible to generate route from agent {from_agent_info['id']} to agent {to_agent_info['id']}")
+
+    @staticmethod
     def generate_sumo_route_from_edge_ids(from_edge_id, to_edge_id):
         sumo_route = traci.simulation.findRoute(from_edge_id, to_edge_id)
         sumo_route_id = f"route_from_{from_edge_id}_to_{to_edge_id}"
-        if len(sumo_route.edges) > 0 and not(sumo_route_id in traci.route.getIDList()):
-            traci.route.add(sumo_route_id, sumo_route.edges)
-            return (sumo_route_id, sumo_route)
+        if len(sumo_route.edges) > 0:
+            if not(sumo_route_id in traci.route.getIDList()):
+                traci.route.add(sumo_route_id, sumo_route.edges)
+                return (sumo_route_id, sumo_route)
+            else:
+                print("Route id already exist")
         else:
             error_msg = f"Map.generate_route_from_coordinates - Route impossible: no connection between the source {from_edge_id} and the desitnation {to_edge_id}."
             print(error_msg)
             raise Exception(error_msg)
 
+    @staticmethod
+    def generate_route_from_agent_to_destination_point(timestamp, sumo_net, from_agent_info, from_agent_type, to_coordinates):
+        from_edge_id = Map.get_edge_id_from_agent(from_agent_info, from_agent_type)
+        to_edge_id = Map.get_sumo_edge_id_from_coordinates(sumo_net, to_coordinates)
+        try:
+            sumo_route_id, sumo_route = Map.generate_sumo_route_from_edge_ids(from_edge_id, to_edge_id)
+            sumo_route_distance = sumo_route.length
+            sumo_route_duration = sumo_route.travelTime
+            return Route(timestamp, from_agent_info["current_coordinates"], to_coordinates, 'sumo', sumo_route_id, sumo_route.edges, sumo_route_distance, sumo_route_duration)
+        except:
+            raise Exception(f"Map.generate_route_from_agents - Impossible to generate route from agent {from_agent_info['id']} to coordinates {to_coordinates}")
+
     def get_area_from_coordinates(self, coordinates):
         hexagon_id = h3.geo_to_h3(coordinates[1], coordinates[0], self.__resolution)
-        if not self.__hexagons[hexagon_id]:
+        if not hexagon_id in self.__hexagons:
             return "unknown"
         area_id = self.__hexagons[hexagon_id]["area_id"]
         return area_id
 
     def get_area_from_hexagon(self, hexagon_id="random"):
-        if not self.__hexagons[hexagon_id]:
+        if not hexagon_id in self.__hexagons:
             return "unknown"
         area_id = self.__hexagons[hexagon_id]["area_id"]
         return area_id
@@ -167,6 +206,15 @@ class Map:
     def get_coordinates_from_hexagon_id(hexagon_id):
         h3_coordinates = h3.h3_to_geo(hexagon_id)
         return (h3_coordinates[1], h3_coordinates[0])
+
+    @staticmethod
+    def get_edge_id_from_agent(agent_info, agent_type):
+        if agent_type == HumanType.DRIVER:
+            return traci.vehicle.getRouteIndex(agent_info["id"])
+        elif agent_type == HumanType.CUSTOMER:
+            return traci.person.getEdges(agent_info["id"])
+        else:
+            raise Exception(f"Map.generate_sumo_route_from_agent_ids - Unknown from_agent_type {agent_type}")
 
     def get_hexagon_id_from_coordinates(self, coordinates):
         return h3.geo_to_h3(coordinates[1], coordinates[0], self.__resolution)
