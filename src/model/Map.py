@@ -155,9 +155,9 @@ class Map:
         if len(sumo_route.edges) > 0:
             if not(sumo_route_id in traci.route.getIDList()):
                 traci.route.add(sumo_route_id, sumo_route.edges)
-                return (sumo_route_id, sumo_route)
             else:
                 print("Route id already exist")
+            return (sumo_route_id, sumo_route)
         else:
             error_msg = f"Map.generate_route_from_coordinates - Route impossible: no connection between the source {from_edge_id} and the desitnation {to_edge_id}."
             print(error_msg)
@@ -210,9 +210,14 @@ class Map:
     @staticmethod
     def get_edge_id_from_agent(agent_info, agent_type):
         if agent_type == HumanType.DRIVER:
-            return traci.vehicle.getRouteIndex(agent_info["id"])
+            driver_id = agent_info["id"]
+            route_idx = traci.vehicle.getRouteIndex(driver_id)
+            current_edge = traci.vehicle.getRoute(driver_id)[route_idx]
+            return current_edge
         elif agent_type == HumanType.CUSTOMER:
-            return traci.person.getEdges(agent_info["id"])
+            customer_id = agent_info["id"]
+            current_edge = traci.person.getEdges(customer_id)[0]
+            return current_edge
         else:
             raise Exception(f"Map.generate_sumo_route_from_agent_ids - Unknown from_agent_type {agent_type}")
 
@@ -351,7 +356,8 @@ class Map:
     def is_arrived_by_sumo_edge(sumo_net, driver_info):
         destination_edge = traci.vehicle.getRoute(driver_info["id"])[-1]
         current_edge = Map.get_sumo_edge_id_from_coordinates(sumo_net, driver_info["current_coordinates"])
-        distance = round(traci.vehicle.getDrivingDistance(driver_info["id"], destination_edge, 0))
+        destination_position = driver_info["route"]["destination_position"]
+        distance = round(traci.vehicle.getDrivingDistance(driver_info["id"], destination_edge, destination_position))
         if destination_edge == current_edge and distance == 0:
             return True
         return False

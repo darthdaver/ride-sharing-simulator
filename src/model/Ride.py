@@ -30,6 +30,9 @@ class Ride:
         if self.__request["current_candidate"]:
             self.__request["current_candidate"]["response_count_down"] -= 1
 
+    def get_destination_route(self):
+        return self.__routes["destination_route"]
+
     def get_id(self):
         return self.__id
 
@@ -49,6 +52,9 @@ class Ride:
                 **self.__stats
             }
         }
+
+    def get_meeting_route(self):
+        return self.__routes["meeting_route"]
 
     def request_canceled(self):
         self.__request["state"] = RideRequestState.CANCELED

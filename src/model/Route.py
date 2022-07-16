@@ -1,9 +1,10 @@
 class Route:
-    def __init__(self, timestamp, starting_point, destination_point, route_type, route_id, route, original_distance, original_duration):
+    def __init__(self, timestamp, starting_point, destination_point, route_type, route_id, route, original_distance, original_duration, destination_position=0):
         self.__timestamp = timestamp
         self.__id = route_id
         self.__starting_point = starting_point
         self.__destination_point = destination_point
+        self.__destination_position = destination_position
         self.__route_type = route_type
         self.__route = route
         self.__original_distance = original_distance
@@ -11,6 +12,9 @@ class Route:
 
     def get_destination_point(self):
         return self.__destination_point
+
+    def get_destination_position(self):
+        return self.__destination_position
 
     def get_original_distance(self):
         return self.__original_distance
@@ -33,11 +37,15 @@ class Route:
     def get_timestamp(self):
         return self.__timestamp
 
+    def set_destination_position(self, destination_position):
+        self.__destination_position = destination_position
+
     def to_dict(self):
         return {
             "id": self.__id,
             "starting_point": self.__starting_point,
             "destination_point": self.__destination_point,
+            "destination_position": self.__destination_position,
             "route_type": self.__route_type,
             "route": self.__route,
             "original_distance": self.__original_distance,

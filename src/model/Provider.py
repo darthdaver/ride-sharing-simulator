@@ -33,6 +33,14 @@ class Provider:
         price = (base_fare + (fee_per_minute * travel_time) + (fee_per_mile * ride_length/1000)) * surge_multiplier
         return price
 
+    def get_ride_meeting_route(self, ride_id):
+        ride = self.__rides[ride_id]
+        return ride.get_meeting_route()
+
+    def get_ride_destination_route(self, ride_id):
+        ride = self.__rides[ride_id]
+        return ride.get_destination_route()
+
     @staticmethod
     def get_idle_drivers_info(drivers_info):
         drivers_info_array = list(drivers_info.values())
@@ -185,7 +193,8 @@ class Provider:
         free_drivers = []
         for driver_info in drivers_info.values():
             if not (driver_info["pending_request"] or driver_info["state"] in [DriverState.MOVING, DriverState.ONROAD, DriverState.PICKUP, DriverState.RESPONDING, DriverState.INACTIVE]):
-                free_drivers.append(driver_info)
+                if driver_info["id"] in traci.vehicle.getIDList():
+                    free_drivers.append(driver_info)
         return free_drivers
 
     def __get_rides_by_state(self, state):

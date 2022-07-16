@@ -44,6 +44,9 @@ class Driver(Human):
         self.__route = route
         return self.get_info()
 
+    def set_route_destination_position(self, destination_position):
+        self.__route.set_destination_position(destination_position)
+
     def set_state(self, state):
         self.state = state
         return self.get_info()

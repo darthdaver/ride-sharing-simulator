@@ -27,7 +27,5 @@
 -->
 
 <additional xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/additional_file.xsd">
-    <vType id="driver" vClass="taxi" color="39,13,227">
-        <param key="has.taxi.device" value="true"/>
-    </vType>
+    <vType id="driver" vClass="passenger" color="39,13,227"></vType>
 </additional>
