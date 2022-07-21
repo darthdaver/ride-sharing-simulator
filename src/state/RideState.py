@@ -4,7 +4,7 @@ class RideState(str, Enum):
     REQUESTED = "REQUESTED"
     PENDING = "PENDING"
     PICKUP = "PICKUP"
-    ONROAD = "ONROAD"
+    ON_ROAD = "ON_ROAD"
     END = "END"
     CANCELED = "CANCELED"
     NOT_ACCOMPLISHED = "NOT ACCOMPLISHED"

@@ -1,13 +1,13 @@
 from os import times
 from src.state.RideRequestState import RideRequestState
 from time import time
-from src.model_old.Customer import Customer
-from src.model_old.Driver import Driver
-from src.model_old.Net import Net
-from src.model_old.Uber import Uber
-from src.model_old.Ride import Ride
+from src.model.Customer import Customer
+from src.model.Driver import Driver
+from src.model.Net import Net
+from src.model.Uber import Uber
+from src.model.Ride import Ride
 from src.debug.Debug import Debug
-from src.controller_old.Printer import Printer
+from src.controller.Printer import Printer
 from src.state.RideState import RideState
 from src.state.DriverState import DriverState
 from src.state.FileSetup import FileSetup
@@ -408,7 +408,7 @@ class Simulator:
             for area_id, area in self.net.areas.items():
                 area.stats["last_checkpoint"] = step - 1
 
-        self.traci.close(False)
+        self.traci.close()
         sys.stdout.flush()
 
 
@@ -418,11 +418,11 @@ class Simulator:
             idle_timer_over = (timestamp - driver.last_ride) > self.timer_remove_driver_idle
             traci_remove = driver.id in list(self.traci.simulation.getArrivedIDList())
             traci_list = list(self.traci.vehicle.getTaxiFleet(0)) + list(self.traci.vehicle.getTaxiFleet(1)) + list(self.traci.vehicle.getTaxiFleet(2)) + list(self.traci.vehicle.getTaxiFleet(3))
-
-            if (driver.state == DriverState.IDLE.value and not(driver.request_pending) and (idle_timer_over or traci_remove or (not (driver.id in (traci_list))))):
+            
+            if (driver.state == DriverState.IDLE.value and (idle_timer_over or traci_remove or (not (driver.id in (traci_list))))):
                 #print(driver.id)
                 self.remove_driver(timestamp, driver)
-            elif (driver.state == DriverState.IDLE.value and surge_multiplier < 1.2 and not(driver.request_pending)):
+            elif (driver.state == DriverState.IDLE.value and surge_multiplier < 1.2):
                 stop_policy = self.driver_stop_work_policy[driver.personality]
                 stop_probability = (timestamp - driver.last_ride) * 1/(surge_multiplier * 100)
                 if (utils.random_choice(stop_probability)):
@@ -574,7 +574,7 @@ class Simulator:
             driver = self.uber.drivers[ride.driver_id]
             customer = self.uber.customers[ride.customer_id]
             if driver.current_edge == customer.current_edge:
-                ride.update_on_road(timestamp)
+                ride.update_onroad(timestamp)
                 customer.update_onroad_ride()
                 driver.update_onroad_ride()
                 self.uber.update_onroad_ride(ride, driver)

@@ -62,6 +62,7 @@ class Ride:
 
     def request_canceled(self):
         self.__request["state"] = RideRequestState.CANCELED
+        self.__state = RideState.CANCELED
         return self.get_info()
 
     def request_rejected(self, driver_id, idle_driver=True):
@@ -106,7 +107,7 @@ class Ride:
         return self.get_info()
 
     def update_on_road(self, stats):
-        self.__state = RideState.ONROAD
+        self.__state = RideState.ON_ROAD
         self.__set_stats(stats)
         return self.get_info()
 

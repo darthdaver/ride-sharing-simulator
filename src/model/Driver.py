@@ -67,7 +67,7 @@ class Driver(Human):
 
     def update_on_road(self, destination_route):
         self.__route = destination_route
-        self.state = DriverState.ONROAD
+        self.state = DriverState.ON_ROAD
         return self.get_info()
 
     def update_pickup(self, route):

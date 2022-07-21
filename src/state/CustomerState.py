@@ -5,4 +5,4 @@ class CustomerState(str, Enum):
     INACTIVE = "INACTIVE"
     PENDING = "PENDING"
     PICKUP = "PICKUP"
-    ONROAD = "ONROAD"
+    ON_ROAD = "ON_ROAD"

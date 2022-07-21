@@ -6,4 +6,4 @@ class DriverState(str, Enum):
     IDLE = "IDLE"
     MOVING = "MOVING"
     PICKUP = "PICKUP"
-    ONROAD = "ONROAD"
+    ON_ROAD = "ON_ROAD"

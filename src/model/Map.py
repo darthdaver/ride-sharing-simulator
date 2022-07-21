@@ -359,7 +359,7 @@ class Map:
 
     @staticmethod
     def is_arrived_by_sumo_edge(sumo_net, driver_info):
-        if driver_info["state"] in [DriverState.PICKUP, DriverState.ONROAD]:
+        if driver_info["state"] in [DriverState.PICKUP, DriverState.ON_ROAD]:
             destination_edge = traci.vehicle.getRoute(driver_info["id"])[-1]
             current_edge = Map.get_sumo_edge_id_from_coordinates(sumo_net, driver_info["current_coordinates"])
             destination_position = driver_info["route"]["destination_position"]

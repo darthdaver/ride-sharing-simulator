@@ -25,7 +25,7 @@ class Customer(Human):
         return self.get_info()
 
     def update_on_road(self):
-        self.state = CustomerState.ONROAD
+        self.state = CustomerState.ON_ROAD
         return self.get_info()
 
     def update_pending(self):
