@@ -12,6 +12,7 @@ from src.utils import utils
 class Provider:
     def __init__(self, provider_setup):
         self.__rides = {}
+        self.__removed_rides = {}
         self.__fare = provider_setup["fare"]
         self.__request = provider_setup["request"]
         self.__unprocessed_requests = []
@@ -99,11 +100,11 @@ class Provider:
             return (ride_info, RideRequestState.SEARCHING_CANDIDATES, None)
         elif ride_info["request"]["state"] == RideRequestState.NONE:
             self.__ride_not_accomplished(ride)
-            return [ride_info, RideRequestState.SEARCHING_CANDIDATES, None]
+            return [ride_info, RideRequestState.NONE, None]
         elif ride_info["request"]["state"] in [RideRequestState.SENT, RideRequestState.WAITING]:
             current_candidate = ride_info["request"]["current_candidate"]
             assert current_candidate is not None, "Provider.manage_pending_request - candidate undefined [1]"
-            if current_candidate and current_candidate["response_count_down"] == current_candidate["sent_request_back_timer"]:
+            if current_candidate and current_candidate["response_count_down"] == current_candidate["send_request_back_timer"]:
                 return (ride_info, RideRequestState.RESPONSE, current_candidate["id"])
             else:
                 ride.decrement_count_down_request()
@@ -114,23 +115,26 @@ class Provider:
         return (ride_info, RideRequestState.NONE, None)
 
     def print_rides(self, timestamp):
-        path = f"{os.getcwd()}/../output/rides_{timestamp}.json"
+        path = f"{os.getcwd()}/output/rides_{timestamp}.json"
         with open(path, 'w') as outfile:
             json.dump(self.__rides, outfile)
 
     def print_rides_state(self, timestamp):
         for ride in self.__rides.values():
             ride_info = ride.get_info()
-            path = f"{os.getcwd()}/../output/{ride_info['id']}.json"
+            path = f"{os.getcwd()}/output/{ride_info['id']}.json"
             data = {
                 **ride_info,
                 "request": {
-                    "state": ride_info["request"]["state"],
-                    "current_candidate": ride_info["request"]["current_candidate"],
-                    "driver_candidates": list(map(lambda r: {
-                        **r,
-                        "meeting_route": r["meeting_route"],
-                    }, ride_info["request"])),
+                    "state": ride_info["request"]["state"].value,
+                    "current_candidate": {
+                        **ride_info["request"]["current_candidate"],
+                        "meeting_route": ride_info["request"]["current_candidate"]["meeting_route"].to_dict()
+                    } if ride_info["request"]["current_candidate"] is not None else None,
+                    "driver_candidates": list(map(lambda d: {
+                        **d,
+                        "meeting_route": d["meeting_route"].to_dict(),
+                    }, ride_info["request"]["drivers_candidates"])),
                 },
                 "routes": {
                     "meeting_route": ride_info["routes"]["meeting_route"],
@@ -152,7 +156,16 @@ class Provider:
         self.__rides[ride.get_info()["id"]] = ride
         self.__unprocessed_requests.append(ride.get_id())
 
+    def refine_ride_route(self, ride_id, route, route_type):
+        assert route_type in ["meeting_route","destination_route"], f"Provider.refine_ride_route - unexpected route_type {route_type}"
+        ride = self.__rides[ride_id]
+        ride_info = ride.refine_route(route_type, route)
+        return ride_info
+
     def remove_ride(self, ride_id):
+        ride = self.__rides[ride_id]
+        ride.set_state(RideState.SIMULATION_ERROR)
+        self.__removed_rides[ride_id] = ride
         del self.__rides[ride_id]
         return
 
@@ -217,7 +230,7 @@ class Provider:
 
                 if expected_route_distance <= self.__request["max_driver_distance"]:
                     self.add_candidate_to_ride(ride_info["id"], {
-                        "id": driver_info["id"],
+                        "id": driver_id,
                         "response_count_down": 15,
                         "meeting_route": route,
                         "send_request_back_timer": utils.random_int_from_range(0, 11),

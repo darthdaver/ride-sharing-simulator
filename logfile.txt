@@ -1,0 +1,22 @@
+***Starting server on port 58563 ***
+Loading net-file from 'net_config/schaffhausen.net.xml' ... done (2627ms).
+Loading additional-files from 'net_config/add.add.xml' ... done (11ms).
+Loading done.
+Simulation started with time: 0.00
+Simulation ended at time: 109.00
+Performance: 
+ Duration: 239.73s
+ TraCI-Duration: 12.45s
+ Real time factor: 0.45468
+ UPS: 0.446337
+ UPS-Persons: 0.575650
+Vehicles: 
+ Inserted: 4 (Loaded: 10)
+ Running: 3
+ Waiting: 0
+Persons: 
+ Inserted: 2
+ Running: 2
+
+DijkstraRouter answered 6 queries and explored 2344.33 edges on average.
+DijkstraRouter spent 0.02s answering queries (2.50ms on average).

@@ -1,6 +1,6 @@
 from enum import Enum
 
-class HumanPersonality(Enum):
+class HumanPersonality(str, Enum):
     HURRY = "HURRY"
     GREEDY = "GREEDY"
     NORMAL = "NORMAL"

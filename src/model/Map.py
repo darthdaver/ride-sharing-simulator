@@ -7,6 +7,7 @@ import h3
 from src.utils import utils
 from src.state.HumanType import HumanType
 from src.model.Route import Route
+from src.state.DriverState import DriverState
 import sumolib
 import traci
 
@@ -20,7 +21,17 @@ class Map:
         self.__resolution = resolution
 
     @staticmethod
+    def add_sumo_route_to_simulation(sumo_route_id, sumo_route):
+        if not (sumo_route_id in traci.route.getIDList()):
+            traci.route.add(sumo_route_id, sumo_route.edges)
+        else:
+            print("Route id already exist")
+
+    @staticmethod
     def compute_distance(current_coordinates, reference_coordinates):
+        if type(current_coordinates[0]) == str or type(current_coordinates[1]) == str or type(reference_coordinates[0]) == str or type(reference_coordinates[1]) == str:
+            print(current_coordinates)
+            print(reference_coordinates)
         return (
             abs(current_coordinates[0] - reference_coordinates[0]),
             abs(current_coordinates[1] - reference_coordinates[1])
@@ -115,8 +126,6 @@ class Map:
         except:
             raise Exception(f"Map.generate_random_route_in_area_from_agent - Impossible to generate route from agent {agent_info} to coordinates {destination_point}")
 
-
-
     @staticmethod
     def generate_route_from_coordinates(timestamp, sumo_net, waypoints):
         from_edge_id = Map.get_sumo_edge_id_from_coordinates(sumo_net, waypoints[0])
@@ -126,11 +135,8 @@ class Map:
         sumo_route_duration = sumo_route.travelTime
         sumo_route_id = f"route_from_{from_edge_id}_to_{to_edge_id}"
         if len(sumo_route.edges) > 0:
-            if not(sumo_route_id in traci.route.getIDList()):
-                traci.route.add(sumo_route_id, sumo_route.edges)
-            else:
-                print("Route id already exist")
-            return Route(timestamp, waypoints[0], waypoints[1], "sumo", sumo_route_id, sumo_route, sumo_route_distance, sumo_route_duration)
+            Map.add_sumo_route_to_simulation(sumo_route_id, sumo_route)
+            return Route(timestamp, waypoints[0], waypoints[1], "sumo", sumo_route_id, sumo_route.edges, sumo_route_distance, sumo_route_duration)
         else:
             error_msg =f"Map.generate_route_from_coordinates - Route impossible: no connection between the source {waypoints[0]} and the desitnation {waypoints[1]}."
             print(error_msg)
@@ -144,24 +150,10 @@ class Map:
             sumo_route_id, sumo_route = Map.generate_sumo_route_from_edge_ids(from_edge_id, to_edge_id)
             sumo_route_distance = sumo_route.length
             sumo_route_duration = sumo_route.travelTime
+            Map.add_sumo_route_to_simulation(sumo_route_id, sumo_route)
             return Route(timestamp, from_agent_info["current_coordinates"], to_agent_info["current_coordinates"], 'sumo', sumo_route_id, sumo_route.edges, sumo_route_distance, sumo_route_duration)
         except:
             raise Exception(f"Map.generate_route_from_agents - Impossible to generate route from agent {from_agent_info['id']} to agent {to_agent_info['id']}")
-
-    @staticmethod
-    def generate_sumo_route_from_edge_ids(from_edge_id, to_edge_id):
-        sumo_route = traci.simulation.findRoute(from_edge_id, to_edge_id)
-        sumo_route_id = f"route_from_{from_edge_id}_to_{to_edge_id}"
-        if len(sumo_route.edges) > 0:
-            if not(sumo_route_id in traci.route.getIDList()):
-                traci.route.add(sumo_route_id, sumo_route.edges)
-            else:
-                print("Route id already exist")
-            return (sumo_route_id, sumo_route)
-        else:
-            error_msg = f"Map.generate_route_from_coordinates - Route impossible: no connection between the source {from_edge_id} and the desitnation {to_edge_id}."
-            print(error_msg)
-            raise Exception(error_msg)
 
     @staticmethod
     def generate_route_from_agent_to_destination_point(timestamp, sumo_net, from_agent_info, from_agent_type, to_coordinates):
@@ -171,9 +163,22 @@ class Map:
             sumo_route_id, sumo_route = Map.generate_sumo_route_from_edge_ids(from_edge_id, to_edge_id)
             sumo_route_distance = sumo_route.length
             sumo_route_duration = sumo_route.travelTime
+            Map.add_sumo_route_to_simulation(sumo_route_id, sumo_route)
             return Route(timestamp, from_agent_info["current_coordinates"], to_coordinates, 'sumo', sumo_route_id, sumo_route.edges, sumo_route_distance, sumo_route_duration)
         except:
             raise Exception(f"Map.generate_route_from_agents - Impossible to generate route from agent {from_agent_info['id']} to coordinates {to_coordinates}")
+
+    @staticmethod
+    def generate_sumo_route_from_edge_ids(from_edge_id, to_edge_id):
+        sumo_route = traci.simulation.findRoute(from_edge_id, to_edge_id)
+        sumo_route_id = f"route_from_{from_edge_id}_to_{to_edge_id}"
+        if len(sumo_route.edges) > 0:
+            Map.add_sumo_route_to_simulation(sumo_route_id, sumo_route)
+            return (sumo_route_id, sumo_route)
+        else:
+            error_msg = f"Map.generate_route_from_coordinates - Route impossible: no connection between the source {from_edge_id} and the desitnation {to_edge_id}."
+            print(error_msg)
+            raise Exception(error_msg)
 
     def get_area_from_coordinates(self, coordinates):
         hexagon_id = h3.geo_to_h3(coordinates[1], coordinates[0], self.__resolution)
@@ -354,13 +359,21 @@ class Map:
 
     @staticmethod
     def is_arrived_by_sumo_edge(sumo_net, driver_info):
-        destination_edge = traci.vehicle.getRoute(driver_info["id"])[-1]
-        current_edge = Map.get_sumo_edge_id_from_coordinates(sumo_net, driver_info["current_coordinates"])
-        destination_position = driver_info["route"]["destination_position"]
-        distance = round(traci.vehicle.getDrivingDistance(driver_info["id"], destination_edge, destination_position))
-        if destination_edge == current_edge and distance == 0:
-            return True
-        return False
+        if driver_info["state"] in [DriverState.PICKUP, DriverState.ONROAD]:
+            destination_edge = traci.vehicle.getRoute(driver_info["id"])[-1]
+            current_edge = Map.get_sumo_edge_id_from_coordinates(sumo_net, driver_info["current_coordinates"])
+            destination_position = driver_info["route"]["destination_position"]
+            distance = round(traci.vehicle.getDrivingDistance(driver_info["id"], destination_edge, destination_position))
+            if destination_edge == current_edge and distance == 0:
+                return True
+            return False
+        elif driver_info["state"] in [DriverState.IDLE, DriverState.RESPONDING, DriverState.MOVING]:
+            current_route_idx = traci.vehicle.getRouteIndex(driver_info["id"])
+            driver_route = driver_info["route"]
+            current_edge = driver_route[current_route_idx]
+            if current_edge == driver_route[-2]:
+                return True
+            return False
 
     @staticmethod
     def is_sumo_edge(sumo_net, id):
@@ -378,6 +391,13 @@ class Map:
 
     def is_valid_sumo_route(self, sumo_route):
         return len(sumo_route.edges) > 0
+
+    @staticmethod
+    def refine_sumo_route(timestamp, from_edge, to_edge, from_point, to_point):
+        refined_sumo_route_id, refined_sumo_route = Map.generate_sumo_route_from_edge_ids(from_edge, to_edge)
+        refined_sumo_route_distance = refined_sumo_route.length
+        refined_sumo_route_duration = refined_sumo_route.travelTime
+        return Route(timestamp, from_point, to_point, 'sumo', refined_sumo_route_id, refined_sumo_route.edges, refined_sumo_route_distance, refined_sumo_route_duration)
 
     def reset_generation_policy(self, area_id):
         area = self.__areas[area_id]

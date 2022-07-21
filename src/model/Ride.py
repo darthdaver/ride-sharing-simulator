@@ -56,6 +56,10 @@ class Ride:
     def get_meeting_route(self):
         return self.__routes["meeting_route"]
 
+    def refine_route(self, route_type, route):
+        self.__routes[route_type] = route
+        return self.get_info()
+
     def request_canceled(self):
         self.__request["state"] = RideRequestState.CANCELED
         return self.get_info()
