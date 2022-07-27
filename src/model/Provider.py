@@ -17,7 +17,6 @@ class Provider:
         self.__rides_by_state = {k.value: [] for k in RideState}
         self.__fare = provider_setup["fare"]
         self.__request = provider_setup["request"]
-        self.__pending_customers = []
 
     def add_ride(self, ride):
         self.__rides[ride.get_id()] = ride
@@ -40,12 +39,16 @@ class Provider:
             ride = self.__rides[ride_id]
             ride_info = ride.get_info()
             if agent_type == HumanType.DRIVER:
-                if ride_info["driver_id"] == agent_info["id"]:
-                    return ride_info
+                if state == RideState.PENDING:
+                    if ride_info["request"]["current_candidate"]["id"] == agent_info["id"]:
+                        return ride_info
+                else:
+                    if ride_info["driver_id"] == agent_info["id"]:
+                        return ride_info
             elif agent_type == HumanType.CUSTOMER:
                 if ride_info["customer_id"] == agent_info["id"]:
                     return ride_info
-        assert False, f"Provider.find_ride_by_agent_id - ride associated to agent {agent_info['id']} with state {agent_info['state']}, not found."
+        return None
 
     def print_rides_number(self):
         print(len(self.__rides.keys()))
@@ -101,7 +104,6 @@ class Provider:
         if ride_info["request"]["state"] in [RideRequestState.REJECTED, RideRequestState.UNPROCESSED]:
             self.set_ride_request_state(ride_info["id"], RideRequestState.SEARCHING_CANDIDATES)
             free_drivers_info = self.__free_drivers_info(drivers_info)
-            self.__pending_customers.remove(ride_info["customer_id"])
             free_drivers_ids = list(map(lambda d: d["id"], free_drivers_info))
             candidate = self.__select_driver_candidate(ride_info, drivers_info, free_drivers_ids)
             if candidate:
@@ -114,7 +116,7 @@ class Provider:
         elif ride_info["request"]["state"] == RideRequestState.SEARCHING_CANDIDATES:
             return (ride_info, RideRequestState.SEARCHING_CANDIDATES, None)
         elif ride_info["request"]["state"] == RideRequestState.NONE:
-            self.__ride_not_accomplished(ride)
+            ride_info = self.__ride_not_accomplished(ride)
             return [ride_info, RideRequestState.NONE, None]
         elif ride_info["request"]["state"] in [RideRequestState.SENT, RideRequestState.WAITING]:
             current_candidate = ride_info["request"]["current_candidate"]
@@ -210,6 +212,8 @@ class Provider:
 
     def update_ride_accepted(self, ride_id, driver_id, meeting_route, destination_route, stats):
         ride = self.__rides[ride_id]
+        ride_info = ride.get_info()
+        self.set_ride_request_state(ride_info["id"], RideRequestState.ACCEPTED)
         return ride.update_accepted(driver_id, meeting_route, destination_route, stats)
 
     def update_ride_pickup(self, ride_id):
@@ -238,7 +242,7 @@ class Provider:
 
     def __free_drivers_info(self, drivers_info):
         free_drivers = []
-        for driver_info in drivers_info:
+        for driver_info in drivers_info.values():
             if driver_info["id"] in traci.vehicle.getIDList():
                 free_drivers.append(driver_info)
         return free_drivers
@@ -273,7 +277,6 @@ class Provider:
             except:
                 print(f"Provider.__nearby_drivers - Impossbile to generate route for driver {driver_info['id']}")
                 continue
-        self.__pending_customers.append(ride_info["customer_id"])
         self.__rides[ride_info["id"]].sort_candidates()
 
     def __ride_not_accomplished(self, ride):
@@ -285,9 +288,7 @@ class Provider:
     def __select_driver_candidate(self, ride_info, drivers_info, free_drivers_ids):
         drivers_candidates = ride_info["request"]["drivers_candidates"]
         for candidate in drivers_candidates:
-            driver = drivers_info[candidate["id"]]
-            if not driver["pending_request"]:
-                if candidate and candidate["id"] in free_drivers_ids:
-                    return candidate
+            if candidate and candidate["id"] in free_drivers_ids:
+                return candidate
         return None
 

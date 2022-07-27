@@ -7,24 +7,22 @@ class Driver(Human):
         self.__route = route
         self.__current_distance = None
         self.__last_ride_timestamp = timestamp
-        self.__pending_request = False
+        self.__rides_completed = 0
 
     def get_info(self):
         return {
             **super().get_info(),
-            "pending_request": self.__pending_request,
             "route": None if self.__route is None else self.__route.to_dict(),
             "last_ride_timestamp": self.__last_ride_timestamp,
-            "current_distance": self.__current_distance
+            "current_distance": self.__current_distance,
+            "rides_completed": self.__rides_completed
         }
 
     def receive_request(self):
         self.state = DriverState.RESPONDING
-        self.__pending_request = True
         return self.get_info()
 
     def reject_request(self):
-        self.__pending_request = False
         self.state = DriverState.IDLE
         return self.get_info()
 
@@ -34,10 +32,6 @@ class Driver(Human):
 
     def set_coordinates(self, coordinates):
         self.current_coordinates = coordinates
-        return self.get_info()
-
-    def set_pending_request(self, value):
-        self.__pending_request = value
         return self.get_info()
 
     def set_route(self, route):
@@ -58,6 +52,7 @@ class Driver(Human):
         self.state = DriverState.IDLE
         self.__route = route
         self.__last_ride_timestamp = timestamp
+        self.__rides_completed += 1
         return self.get_info()
 
     def update_end_moving(self, route):
@@ -72,7 +67,6 @@ class Driver(Human):
 
     def update_pickup(self, route):
         self.state = DriverState.PICKUP
-        self.__pending_request = False
         self.__route = route
         return self.get_info()
     
