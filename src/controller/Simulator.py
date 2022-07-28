@@ -802,17 +802,15 @@ class Simulator:
                     print("STOP")
                 if timestamp == 1.0:
                     Printer.save_specific_indicators(timestamp)
-                #self.print_customers()
-                #self.__provider.print_rides_state(timestamp)
-                print(self.__drivers_by_state)
-                print(self.__customers_by_state)
+                #print(self.__drivers_by_state)
+                #print(self.__customers_by_state)
                 Printer.save_global_indicators(timestamp, self.__provider.get_rides_info_by_state("all"))
                 Printer.save_surge_multipliers(timestamp, self.__map.get_areas_info())
 
             except Exception as e:
                 self.print_drivers()
                 print(self.__drivers_by_state)
-                #print(self.__customers_by_state)
+                print(self.__customers_by_state)
                 print(e)
                 raise Exception("A Fatal error occurred in Simulator.run")
         traci.close(False)

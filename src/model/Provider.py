@@ -257,17 +257,31 @@ class Provider:
 
     def __nearby_drivers(self, timestamp, sumo_net, ride_info, meeting_point, drivers_info):
         drivers_info_array = list(drivers_info.values())
+        nearby_candidates = []
         for driver_info in drivers_info_array:
             driver_id = driver_info["id"]
+            air_distance = Map.get_air_distance(meeting_point, driver_info["current_coordinates"])
+            if air_distance <= self.__request["max_driver_distance"]:
+                nearby_candidates.append({
+                    "driver_id": driver_id,
+                    "current_coordinates": driver_info["current_coordinates"],
+                    "air_distance": air_distance
+                })
+
+                if len(nearby_candidates) == 5:
+                    break
+        if len(nearby_candidates) > 0:
+            nearby_candidates.sort(key=lambda c: c["air_distance"])
+        for candidate in nearby_candidates:
             try:
-                print(f"Map.__nearby_drivers | Driver {driver_info['id']} - generate route from {driver_info['current_coordinates']} to destination {meeting_point}")
-                route = Map.generate_route_from_coordinates(timestamp, sumo_net, [driver_info["current_coordinates"], meeting_point])
+                print(f"Map.__nearby_drivers | Driver {candidate['driver_id']} - generate route from {candidate['current_coordinates']} to destination {meeting_point}")
+                route = Map.generate_route_from_coordinates(timestamp, sumo_net, [candidate["current_coordinates"], meeting_point])
                 expected_route_distance = route.get_original_distance()
                 expected_route_duration = route.get_original_duration()
 
                 if expected_route_distance <= self.__request["max_driver_distance"]:
                     self.add_candidate_to_ride(ride_info["id"], {
-                        "id": driver_id,
+                        "id": candidate["driver_id"],
                         "response_count_down": 15,
                         "meeting_route": route,
                         "send_request_back_timer": utils.random_int_from_range(0, 11),

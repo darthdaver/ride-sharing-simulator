@@ -180,6 +180,10 @@ class Map:
             print(error_msg)
             raise Exception(error_msg)
 
+    @staticmethod
+    def get_air_distance(source_coordinates, destination_coordinates):
+        return h3.point_dist((source_coordinates[1],source_coordinates[0]),(destination_coordinates[1], destination_coordinates[0]), unit='m')
+
     def get_area_from_coordinates(self, coordinates):
         hexagon_id = h3.geo_to_h3(coordinates[1], coordinates[0], self.__resolution)
         if not hexagon_id in self.__hexagons:
