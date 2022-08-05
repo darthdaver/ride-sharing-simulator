@@ -25,7 +25,8 @@ class Map:
         if not (sumo_route_id in traci.route.getIDList()):
             traci.route.add(sumo_route_id, sumo_route.edges)
         else:
-            print("Route id already exist")
+            #print("Route id already exist")
+            pass
 
     @staticmethod
     def compute_distance(current_coordinates, reference_coordinates):
@@ -37,25 +38,21 @@ class Map:
             abs(current_coordinates[1] - reference_coordinates[1])
         )
 
-    def find_near_hexagon(self, sumo_net, hexagon_id):
+    def find_near_hexagon(self, hexagon_id):
         hexagon_ring = self.get_near_hexagons(hexagon_id, 20)
         for ring in hexagon_ring:
             for near_hexagon in ring:
                 area_id = self.get_area_from_hexagon(near_hexagon)
                 if not area_id == "unknown":
-                    try:
-                        return self.generate_coordinates_from_hexagon(sumo_net, area_id, near_hexagon)
-                    except:
-                        print(f"Map.find_near_hexagon - New coordinates in near hexagon {near_hexagon} not found.")
-                        continue
-        print("Map.find_near_hexagon - New coordinates not found")
+                    return near_hexagon
+        print("Map.find_near_hexagon - Near hexagon not found")
         return None
 
-    def generate_coordinates_from_hexagon(self, sumo_net, area_id, hexagon_id="random", must_be_edge=True):
+    def generate_random_coordinates_from_hexagon(self, sumo_net, area_id, hexagon_id="random", must_be_edge=True):
         area = self.__areas[area_id]
         is_random = True
         if not hexagon_id == "random":
-            assert hexagon_id in area["hexagons"], "Map.generate_coordinates_from_hexagon - Id hexagon dose not belong to area"
+            assert hexagon_id in area["hexagons"], "Map.generate_random_coordinates_from_hexagon - Id hexagon dose not belong to area"
         hexagons = copy.deepcopy(area["hexagons"])
         while len(hexagons) > 0:
             if hexagon_id == "random":
@@ -71,8 +68,8 @@ class Map:
                 if position is not None:
                     return position
             if not is_random:
-                raise Exception("Map.generate_coordinates_from_hexagon - no way found")
-        raise Exception("Map.generate_coordinates_from_hexagon - no way found")
+                raise Exception("Map.generate_random_coordinates_from_hexagon - no way found")
+        raise Exception("Map.generate_random_coordinates_from_hexagon - no way found")
 
     def generate_destination_point(self, sumo_net, start_point, distance):
         start_hexagon = h3.geo_to_h3(start_point[1], start_point[0], self.__resolution)
@@ -113,7 +110,7 @@ class Map:
             return random_route
         except:
             error_msg = f"Map.generate_random_route_in_area - Route impossible: no connection between the source {start_point} and the desitnation {destination_point}."
-            print(error_msg)
+            #print(error_msg)
             raise Exception(error_msg)
 
     def generate_random_route_in_area_from_agent(self, timestamp, sumo_net, agent_info, agent_type):
@@ -139,7 +136,7 @@ class Map:
             return Route(timestamp, waypoints[0], waypoints[1], "sumo", sumo_route_id, sumo_route.edges, sumo_route_distance, sumo_route_duration)
         else:
             error_msg =f"Map.generate_route_from_coordinates - Route impossible: no connection between the source {waypoints[0]} and the desitnation {waypoints[1]}."
-            print(error_msg)
+            #print(error_msg)
             raise Exception(error_msg)
 
     @staticmethod
@@ -177,7 +174,7 @@ class Map:
             return (sumo_route_id, sumo_route)
         else:
             error_msg = f"Map.generate_route_from_coordinates - Route impossible: no connection between the source {from_edge_id} and the desitnation {to_edge_id}."
-            print(error_msg)
+            #print(error_msg)
             raise Exception(error_msg)
 
     @staticmethod
@@ -191,7 +188,7 @@ class Map:
         area_id = self.__hexagons[hexagon_id]["area_id"]
         return area_id
 
-    def get_area_from_hexagon(self, hexagon_id="random"):
+    def get_area_from_hexagon(self, hexagon_id):
         if not hexagon_id in self.__hexagons:
             return "unknown"
         area_id = self.__hexagons[hexagon_id]["area_id"]
@@ -373,11 +370,19 @@ class Map:
             return False
         elif driver_info["state"] in [DriverState.IDLE, DriverState.RESPONDING, DriverState.MOVING]:
             current_route_idx = traci.vehicle.getRouteIndex(driver_info["id"])
-            driver_route = driver_info["route"]
+            driver_route = driver_info["route"]["route"]
+            if current_route_idx < 0:
+                return False
+            if current_route_idx >= len(driver_route):
+                return True
             current_edge = driver_route[current_route_idx]
-            if current_edge == driver_route[-2]:
+            if current_edge == driver_route[-1]:
                 return True
             return False
+
+    def is_departed(self, driver_id):
+        current_route_idx = traci.vehicle.getRouteIndex(driver_id)
+        return current_route_idx >= 0
 
     @staticmethod
     def is_sumo_edge(sumo_net, id):
@@ -403,9 +408,17 @@ class Map:
         refined_sumo_route_duration = refined_sumo_route.travelTime
         return Route(timestamp, from_point, to_point, 'sumo', refined_sumo_route_id, refined_sumo_route.edges, refined_sumo_route_distance, refined_sumo_route_duration)
 
+    def reset_agent_generation_policy(self, area_id, agent_type):
+        assert agent_type in [HumanType.DRIVER, HumanType.CUSTOMER], f"Map.reset_agent_generation_policy - Unknown agent type {agent_type}"
+        area = self.__areas[area_id]
+        agent_label = agent_type.value.lower()
+        area["current_generation_probability"][agent_label] = [
+            *area["generation_policy"][agent_label]
+        ]
+
     def reset_generation_policy(self, area_id):
         area = self.__areas[area_id]
-        area["current_generation_policy"] = {
+        area["current_generation_probability"] = {
             **area["generation_policy"]
         }
 

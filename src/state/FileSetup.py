@@ -6,6 +6,5 @@ class FileSetup(str, Enum):
     SIMULATOR = "src/config/simulator.json"
     PROVIDER = "src/config/provider.json"
     SCENARIO = "src/config/scenario.json"
-    TUNING = "src/config/tuning.json"
     MAP = "src/repos/city-mapdict.json"
-    NET = "net_config/schaffhausen.net.xml"
+    NET = "net_config/schaffhausen_simplified.net.xml"

@@ -1,3 +1,5 @@
+import math
+
 from src.state.RideState import RideState
 from src.state.RideRequestState import RideRequestState
 
@@ -13,6 +15,9 @@ class Ride:
         self.__request = {
             "state": RideRequestState.UNPROCESSED,
             "drivers_candidates": [],
+            "average_candidates_distance": math.inf,
+            "average_candidates_duration": math.inf,
+            "candidates_count": 0,
             "rejections": [],
             "current_candidate": None
         }
@@ -24,6 +29,7 @@ class Ride:
 
     def add_driver_candidate(self, driver_candidate):
         self.__request["drivers_candidates"].append(driver_candidate)
+        return self.get_info()
 
     def decrement_count_down_request(self):
         assert self.__request["current_candidate"] is not None, "Ride.decrement_count_down_request - candidate is undefined."
@@ -97,6 +103,11 @@ class Ride:
 
     def sort_candidates(self):
         self.__request["drivers_candidates"] = sorted(self.__request["drivers_candidates"], key=lambda d: d["expected_duration"])
+
+    def update_request(self, candidates_count, avg_distance, avg_duration):
+        self.__request["candidates_count"] = candidates_count
+        self.__request["average_distance"] = avg_distance
+        self.__request["average_duration"] = avg_duration
 
     def update_cancel(self):
         pass

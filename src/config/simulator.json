@@ -1,5 +1,5 @@
 {
-    "timer_remove_idle_driver": 250,
+    "timer_remove_idle_driver": 480,
     "type": "normal",
     "checkpoints": {
         "simulation_duration": 5000,

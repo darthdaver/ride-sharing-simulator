@@ -44,10 +44,12 @@ class Human:
 
     def __assign_personality(self, personality_distribution):
         value = random.random()
+        min_treshold = 0
 
-        for treshold, personality in personality_distribution:
-            if value <= treshold:
+        for max_treshold, personality in personality_distribution:
+            if min_treshold <= value <= max_treshold:
                 return personality
+            min_treshold = max_treshold
         return "normal"
 
     def accept_ride_conditions(self, surge_multiplier, policy, bias=0):

@@ -1,5 +1,6 @@
 import json
 import os
+import random
 
 import traci
 
@@ -10,6 +11,7 @@ from src.state.RideState import RideState
 from src.state.RideRequestState import RideRequestState
 from src.utils import utils
 from src.state.HumanType import HumanType
+from functools import reduce
 
 class Provider:
     def __init__(self, provider_setup):
@@ -22,7 +24,8 @@ class Provider:
         self.__rides[ride.get_id()] = ride
 
     def add_candidate_to_ride(self, ride_id, driver_candidate):
-        self.__rides[ride_id].add_driver_candidate(driver_candidate)
+        ride_info = self.__rides[ride_id].add_driver_candidate(driver_candidate)
+        return ride_info
 
     def find_ride_by_agent_id(self, agent_info, agent_type):
         assert agent_type in [HumanType.DRIVER, HumanType.CUSTOMER], f"Provider.find_ride_by_agent_id - unexpected agent type {agent_type}"
@@ -33,6 +36,8 @@ class Provider:
             state = RideState.ON_ROAD
         elif agent_info["state"] in [DriverState.RESPONDING, CustomerState.PENDING]:
             state = RideState.PENDING
+        elif agent_info["state"] == CustomerState.ACTIVE:
+            state = RideState.REQUESTED
         else:
             assert False, f"Provider.find_ride_by_agent_id - unexpected agent state {agent_info['state']}"
         for ride_id in self.__rides_by_state[state.value]:
@@ -53,12 +58,26 @@ class Provider:
     def print_rides_number(self):
         print(len(self.__rides.keys()))
 
+    def compute_balance(self, idle_customers_count, idle_drivers_count, active_drivers, active_customers):
+        if idle_customers_count > 0:
+            if idle_drivers_count == 0:
+                return 1 / (idle_customers_count + 1)
+            else:
+                return 0.5 + (idle_drivers_count / (2*idle_customers_count))
+        else:
+            return 0.7 + (idle_drivers_count / 10)
+
     def compute_price(self, travel_time, ride_length, surge_multiplier):
         base_fare = self.__fare["base_fare"]
         fee_per_minute = self.__fare["fee_per_minute"]
         fee_per_mile = self.__fare["fee_per_mile"]
         price = (base_fare + (fee_per_minute * travel_time) + (fee_per_mile * ride_length/1000)) * surge_multiplier
         return price
+
+    def compute_surge_multiplier_increment(self, balance):
+        for min_balance, max_balance, value in self.__fare["surge_multiplier_policy"]:
+            if min_balance <= balance < max_balance:
+                return value
 
     def get_ride_meeting_route(self, ride_id):
         ride = self.__rides[ride_id]
@@ -70,7 +89,7 @@ class Provider:
 
     def get_pending_rides(self):
         rides_array = list(self.__rides.values())
-        pending_rides = list(filter(lambda r: not (r.get_info()["request"]["state"] in [RideRequestState.CANCELED, RideRequestState.ACCEPTED]), rides_array))
+        pending_rides = list(filter(lambda r: (r.get_info()["state"] in [RideState.REQUESTED, RideState.PENDING]), rides_array))
         pending_rides_info = list(map(lambda r: r.get_info(), pending_rides))
         return pending_rides_info
 
@@ -105,19 +124,17 @@ class Provider:
             self.set_ride_request_state(ride_info["id"], RideRequestState.SEARCHING_CANDIDATES)
             free_drivers_info = self.__free_drivers_info(drivers_info)
             free_drivers_ids = list(map(lambda d: d["id"], free_drivers_info))
-            candidate = self.__select_driver_candidate(ride_info, drivers_info, free_drivers_ids)
+            candidate = self.__select_driver_candidate(ride_info, free_drivers_ids)
             if candidate:
                 ride_info = ride.set_candidate(candidate)
                 ride_info = ride.set_request_state(RideRequestState.SENT)
                 return (ride_info, RideRequestState.SENT, candidate["id"])
             else:
                 ride_info = ride.set_request_state(RideRequestState.NONE)
+                ride_info = self.__ride_not_accomplished(ride)
                 return [ride_info, RideRequestState.NONE, None]
         elif ride_info["request"]["state"] == RideRequestState.SEARCHING_CANDIDATES:
             return (ride_info, RideRequestState.SEARCHING_CANDIDATES, None)
-        elif ride_info["request"]["state"] == RideRequestState.NONE:
-            ride_info = self.__ride_not_accomplished(ride)
-            return [ride_info, RideRequestState.NONE, None]
         elif ride_info["request"]["state"] in [RideRequestState.SENT, RideRequestState.WAITING]:
             current_candidate = ride_info["request"]["current_candidate"]
             assert current_candidate is not None, "Provider.manage_pending_request - candidate undefined [1]"
@@ -127,7 +144,14 @@ class Provider:
                 ride.decrement_count_down_request()
                 assert current_candidate is not None, "Provider.manage_pending_request - candidate undefined [2]"
                 return (ride_info, RideRequestState.WAITING, current_candidate["id"])
+        elif ride_info["request"]["state"] == RideRequestState.ROUTE_NOT_FOUND:
+            self.remove_ride_simulation_error(ride_info["id"])
+            return (ride_info, RideRequestState.ROUTE_NOT_FOUND, None)
         return (ride_info, RideRequestState.NONE, None)
+
+    def print_ride_info(self, ride_id):
+        ride = self.__rides[ride_id]
+        print(ride.get_info())
 
     def print_rides(self, timestamp):
         path = f"{os.getcwd()}/output/rides_{timestamp}.json"
@@ -258,6 +282,9 @@ class Provider:
     def __nearby_drivers(self, timestamp, sumo_net, ride_info, meeting_point, drivers_info):
         drivers_info_array = list(drivers_info.values())
         nearby_candidates = []
+        sum_distance = 0
+        sum_duration = 0
+        random.shuffle(drivers_info_array)
         for driver_info in drivers_info_array:
             driver_id = driver_info["id"]
             air_distance = Map.get_air_distance(meeting_point, driver_info["current_coordinates"])
@@ -268,29 +295,40 @@ class Provider:
                     "air_distance": air_distance
                 })
 
-                if len(nearby_candidates) == 5:
-                    break
+                #if len(nearby_candidates) == 15:
+                    #break
         if len(nearby_candidates) > 0:
             nearby_candidates.sort(key=lambda c: c["air_distance"])
+        else:
+            print(f"Provider.__nearby_drivers - {ride_info['customer_id']} has 0 candidates.")
         for candidate in nearby_candidates:
             try:
-                print(f"Map.__nearby_drivers | Driver {candidate['driver_id']} - generate route from {candidate['current_coordinates']} to destination {meeting_point}")
+                #print(f"Map.__nearby_drivers | Driver {candidate['driver_id']} - generate route from {candidate['current_coordinates']} to destination {meeting_point}")
                 route = Map.generate_route_from_coordinates(timestamp, sumo_net, [candidate["current_coordinates"], meeting_point])
                 expected_route_distance = route.get_original_distance()
                 expected_route_duration = route.get_original_duration()
-
-                if expected_route_distance <= self.__request["max_driver_distance"]:
-                    self.add_candidate_to_ride(ride_info["id"], {
-                        "id": candidate["driver_id"],
-                        "response_count_down": 15,
-                        "meeting_route": route,
-                        "send_request_back_timer": utils.random_int_from_range(0, 11),
-                        "expected_distance": expected_route_distance,
-                        "expected_duration": expected_route_duration
-                    })
+                ride_info = self.add_candidate_to_ride(ride_info["id"], {
+                    "id": candidate["driver_id"],
+                    "response_count_down": 15,
+                    "meeting_route": route,
+                    "send_request_back_timer": utils.random_int_from_range(0, 11),
+                    "expected_distance": expected_route_distance,
+                    "expected_duration": expected_route_duration
+                })
+                sum_distance += expected_route_distance
+                sum_duration += expected_route_duration
             except:
                 print(f"Provider.__nearby_drivers - Impossbile to generate route for driver {driver_info['id']}")
                 continue
+
+        if len(nearby_candidates) > 0 and len(ride_info["request"]["drivers_candidates"]) == 0:
+            self.set_ride_request_state(ride_info["id"], RideRequestState.ROUTE_NOT_FOUND)
+        elif len(ride_info["request"]["drivers_candidates"]) > 0:
+            ride = self.__rides[ride_info["id"]]
+            candidates_count = len(ride_info["request"]["drivers_candidates"])
+            avg_distance = sum_distance / candidates_count
+            avg_duration = sum_duration / candidates_count
+            ride.update_request(candidates_count, avg_distance, avg_duration)
         self.__rides[ride_info["id"]].sort_candidates()
 
     def __ride_not_accomplished(self, ride):
@@ -299,7 +337,7 @@ class Provider:
         self.__rides_by_state[RideState.NOT_ACCOMPLISHED.value].append(ride_info["id"])
         return ride.set_state(RideState.NOT_ACCOMPLISHED)
 
-    def __select_driver_candidate(self, ride_info, drivers_info, free_drivers_ids):
+    def __select_driver_candidate(self, ride_info, free_drivers_ids):
         drivers_candidates = ride_info["request"]["drivers_candidates"]
         for candidate in drivers_candidates:
             if candidate and candidate["id"] in free_drivers_ids:

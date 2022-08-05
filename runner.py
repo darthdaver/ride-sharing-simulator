@@ -41,13 +41,15 @@ if __name__ == "__main__":
     else:
         sumoBinary = checkBinary('sumo-gui')
 
-    """traci.start(["sumo-gui", "-c", "net_config/sumo.sumocfg",
-                 "--tripinfo-output", "net_config/tripinfo.xml", "--log", f"{os.getcwd()}/logfile.txt"])"""
+    traci.start(["sumo-gui", "-c", "net_config/sumo.sumocfg",
+                 "--tripinfo-output", "net_config/tripinfo.xml", "--log", f"{os.getcwd()}/logfile.txt"], 
+                 traceFile=f"{os.getcwd()}/traci_logfile.txt", traceGetters=False)
 
-    sumoBinary = checkBinary('sumo')
+    """sumoBinary = checkBinary('sumo')
 
     traci.start(["sumo", "-c", "net_config/sumo.sumocfg",
-                 "--tripinfo-output", "net_config/tripinfo.xml","--log", f"{os.getcwd()}/logfile.txt"])
+                 "--tripinfo-output", "net_config/tripinfo.xml","--log", f"{os.getcwd()}/logfile.txt"],
+                traceFile=f"{os.getcwd()}/traci_logfile.txt", traceGetters=False)"""
 
     print('INIT')
     simulator = Simulator()

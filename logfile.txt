@@ -1,437 +1,526 @@
-***Starting server on port 60107 ***
-Loading net-file from 'net_config/schaffhausen.net.xml' ... done (2396ms).
-Loading additional-files from 'net_config/add.add.xml' ... done (11ms).
+***Starting server on port 56100 ***
+Loading net-file from 'net_config/schaffhausen_simplified.net.xml' ... done (3347ms).
+Warning: At actuated tlLogic '29011528', linkIndex 2 has no controlling detector.
+Warning: At actuated tlLogic '29011528', linkIndex 3 has no controlling detector.
+Warning: At actuated tlLogic '29011528', linkIndex 4 has no controlling detector.
+Warning: At actuated tlLogic 'joinedS_2', linkIndex 1 has no controlling detector.
+Warning: At actuated tlLogic 'joinedS_2', linkIndex 2 has no controlling detector.
+Warning: At actuated tlLogic 'joinedS_2', linkIndex 5 has no controlling detector.
+Loading additional-files from 'net_config/add.add.xml' ... done (10ms).
 Loading done.
-Simulation version 1.13.0 started with time: 0.00
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '349839270'.
-Warning: No connection between edge '4691051#1' and edge '-4891544#4' found.
-Warning: No connection between edge '200906904#2' and edge '-24288432#3' found.
-Warning: No connection between edge '4813432' and edge '-24288432#3' found.
-Warning: No connection between edge '-4578027#0' and edge '-24288432#3' found.
-Warning: No connection between edge '-26094862#0' and edge '-24288432#3' found.
-Warning: No connection between edge '-226217956#0' and edge '-24288432#3' found.
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_6' (Vehicle is on junction-internal edge leading elsewhere).
-Warning: Teleporting person 'customer_14' from vehicle destination edge '-4587984#1' to intended destination edge '-4891754#1' time=202.00
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1069997773#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1069997773#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1069997773#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1069997773#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1069997773#0'.
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_7' (Vehicle is on junction-internal edge leading elsewhere).
-Warning: No connection between edge '287221383#0' and edge '-203452616#2' found.
-Warning: No connection between edge '287221383#0' and edge '-4714005#4' found.
-Warning: No connection between edge '-4661207#6' and edge '686311233#1' found.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '829996188#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '829996188#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '829996188#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '829996188#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '829996188#2'.
-Warning: Teleporting person 'customer_32' from vehicle destination edge '197653046' to intended destination edge '4733546' time=335.00
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_13' (Vehicle is on junction-internal edge leading elsewhere).
-Warning: Teleporting person 'customer_22' from vehicle destination edge '-24524219#2' to intended destination edge '-205478440#0' time=357.00
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '448375288'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '448375288'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '448375288'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '448375288'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '448375288'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755431289#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755431289#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755431289#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755431289#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755431289#1'.
-Warning: No connection between edge '-4661162#7' and edge '-4962006' found.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25903047'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25903047'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25903047'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25903047'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25903047'.
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_54' (Vehicle is on junction-internal edge leading elsewhere).
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '441960087#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '441960087#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '441960087#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '441960087#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '441960087#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424782#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424782#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424782#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424782#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424782#0'.
-Warning: Teleporting person 'customer_84' from vehicle destination edge '-128904173#1' to intended destination edge '-226217955#4' time=416.00
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '259033231'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '259033231'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '259033231'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '259033231'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '259033231'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25902126#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25902126#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25902126#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25902126#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25902126#1'.
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_97' (Vehicle is on junction-internal edge leading elsewhere).
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-217849115#1'.)
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755409813#10'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755409813#10'.
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-217849115#1'.)
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755409813#10'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755409813#10'.
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-217849115#1'.)
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-217849115#1'.)
-Warning: No connection between edge '659509105' and edge '4891754#1' found.
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_35' (Vehicle is on junction-internal edge leading elsewhere).
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4813473'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4813473'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4813473'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4813473'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4813473'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
-Warning: Teleporting person 'customer_49' from vehicle destination edge '-4587984#6' to intended destination edge '4587986#4' time=471.00
-Warning: No connection between edge '179146681' and edge '-24419521#7' found.
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-25964112#2'.)
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '279446009'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '279446009'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '279446009'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '279446009'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '279446009'.
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_93' (Vehicle is on junction-internal edge leading elsewhere).
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '274281629#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '274281629#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '274281629#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '274281629#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '274281629#2'.
-Warning: Teleporting person 'customer_148' from vehicle destination edge '-26338785' to intended destination edge '-4643413#7' time=514.00
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '315320445'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '315320445'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '315320445'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '315320445'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '315320445'.
-Warning: Vehicle 'driver_25' performs emergency braking on lane '-239921757#3_0' with decel=9.00, wished=4.50, severity=1.00, time=524.00.
-Warning: No connection between edge '29224694#1' and edge '57784262' found.
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_24' (Vehicle is on junction-internal edge leading elsewhere).
-Error: Answered with error to command 0xc4: stop for vehicle 'driver_50' on lane '-113689484_0' is not downstream the current route.
-Warning: Teleporting person 'customer_38' from vehicle destination edge '-5082142#1' to intended destination edge '4821029' time=564.00
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25902126#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25902126#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25902126#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25902126#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25902126#1'.
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-26333015#1'.)
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-26333015#1'.)
-Warning: Teleporting person 'customer_19' from vehicle destination edge '-254428852#0' to intended destination edge '254428852#0' time=600.00
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '829996181'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '829996181'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '829996181'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '829996181'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '829996181'.
-Warning: Teleporting person 'customer_108' from vehicle destination edge '4813236#1' to intended destination edge '-25648234#2' time=660.00
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433094#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433094#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433094#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433094#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433094#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '116867638#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '116867638#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '116867638#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '116867638#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '116867638#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424779#9'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424779#9'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424779#9'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424779#9'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424779#9'.
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_99' (Vehicle is on junction-internal edge leading elsewhere).
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '274281629#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '274281629#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '274281629#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '274281629#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '274281629#2'.
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_25' (Vehicle is on junction-internal edge leading elsewhere).
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-1069997775'.)
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-1069997775'.)
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-1069997775'.)
-Warning: No connection between edge '-226210220' and edge '4661207#9' found.
-Warning: No connection between edge '-226215976#2' and edge '4661207#9' found.
-Warning: No connection between edge '4643413#3' and edge '4661207#9' found.
-Warning: No connection between edge '102624600#1' and edge '4661207#9' found.
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-1069997775'.)
-Warning: Teleporting person 'customer_161' from vehicle destination edge '-25902701#3' to intended destination edge '-226217954#6' time=691.00
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_108' (Vehicle is on junction-internal edge leading elsewhere).
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-1069997775'.)
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-1069997775'.)
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-819331030'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-819331030'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-819331030'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-819331030'.
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-1069997775'.)
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-1069997775'.)
-Warning: Teleporting person 'customer_188' from vehicle destination edge '-4698014#6' to intended destination edge '-226217954#0' time=697.00
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-1069997775'.)
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-1069997775'.)
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-1069997775'.)
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1069997773#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1069997773#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1069997773#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1069997773#0'.
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-1069997775'.)
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-1069997775'.)
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-1069997775'.)
-Warning: Teleporting person 'customer_167' from vehicle destination edge '-205478433' to intended destination edge '-4854421' time=706.00
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-1069997775'.)
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-1069997775'.)
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-1069997775'.)
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-1069997775'.)
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-1069997775'.)
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_194' (Vehicle is on junction-internal edge leading elsewhere).
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#6'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#6'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#6'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#6'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#6'.
-Warning: No connection between edge '-254282829#3' and edge '-763139173#1' found.
-Warning: No connection between edge '4982776' and edge '-4691052' found.
-Warning: No connection between edge '46494132' and edge '-24997085#0' found.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '116701377'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '116701377'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '116701377'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '116701377'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '116701377'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '829996184#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '829996184#0'.
+Simulation started with time: 0.00
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '754841490#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#4'.
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_18' (Vehicle is on junction-internal edge leading elsewhere).
+Error: Answered with error to command 0xc4: stop for vehicle 'driver_9' on lane '884095852_0' is not downstream the current route.
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_26' (Vehicle is on junction-internal edge leading elsewhere).
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_4' (Vehicle is on junction-internal edge leading elsewhere).
+Warning: No connection between edge '5358077#0' and edge '4811991#0' found.
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_23' (Vehicle is on junction-internal edge leading elsewhere).
 Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-207460106#1'.)
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '829996184#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '829996184#0'.
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_231' (Vehicle is on junction-internal edge leading elsewhere).
-Warning: No connection between edge '201750653' and edge '-4994023#2' found.
-Warning: No connection between edge '201750653' and edge '-4982773#3' found.
-Warning: No connection between edge '-25011621#1' and edge '-4691050' found.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '116858646'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '116858646'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '116858646'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '116858646'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '116858646'.
-Warning: No connection between edge '-819414570#1' and edge '4691051#1' found.
-Warning: No connection between edge '-199683589#0' and edge '4691051#1' found.
-Warning: No connection between edge '201750671' and edge '4691051#1' found.
-Warning: No connection between edge '-4643413#3' and edge '4691051#1' found.
-Warning: No connection between edge '26128941#8' and edge '4691051#1' found.
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-25964112#2'.)
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-254501211#4'.)
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-25964112#2'.)
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_256' (Vehicle is on junction-internal edge leading elsewhere).
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_110' (Vehicle is on junction-internal edge leading elsewhere).
-Warning: No connection between edge '226224719#0' and edge '24288432#2' found.
-Warning: No connection between edge '4592622#1' and edge '-239922641#4' found.
-Warning: No connection between edge '4592622#1' and edge '4697923' found.
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_269' (Vehicle is on junction-internal edge leading elsewhere).
-Warning: No connection between edge '4592622#1' and edge '-4813237#8' found.
-Warning: No connection between edge '4592622#1' and edge '-25963878#0' found.
-Warning: No connection between edge '4592624' and edge '4813437#1' found.
+Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-207460106#1'.)
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25901720#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25901720#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25901720#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25901720#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25901720#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25901720#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25901720#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25901720#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25901720#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25901720#2'.
+Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-182281740#3'.)
+Warning: Vehicle 'driver_30' performs emergency braking on lane '4982800#2_0' with decel=9.00, wished=4.50, severity=1.00, time=265.00.
 Error: Answered with error to command 0xc4: Position on lane must not be negative.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4829599#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4829599#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4829599#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4829599#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4829599#0'.
-Warning: No connection between edge '179146675' and edge '26128941#7' found.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '492880339'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '492880339'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '492880339'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '492880339'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '492880339'.
-Warning: No connection between edge '659509105' and edge '-24419521#5' found.
-Warning: No connection between edge '659509105' and edge '4698085#0' found.
-Warning: No connection between edge '659509105' and edge '-219499476#1' found.
-Warning: No connection between edge '659509105' and edge '-690023189#3' found.
-Warning: No connection between edge '659509105' and edge '-28233903' found.
-Warning: No connection between edge '659509105' and edge '-26094848#0' found.
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_184' (Vehicle is on junction-internal edge leading elsewhere).
-Warning: No connection between edge '659509105' and edge '-4587834#3' found.
-Warning: No connection between edge '659509105' and edge '25200775' found.
-Warning: No connection between edge '659509105' and edge '-4698019#0' found.
-Warning: No connection between edge '659509105' and edge '25963887' found.
-Warning: Teleporting person 'customer_301' from vehicle destination edge '-24524254#0' to intended destination edge '25647617' time=916.00
-Warning: No connection between edge '659509105' and edge '-4813437#4' found.
-Warning: No connection between edge '659509105' and edge '884095853' found.
-Warning: No connection between edge '659509105' and edge '4578027#3' found.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-291306366#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-291306366#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-291306366#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-291306366#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-291306366#2'.
-Warning: No connection between edge '659509105' and edge '-4698014#4' found.
-Warning: No connection between edge '659509105' and edge '113689484' found.
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_292' (Vehicle is on junction-internal edge leading elsewhere).
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_114' (Vehicle is on junction-internal edge leading elsewhere).
-Warning: No connection between edge '659509105' and edge '-25815131#0' found.
-Warning: No connection between edge '659509105' and edge '-315308149#0' found.
-Warning: No connection between edge '659509105' and edge '-49589895#0' found.
-Warning: No connection between edge '659509105' and edge '113689484' found.
-Warning: Teleporting person 'customer_179' from vehicle destination edge '-26757954#18' to intended destination edge '-24524357' time=935.00
-Warning: No connection between edge '659509105' and edge '686311209' found.
-Warning: No connection between edge '659509105' and edge '24288432#2' found.
-Warning: No connection between edge '-4587836#3' and edge '24288432#2' found.
-Warning: No connection between edge '-4643449#0' and edge '24288432#2' found.
-Warning: No connection between edge '-4623019#6' and edge '24288432#2' found.
-Warning: No connection between edge '-4697926' and edge '24288432#2' found.
-Warning: No connection between edge '659509105' and edge '-26128941#0' found.
-Warning: No connection between edge '-315308149#0' and edge '763139173#0' found.
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-241778794'.)
-Warning: No connection between edge '-315308149#0' and edge '763139173#0' found.
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_299' (Vehicle is on junction-internal edge leading elsewhere).
-Warning: No connection between edge '-254282829#3' and edge '-4661207#7' found.
-Warning: No connection between edge '-315308149#0' and edge '763139173#0' found.
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_170' (Vehicle is on junction-internal edge leading elsewhere).
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-549339356'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-549339356'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-549339356'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-549339356'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-549339356'.
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_296' (Vehicle is on junction-internal edge leading elsewhere).
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '391023853#1'.
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-241778794'.)
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '391023853#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '391023853#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '391023853#1'.
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-241778794'.)
-Warning: Teleporting person 'customer_260' from vehicle destination edge '201082286' to intended destination edge '315560700' time=976.00
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '219682003'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '219682003'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '219682003'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '219682003'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '219682003'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '128904201'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '128904201'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '128904201'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '128904201'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '128904201'.
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_249' (Vehicle is on junction-internal edge leading elsewhere).
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '829996184#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '829996184#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '829996184#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '829996184#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '829996184#0'.
-Warning: Teleporting person 'customer_366' from vehicle destination edge '-4984206' to intended destination edge '-4813228#1' time=997.00
-Error: Answered with error to command 0xc4: Position on lane must not be negative.
-Warning: Vehicle 'driver_205' aborts stop.
-Warning: No connection between edge '-25012055#2' and edge '4691052' found.
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_347' (Vehicle is on junction-internal edge leading elsewhere).
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '829996188#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '829996188#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '829996188#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '829996188#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '829996188#1'.
-Warning: No connection between edge '-365979288#2' and edge '-4691052' found.
-Warning: No connection between edge '195972828#0' and edge '-4691052' found.
-Warning: No connection between edge '-4592762#0' and edge '-4691052' found.
-Warning: No connection between edge '239921757#2' and edge '-4691052' found.
-Warning: No connection between edge '113689484' and edge '-4691052' found.
-Warning: Teleporting person 'customer_352' from vehicle destination edge '239921757#0' to intended destination edge '-239921757#0' time=1040.00
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_179' (Vehicle is on junction-internal edge leading elsewhere).
-Warning: Teleporting person 'customer_361' from vehicle destination edge '-44783376#2' to intended destination edge '-287221382#4' time=1049.00
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '274281629#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '274281629#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '274281629#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '274281629#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '274281629#2'.
-Warning: Teleporting person 'customer_249' from vehicle destination edge '4698016#0' to intended destination edge '4733550' time=1060.00
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_166' (Vehicle is on junction-internal edge leading elsewhere).
-Warning: Vehicle 'driver_381' performs emergency braking on lane '519181688#1_0' with decel=9.00, wished=4.50, severity=1.00, time=1062.00.
-Error: Answered with error to command 0xc4: Position on lane must not be negative.
-Warning: Vehicle 'driver_133' aborts stop.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755409813#10'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755409813#10'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755409813#10'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755409813#10'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755409813#10'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '391028582#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '391028582#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '391028582#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '391028582#1'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '391028582#1'.
-Warning: Teleporting person 'customer_253' from vehicle destination edge '-4813432' to intended destination edge '-25364737' time=1077.00
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_392' (Vehicle is on junction-internal edge leading elsewhere).
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4691152#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4691152#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4691152#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4691152#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4691152#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4691152#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4691152#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4691152#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4691152#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4691152#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4691152#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4691152#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4691152#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4691152#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4691152#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4691152#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4691152#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4691152#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4691152#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4691152#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4691152#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-219682003'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-219682003'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-219682003'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-219682003'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-219682003'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-219682003'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-219682003'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-219682003'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-219682003'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-219682003'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-219682003'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-219682003'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-219682003'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-219682003'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-219682003'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-219682003'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-219682003'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-219682003'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-219682003'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-219682003'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-219682003'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-219682003'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-219682003'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-219682003'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-219682003'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-219682003'.
+Warning: No connection between edge '4982800#6' and edge '4691051#1' found.
+Warning: Vehicle 'driver_31' aborts stop.
+Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-26333015#1'.)
+Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-26333015#1'.)
 Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-217849115#1'.)
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-217849115#1'.)
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_305' (Vehicle is on junction-internal edge leading elsewhere).
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#0'.
-Warning: Teleporting person 'customer_448' from vehicle destination edge '-4984199#0' to intended destination edge '-686311209' time=1091.00
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '315560722'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '315560722'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '315560722'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '315560722'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '315560722'.
-Warning: Teleporting person 'customer_474' from vehicle destination edge '-49589895#0' to intended destination edge '-239921757#0' time=1100.00
-Warning: Vehicle 'driver_87' skips stop on lane '-49589895#0_0' time=1100.00.
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-26530774'.)
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-26530774'.)
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-26530774'.)
-Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-26530774'.)
-Warning: No connection between edge '179146681' and edge '-226221314#6' found.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '871127437'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '871127437'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '871127437'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '871127437'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '871127437'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424774#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424774#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424774#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424774#2'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424774#2'.
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_348' (Vehicle is on junction-internal edge leading elsewhere).
-Warning: No connection between edge '-4714008' and edge '-4661162#0' found.
-Warning: Teleporting person 'customer_480' from vehicle destination edge '-4984206' to intended destination edge '25222779#1' time=1155.00
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '168452507'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '168452507'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '168452507'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '168452507'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '168452507'.
-Warning: No connection between edge '4594098' and edge '-4577392#8' found.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-26186609#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-26186609#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-26186609#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-26186609#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-26186609#0'.
-Error: Answered with error to command 0xc4: stop for vehicle 'driver_450' on lane '113689484_0' is not downstream the current route.
-Error: Answered with error to command 0xc4: stop for vehicle 'driver_447' on lane '113689484_0' is not downstream the current route.
-Warning: Vehicle 'driver_377' skips stop on lane '-102624600#2_0' time=1200.00.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-25963539#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-25963539#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-25963539#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-25963539#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-25963539#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#0'.
-Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755424784#0'.
-Warning: No connection between edge '201750671' and edge '-24288432#3' found.
-Warning: No connection between edge '1000333562' and edge '-24288432#3' found.
-Warning: No connection between edge '-4643450#2' and edge '-24288432#3' found.
-Warning: No connection between edge '-113689484' and edge '-24288432#3' found.
-Warning: No connection between edge '-239921757#3' and edge '-24288432#3' found.
+Warning: Vehicle 'driver_24' skips stop on lane '-102624600#2_0' time=630.00.
+Warning: Vehicle 'driver_27' skips stop on lane '-102624600#2_0' time=630.00.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
+Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-866669933#2'.)
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-193016387#1'.
+Error: Answered with error to command 0xc4: Position on lane must not be negative.
+Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-207460106#1'.)
+Warning: No connection between edge '287221383#0' and edge '884095853' found.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1069997777#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1069997777#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1069997777#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1069997777#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1069997777#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1069997777#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1069997777#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1069997777#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1069997777#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1069997777#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1069997777#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1069997777#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1069997777#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1069997777#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1069997777#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1069997777#0'.
+Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-207460106#1'.)
+Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-254434801'.)
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_1' (Vehicle is on junction-internal edge leading elsewhere).
+Warning: No connection between edge '19441161#0' and edge '-763139173#1' found.
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_5' (Vehicle is on junction-internal edge leading elsewhere).
+Warning: Teleporting person 'customer_39' from vehicle destination edge '-315308149#0' to intended destination edge '-4587985#6' time=832.00
+Error: Answered with error to command 0xc4: Position on lane must not be negative.
+Warning: No connection between edge '-331862658' and edge '-4691052' found.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '938051440#2'.
+Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-207473633#1'.)
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '938051440#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '938051440#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '938051440#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '938051440#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '938051440#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '938051440#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '938051440#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '938051440#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '938051440#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '938051440#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '938051440#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '938051440#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '938051440#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '938051440#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '938051440#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '938051440#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '938051440#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433097#1'.
+Warning: No connection between edge '199683572#3' and edge '885109708#1' found.
+Warning: No connection between edge '-686311209' and edge '884095850' found.
 Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
 Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
 Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
 Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
 Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
-Warning: No connection between edge '4829672#0' and edge '-4691052' found.
-Warning: No connection between edge '4578028' and edge '226224719#0' found.
-Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_370' (Vehicle is on junction-internal edge leading elsewhere).
-Warning: V
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: No connection between edge '199683572#3' and edge '885109708#1' found.
+Warning: No connection between edge '199683572#3' and edge '885109708#1' found.
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_82' (Vehicle is on junction-internal edge leading elsewhere).
+Warning: No connection between edge '199683572#3' and edge '885109708#1' found.
+Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-1069997775'.)
+Error: Answered with error to command 0xc4: Position on lane must not be negative.
+Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-407234187#1'.)
+Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-407234187#1'.)
+Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-1066935629#2'.)
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_96' (Vehicle is on junction-internal edge leading elsewhere).
+Error: Answered with error to command 0xc4: Position on lane must not be negative.
+Warning: Vehicle 'driver_25' aborts stop.
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_91' (Vehicle is on junction-internal edge leading elsewhere).
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_91' (Vehicle is on junction-internal edge leading elsewhere).
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-202243153'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-202243153'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-202243153'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-202243153'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-202243153'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-202243153'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-202243153'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-202243153'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-202243153'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-202243153'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-202243153'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-202243153'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-202243153'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-202243153'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '-202243153'.
+Error: Answered with error to command 0xc4: Position on lane must not be negative.
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_113' (Vehicle is on junction-internal edge leading elsewhere).
+Warning: Teleporting person 'customer_92' from vehicle destination edge '-25364829#1' to intended destination edge '-4813431#1' time=1861.00
+Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '1075813864#1'.)
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_108' (Vehicle is on junction-internal edge leading elsewhere).
+Warning: Vehicle 'driver_109' aborts stop.
+Error: Answered with error to command 0xc4: Position on lane must not be negative.
+Warning: Vehicle 'driver_43' aborts stop.
+Error: Answered with error to command 0xc4: stop for vehicle 'driver_129' on lane '239921757#2_0' is not downstream the current route.
+Error: Answered with error to command 0xc4: Position on lane must not be negative.
+Warning: Vehicle 'driver_78' aborts stop.
+Warning: Vehicle 'driver_133' skips stop on lane '-102624600#2_0' time=2170.00.
+Warning: Vehicle 'driver_133' skips stop on lane '-102624600#2_0' time=2170.00.
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_125' (Vehicle is on junction-internal edge leading elsewhere).
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4743440'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4743440'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4743440'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4743440'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4743440'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4743440'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4743440'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4743440'.
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_141' (Vehicle is on junction-internal edge leading elsewhere).
+Warning: No connection between edge '-5082145#2' and edge '-4661207#0' found.
+Warning: Teleporting person 'customer_118' from vehicle destination edge '-25901725' to intended destination edge '-25462237#1' time=2417.00
+Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-241778794'.)
+Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-241778794'.)
+Error: Answered with error to command 0xc4: Position on lane must not be negative.
+Warning: Vehicle 'driver_86' skips stop on lane '-4813431#1_0' time=2502.00.
+Warning: Vehicle 'driver_81' skips stop on lane '-113689484_0' time=2547.00.
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_122' (Vehicle is on junction-internal edge leading elsewhere).
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_149' (Vehicle is on junction-internal edge leading elsewhere).
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '49917053'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '49917053'.
+Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-241778794'.)
+Warning: No connection between edge '-254428852#0' and edge '-4661162#6' found.
+Warning: Vehicle 'driver_104' aborts stop.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '23791803'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '23791803'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '23791803'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '23791803'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '23791803'.
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_30' (Vehicle is on junction-internal edge leading elsewhere).
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_148' (Vehicle is on junction-internal edge leading elsewhere).
+Error: Answered with error to command 0xc4: Position on lane must not be negative.
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_164' (Vehicle is on junction-internal edge leading elsewhere).
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433089#3'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433089#3'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433089#3'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433089#3'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433089#3'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433089#3'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '755433089#3'.
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_85' (Vehicle is on junction-internal edge leading elsewhere).
+Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-168452517'.)
+Error: Answered with error to command 0xc4: Position on lane must not be negative.
+Warning: Vehicle 'driver_161' skips stop on lane '-25365418#0_0' time=3250.00.
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_118' (Vehicle is on junction-internal edge leading elsewhere).
+Warning: Teleporting person 'customer_163' from vehicle destination edge '-4813436#3' to intended destination edge '-25648636#2' time=3285.00
+Error: Answered with error to command 0xc4: stop for vehicle 'driver_147' on lane '-102624600#2_0' is not downstream the current route.
+Warning: Vehicle 'driver_147' aborts stop.
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_163' (Vehicle is on junction-internal edge leading elsewhere).
+Warning: Teleporting person 'customer_168' from vehicle destination edge '-239921752' to intended destination edge '-5082139#0' time=3459.00
+Warning: No connection between edge '-4813229#0' and edge '4811991#1' found.
+Warning: Vehicle 'driver_173' aborts stop.
+Error: Answered with error to command 0xc4: stop for vehicle 'driver_191' on lane '-102624600#2_0' is not downstream the current route.
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_201' (Vehicle is on junction-internal edge leading elsewhere).
+Warning: Teleporting person 'customer_183' from vehicle destination edge '-4813432' to intended destination edge '-4813237#2' time=3653.00
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_181' (Vehicle is on junction-internal edge leading elsewhere).
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '391023853#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '391023853#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '391023853#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '391023853#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '391023853#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '391023853#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '391023853#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '391023853#1'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '391023853#1'.
+Warning: Teleporting person 'customer_192' from vehicle destination edge '-4891542#1' to intended destination edge '-23967167#0' time=3803.00
+Error: Answered with error to command 0xab: Invalid departure edge for vehicle type 'DEFAULT_VEHTYPE' (Vehicle 'simulation.findRoute' is not allowed to depart on any lane of edge '-25959926'.)
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1075548699#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1075548699#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1075548699#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1075548699#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1075548699#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1075548699#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1075548699#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1075548699#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1075548699#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1075548699#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1075548699#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1075548699#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '1075548699#0'.
+Warning: No connection between edge '201750653' and edge '-1008860039' found.
+Warning: Vehicle 'driver_187' aborts stop.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '291304764'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '291304764'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '291304764'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '291304764'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '291304764'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '291304764'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '291304764'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '291304764'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '291304764'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '291304764'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '291304764'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '291304764'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '291304764'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '291304764'.
+Error: Answered with error to command 0xc4: Position on lane must not be negative.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '197652333#0'.
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_226' (Vehicle is on junction-internal edge leading elsewhere).
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '38121567#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '38121567#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '38121567#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '38121567#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '38121567#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '38121567#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '38121567#4'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '38121567#4'.
+Warning: No connection between edge '4691050' and edge '-26757954#2' found.
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_228' (Vehicle is on junction-internal edge leading elsewhere).
+Error: Answered with error to command 0xc4: Position on lane must not be negative.
+Warning: Vehicle 'driver_158' aborts stop.
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_190' (Vehicle is on junction-internal edge leading elsewhere).
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_206' (Vehicle is on junction-internal edge leading elsewhere).
+Warning: Vehicle 'driver_162' aborts stop.
+Warning: Teleporting person 'customer_225' from vehicle destination edge '-331862658' to intended destination edge '-226210220' time=4544.00
+Warning: Teleporting person 'customer_219' from vehicle destination edge '-226210220' to intended destination edge '-26757954#4' time=4558.00
+Warning: No connection between edge '-4945441#0' and edge '-4661162#1' found.
+Warning: No connection between edge '203395850#2' and edge '-4691052' found.
+Warning: No connection between edge '-19441161#0' and edge '-4691052' found.
+Warning: No connection between edge '686311208#2' and edge '-4691052' found.
+Warning: No connection between edge '-1069997781#2' and edge '-4691052' found.
+Warning: No connection between edge '4578027#0' and edge '-4691052' found.
+Warning: No connection between edge '-314850717#0' and edge '-4691052' found.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25902870#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25902870#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25902870#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25902870#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25902870#2'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '25902870#2'.
+Warning: Vehicle 'driver_223' aborts stop.
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_236' (Vehicle is on junction-internal edge leading elsewhere).
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_255' (Vehicle is on junction-internal edge leading elsewhere).
+Error: Answered with error to command 0xc4: Route replacement failed for vehicle 'driver_257' (Vehicle is on junction-internal edge leading elsewhere).
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Warning: Vehicle 'simulation.findRoute' is not allowed on destination edge '4812970#0'.
+Simulation ended at time: 5000.00
+Reason: TraCI requested termination.
+Performance: 
+ Duration: 2838.17s
+ TraCI-Duration: 1346.10s
+ Real time factor: 1.7617
+ UPS: 48.719859
+ UPS-Persons: 31.540450
+Vehicles: 
+ Inserted: 263 (Loaded: 4401)
+ Running: 19
+ Waiting: 0
+Persons: 
+ Inserted: 248
+ Running: 16
+
+DijkstraRouter answered 3738 queries and explored 2303.59 edges on average.
+DijkstraRouter spent 9.81s answering queries (2.63ms on average).
