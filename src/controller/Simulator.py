@@ -41,6 +41,7 @@ class Simulator:
         self.__driver_id_counter = 0
         self.__customer_id_counter = 0
         self.__ride_id_counter = 0
+        self.__traffic_counter = 0
         self.__sim_drivers_ids = []
         self.__sim_customers_ids = []
         self.__drivers = {}
@@ -158,6 +159,17 @@ class Simulator:
             #print(f"Generated {driver_id}")
         except:
             print(f"Simulator.__generate_driver - Impossible to find route. Driver {driver_id} not generated.")
+
+    def __generate_traffic(self, timestamp, area_id, num_drivers, hexagon_id="random"):
+        for i in range(num_drivers):
+            coordinates = self.__map.generate_random_coordinates_from_hexagon(self.__sumo_net, area_id, hexagon_id)
+            try:
+                vehicle_id = f"vehicle_{self.__traffic_counter}"
+                self.__traffic_counter += 1
+                random_route = self.__map.generate_random_route_in_area(timestamp, self.__sumo_net, coordinates)
+                traci.vehicle.add(vehicle_id, random_route.get_route_id())
+            except:
+                print(f"Simulator.__generate_traffic - Impossible to find route. Vehicle {vehicle_id} not generated.")
 
     def __get_available_drivers(self, area_id):
         idle_drivers = self.__get_drivers_info_by_states([DriverState.IDLE])

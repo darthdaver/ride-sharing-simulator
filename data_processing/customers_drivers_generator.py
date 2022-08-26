@@ -20,7 +20,7 @@ with open("../data/df_mov_mean_std_pick_drop_no_hour_sf_n_o.csv", 'r') as trips_
         driver_uniform_dist = sorted(np.random.uniform(1, 5000, round(pickups_mean/3 + pickups_std/10)).astype(int))
         driver_uniform_dist.insert(0, random.randint(1,11))
         driver_uniform_dist.pop()
-        strike_drivers = list(filter(lambda d: d < 1000, driver_uniform_dist))
+        strike_drivers = list(filter(lambda d: d < 2000, driver_uniform_dist))
         data_generator[mov_id] = {
             "movement_id": mov_id,
             "pickups_mean": pickups_mean,

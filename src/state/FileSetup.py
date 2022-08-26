@@ -8,4 +8,4 @@ class FileSetup(str, Enum):
     SCENARIO = "src/scenario/planners/drivers_strike.json"
     MAP = "src/repos/city-mapdict-sf_n_o_minimal.json"
     NET = "net_config/san-francisco.net.xml"
-    TIMELINE_GENERATION = "data/timeline_gen_events_sf_n_o.json"
+    TIMELINE_GENERATION = "data/timeline_gen_events_sf_n_o_strike.json"
