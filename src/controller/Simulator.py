@@ -383,6 +383,12 @@ class Simulator:
                     new_route_length_distribution.append([round(p + params["value"][str(length)], 4), length])
                 self.__customer_setup["route_length_distribution"] = new_route_length_distribution
                 print(f"new length distribution: {new_route_length_distribution}")
+        if event_type == EventType.GENERATE_TRAFFIC:
+            areas = params["areas"] if not params["areas"] == [] else self.__map.get_area_ids()
+            for area_id in areas:
+                if params["operation"] == "increment":
+                    num_drivers = params["value"]
+                    self.__generate_traffic(area_id, num_drivers)
 
 
 
