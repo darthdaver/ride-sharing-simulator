@@ -2,12 +2,12 @@ from src.model.Human import Human
 from src.state.DriverState import DriverState
 
 class Driver(Human):
-    def __init__(self, timestamp, id, state, personality_distribution, coordinates, route):
+    def __init__(self, timestamp, id, state, personality_distribution, coordinates, route, last_ride_timestamp=None, rides_completed=0):
         super().__init__(timestamp, id, state, personality_distribution, coordinates)
         self.__route = route
         self.__current_distance = None
-        self.__last_ride_timestamp = timestamp
-        self.__rides_completed = 0
+        self.__last_ride_timestamp = timestamp if last_ride_timestamp is None else last_ride_timestamp
+        self.__rides_completed = rides_completed
 
     def get_info(self):
         return {

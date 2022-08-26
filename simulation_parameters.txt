@@ -1,0 +1,2 @@
+customers_numbers = mean_requests/3
+drivers_numbers = customers_number + pickups_std/10

@@ -1,0 +1,19 @@
+{
+  "name": "progressive_greedy",
+  "events": [{
+    "start": 1000,
+    "end": 2000,
+    "type": "HUMAN_PERSONALITY_POLICY",
+    "params": {
+      "agent_type": "driver",
+      "initial_human_personality_policy": [[0.1,"HURRY"],[0.2,"GREEDY"],[1,"NORMAL"]],
+      "operation": "increment",
+      "value": {
+        "HURRY": -0.0001,
+        "GREEDY": 0.0007,
+        "NORMAL": 0.0
+      },
+      "areas": []
+    }
+  }]
+}

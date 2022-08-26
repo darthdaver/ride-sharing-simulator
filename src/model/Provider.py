@@ -58,14 +58,14 @@ class Provider:
     def print_rides_number(self):
         print(len(self.__rides.keys()))
 
-    def compute_balance(self, idle_customers_count, idle_drivers_count, active_drivers, active_customers):
+    def compute_balance(self, idle_customers_count, idle_drivers_count, num_not_accomplished):
         if idle_customers_count > 0:
             if idle_drivers_count == 0:
                 return 1 / (idle_customers_count + 1)
             else:
-                return 0.5 + (idle_drivers_count / (2*idle_customers_count))
+                return 0.7 + (idle_drivers_count / (5*idle_customers_count))
         else:
-            return 0.7 + (idle_drivers_count / 10)
+            return 0.9 + (idle_drivers_count / 10) - 0.1 * num_not_accomplished
 
     def compute_price(self, travel_time, ride_length, surge_multiplier):
         base_fare = self.__fare["base_fare"]
@@ -295,31 +295,34 @@ class Provider:
                     "air_distance": air_distance
                 })
 
-                #if len(nearby_candidates) == 15:
-                    #break
+                if len(nearby_candidates) == 5:
+                    break
         if len(nearby_candidates) > 0:
             nearby_candidates.sort(key=lambda c: c["air_distance"])
         else:
             print(f"Provider.__nearby_drivers - {ride_info['customer_id']} has 0 candidates.")
         for candidate in nearby_candidates:
-            try:
-                #print(f"Map.__nearby_drivers | Driver {candidate['driver_id']} - generate route from {candidate['current_coordinates']} to destination {meeting_point}")
-                route = Map.generate_route_from_coordinates(timestamp, sumo_net, [candidate["current_coordinates"], meeting_point])
-                expected_route_distance = route.get_original_distance()
-                expected_route_duration = route.get_original_duration()
-                ride_info = self.add_candidate_to_ride(ride_info["id"], {
-                    "id": candidate["driver_id"],
-                    "response_count_down": 15,
-                    "meeting_route": route,
-                    "send_request_back_timer": utils.random_int_from_range(0, 11),
-                    "expected_distance": expected_route_distance,
-                    "expected_duration": expected_route_duration
-                })
-                sum_distance += expected_route_distance
-                sum_duration += expected_route_duration
-            except:
-                print(f"Provider.__nearby_drivers - Impossbile to generate route for driver {driver_info['id']}")
-                continue
+            counter_impossible = 0
+            if counter_impossible <= 2:
+                try:
+                    #print(f"Map.__nearby_drivers | Driver {candidate['driver_id']} - generate route from {candidate['current_coordinates']} to destination {meeting_point}")
+                    route = Map.generate_route_from_coordinates(timestamp, sumo_net, [candidate["current_coordinates"], meeting_point])
+                    expected_route_distance = route.get_original_distance()
+                    expected_route_duration = route.get_original_duration()
+                    ride_info = self.add_candidate_to_ride(ride_info["id"], {
+                        "id": candidate["driver_id"],
+                        "response_count_down": 15,
+                        "meeting_route": route,
+                        "send_request_back_timer": utils.random_int_from_range(0, 11),
+                        "expected_distance": expected_route_distance,
+                        "expected_duration": expected_route_duration
+                    })
+                    sum_distance += expected_route_distance
+                    sum_duration += expected_route_duration
+                except:
+                    print(f"Provider.__nearby_drivers - Impossbile to generate route for driver {driver_info['id']}")
+                    counter_impossible += 1
+                    continue
 
         if len(nearby_candidates) > 0 and len(ride_info["request"]["drivers_candidates"]) == 0:
             self.set_ride_request_state(ride_info["id"], RideRequestState.ROUTE_NOT_FOUND)
@@ -330,6 +333,42 @@ class Provider:
             avg_duration = sum_duration / candidates_count
             ride.update_request(candidates_count, avg_distance, avg_duration)
         self.__rides[ride_info["id"]].sort_candidates()
+
+    def __nearby_drivers_minimal(self, timestamp, sumo_net, ride_info, meeting_point, drivers_info):
+        drivers_info_array = list(drivers_info.values())
+        nearby_candidates = []
+        sum_distance = 0
+        sum_duration = 0
+        random.shuffle(drivers_info_array)
+        for driver_info in drivers_info_array:
+            driver_id = driver_info["id"]
+            air_distance = Map.get_air_distance(meeting_point, driver_info["current_coordinates"])
+            if air_distance <= self.__request["max_driver_distance"]:
+                nearby_candidates.append({
+                    "driver_id": driver_id,
+                    "current_coordinates": driver_info["current_coordinates"],
+                    "air_distance": air_distance
+                })
+
+                if len(nearby_candidates) == 5:
+                    break
+        if len(nearby_candidates) > 0:
+            nearby_candidates.sort(key=lambda c: c["air_distance"])
+        else:
+            print(f"Provider.__nearby_drivers - {ride_info['customer_id']} has 0 candidates.")
+        for candidate in nearby_candidates:
+            ride_info = self.add_candidate_to_ride(ride_info["id"], {
+                "id": candidate["driver_id"],
+                "response_count_down": 15,
+                "send_request_back_timer": utils.random_int_from_range(0, 11),
+            })
+
+        if len(nearby_candidates) > 0 and len(ride_info["request"]["drivers_candidates"]) == 0:
+            self.set_ride_request_state(ride_info["id"], RideRequestState.ROUTE_NOT_FOUND)
+        elif len(ride_info["request"]["drivers_candidates"]) > 0:
+            ride = self.__rides[ride_info["id"]]
+            candidates_count = len(ride_info["request"]["drivers_candidates"])
+            ride.update_request_minimal(candidates_count)
 
     def __ride_not_accomplished(self, ride):
         ride_info = ride.get_info()

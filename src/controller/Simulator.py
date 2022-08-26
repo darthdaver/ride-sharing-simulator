@@ -7,6 +7,7 @@ from src.state.DriverState import DriverState
 from src.state.RideState import RideState
 from src.state.RideRequestState import RideRequestState
 from src.state.HumanPersonality import HumanPersonality
+from src.state.EventType import EventType
 from src.state.HumanType import HumanType
 from src.utils import utils
 from src.model.Scenario import Scenario
@@ -15,11 +16,11 @@ from src.model.Map import Map
 from src.model.Ride import Ride
 from src.model.Customer import Customer
 from src.model.Driver import Driver
+from src.model.EnergyIndexes import EnergyIndexes
 from src.model.Route import Route
 from src.model.Printer import Printer
 from src.settings.Settings import Settings
 import os
-import json
 import traci
 import sumolib
 import sys
@@ -47,9 +48,11 @@ class Simulator:
         self.__drivers_by_state = {k.value: [] for k in DriverState}
         self.__customers_by_state = {k.value: [] for k in CustomerState}
         self.__printer = Printer()
-
         self.__temp_drivers_gen = 0
         self.__temp_customers_gen = 0
+        self.__energy_indexes = EnergyIndexes()
+        self.__timeline_generation = utils.read_setup(FileSetup.TIMELINE_GENERATION.value)
+        self.__scenario = Scenario(utils.read_setup(FileSetup.SCENARIO.value))
 
     def check_area_id(self, agent_info, area_id, type):
         hexagon_id = self.__map.get_hexagon_id_from_coordinates(agent_info["current_coordinates"])
@@ -95,7 +98,7 @@ class Simulator:
                     driver_info = self.__drivers[driver_id].get_info()
                     driver_area_id = self.check_area_id(driver_info, self.__map.get_area_from_coordinates(driver_info["current_coordinates"]), "driver")
                     if not driver_area_id == "unknown":
-                        self.__generate_driver(timestamp, driver_area_id)
+                        self.__generate_driver(timestamp, driver_area_id, last_ride_timestamp=driver_info["last_ride_timestamp"], rides_completed=driver_info["rides_completed"])
                     print(12)
                     self.__remove_driver_by_state(driver_id)
                 elif not driver_id in self.__sim_drivers_ids:
@@ -125,9 +128,9 @@ class Simulator:
         traci.person.add(customer_id, edge_id, pos, depart=timestamp)
         traci.person.appendWaitingStage(customer_id, 1000)
         self.__sim_customers_ids.append(customer_id)
-        print(f"Generated {customer_id}")
+        #print(f"Generated {customer_id}")
 
-    def __generate_customer_requests(self):
+    def __generate_customer_requests(self, timestamp):
         for customer_id in self.__customers_by_state[CustomerState.ACTIVE.value]:
             ride_id = f"ride_{self.__ride_id_counter}"
             self.__ride_id_counter += 1
@@ -136,8 +139,10 @@ class Simulator:
             destination_coordinates = self.__map.generate_destination_point(self.__sumo_net, meeting_coordinates, route_length)
             ride = Ride(ride_id, customer_id, meeting_coordinates, destination_coordinates)
             self.__provider.receive_request(ride)
+            self.__energy_indexes.received_request(timestamp)
 
-    def __generate_driver(self, timestamp, area_id, hexagon_id="random"):
+
+    def __generate_driver(self, timestamp, area_id, hexagon_id="random", last_ride_timestamp=None, rides_completed=0):
         area_info = self.__map.get_area_info(area_id)
         coordinates = self.__map.generate_random_coordinates_from_hexagon(self.__sumo_net, area_id, hexagon_id)
         driver_personality_distribution = area_info["personality_policy"]["driver"]
@@ -146,11 +151,11 @@ class Simulator:
             #print(f"Simulator.__generate_driver | Driver {driver_id} - generate random route")
             random_route = self.__map.generate_random_route_in_area(timestamp, self.__sumo_net, coordinates)
             traci.vehicle.add(driver_id, random_route.get_route_id())
-            driver = Driver(timestamp, driver_id, DriverState.IDLE, driver_personality_distribution, coordinates, random_route)
+            driver = Driver(timestamp, driver_id, DriverState.IDLE, driver_personality_distribution, coordinates, random_route, last_ride_timestamp=last_ride_timestamp, rides_completed=rides_completed)
             self.__drivers[driver_id] = driver
             self.__drivers_by_state[DriverState.IDLE.value].append(driver_id)
             self.__sim_drivers_ids.append(driver_id)
-            print(f"Generated {driver_id}")
+            #print(f"Generated {driver_id}")
         except:
             print(f"Simulator.__generate_driver - Impossible to find route. Driver {driver_id} not generated.")
 
@@ -307,6 +312,7 @@ class Simulator:
                         driver_info = driver.set_current_distance((math.inf, math.inf))
                         self.__provider.update_ride_pickup(ride_info["id"])
                         self.__printer.save_ride_assignation(timestamp, ride_info["id"], customer_info["id"], driver_id)
+                        self.__energy_indexes.accepted_request(timestamp)
                     except:
                         print("Simulator.__manage_pending_request - Impossible to start sumo route")
                         self.__customers_by_state[CustomerState.PICKUP.value].remove(customer_id)
@@ -324,6 +330,8 @@ class Simulator:
             elif ride_request_state in [RideRequestState.NONE, RideRequestState.ROUTE_NOT_FOUND]:
                 assert customer_id is not None, "Simulator.managePendingRequest - id customer undefined on ride request not accomplished."
                 self.__remove_customer(customer_id)
+                if ride_request_state == RideRequestState.NONE:
+                    self.__energy_indexes.request_not_accomplished(timestamp)
 
     def __map_pending_request_area(self, r):
         customer_info = self.__customers[r["customer_id"]].get_info()
@@ -344,10 +352,48 @@ class Simulator:
             driver_info = self.__drivers[driver_id].get_info()
             driver_area_id = self.check_area_id(driver_info, self.__map.get_area_from_coordinates(driver_info["current_coordinates"]), "driver")
             if not driver_area_id == "unknown":
-                self.__generate_driver(timestamp, driver_area_id)
+                self.__generate_driver(timestamp, driver_area_id, last_ride_timestamp=driver_info["last_ride_timestamp"], rides_completed=driver_info["rides_completed"])
             print(15)
             self.__remove_driver(driver_id)
             print(f"Impossible to move driver {driver_id} to area {area_id}")
+
+    def __perform_scenario_event(self, timestamp, event_type, params):
+        if event_type == EventType.HUMAN_PERSONALITY_POLICY:
+            assert params["agent_type"] in [HumanType.DRIVER.value.lower(), HumanType.CUSTOMER.value.lower()], f"Map.update_personality_policy - unknown label {params['agent_type']}"
+            areas = params["areas"] if not params["areas"] == [] else self.__map.get_area_ids()
+            agent_type = HumanType.DRIVER if params["agent_type"] == HumanType.DRIVER.value.lower() else HumanType.CUSTOMER
+            for area_id in areas:
+                area_info = self.__map.get_area_info(area_id)
+                if int(timestamp) == params["start"]:
+                    self.__map.update_personality_policy(area_id, params["initial_human_personality_policy"], agent_type)
+                if params["operation"] == "increment":
+                    area_personality_policy = area_info["personality_policy"][agent_type.value.lower()]
+                    new_personality_policy = []
+                    for v, human_personality in area_personality_policy:
+                        new_personality_policy.append([round(params["value"][human_personality] + v, 4), human_personality])
+                    self.__map.update_personality_policy(area_id, new_personality_policy, agent_type)
+                    print(f"new personality policy: {new_personality_policy} - area_id: {area_id}")
+        if event_type == EventType.INCREASE_LENGTH_RIDES:
+            if int(timestamp) == params["start"]:
+                self.__customer_setup["route_length_distribution"] = params["initial_route_length_distribution"]
+            if params["operation"] == "increment":
+                route_length_distribution = self.__customer_setup["route_length_distribution"]
+                new_route_length_distribution = []
+                for p, length in route_length_distribution:
+                    new_route_length_distribution.append([round(p + params["value"][str(length)], 4), length])
+                self.__customer_setup["route_length_distribution"] = new_route_length_distribution
+                print(f"new length distribution: {new_route_length_distribution}")
+
+
+
+    def __populate_scenario(self):
+        for area_id, area_info in self.__map.get_areas_info().items():
+            for i in range(1):
+                if utils.random_choice(0.1):
+                    self.__generate_customer(0.0, area_id)
+            for i in range(2):
+                if utils.random_choice(0.1):
+                    self.__generate_driver(0.0, area_id)
 
     def __process_rides(self, timestamp):
         unprocessed_requests = self.__provider.get_unprocessed_requests()
@@ -378,6 +424,33 @@ class Simulator:
             else:
                 self.__remove_customer(customer_info["id"])
                 ride_info = self.__provider.ride_request_canceled(ride_id)
+                self.__energy_indexes.canceled_request(timestamp)
+
+    def random_agent_generation(self, timestamp):
+        for area_id, area_info in self.__map.get_areas_info().items():
+            customer_generation_probability = area_info["current_generation_probability"]["customer"][0]
+            if utils.random_choice(customer_generation_probability):
+                print(f"Generated customer with generation prob: {customer_generation_probability} - {area_id}")
+                self.__temp_customers_gen += 1
+                print(self.__temp_customers_gen)
+                self.__generate_customer(timestamp, area_id)
+                print(area_info["current_generation_probability"])
+                self.__map.reset_agent_generation_policy(area_id, HumanType.CUSTOMER)
+                print(area_info["current_generation_probability"])
+            else:
+                self.__map.increment_generation_probability(area_id, HumanType.CUSTOMER)
+        for area_id, area_info in self.__map.get_areas_info().items():
+            driver_generation_probability = area_info["current_generation_probability"]["driver"][0]
+            if utils.random_choice(driver_generation_probability):
+                print(f"Generated driver with generation prob: {driver_generation_probability} - {area_id}")
+                self.__temp_drivers_gen += 1
+                print(self.__temp_drivers_gen)
+                self.__generate_driver(timestamp, area_id)
+                print(area_info["current_generation_probability"])
+                self.__map.reset_agent_generation_policy(area_id, HumanType.DRIVER)
+                print(area_info["current_generation_probability"])
+            else:
+                self.__map.increment_generation_probability(area_id, HumanType.DRIVER)
 
     def __refine_ride_route(self, timestamp, driver_id, ride_id, route, route_type):
         try:
@@ -483,7 +556,12 @@ class Simulator:
             pending_customers = list(filter(lambda d: d["state"] == CustomerState.PENDING, customers_in_area_array))
             pickup_customers = list(filter(lambda d: d["state"] == CustomerState.PICKUP, customers_in_area_array))
             on_road_customers = list(filter(lambda d: d["state"] == CustomerState.ON_ROAD, customers_in_area_array))
-            balance = self.__provider.compute_balance(len(pending_customers), len(idle_drivers_in_area) + len(responding_drivers_in_area), len(drivers_in_area_array), len(customers_in_area_array))
+            energy_indexes = self.__energy_indexes.get_energy_indexes()
+            num_not_accomplished = 0
+            start_timestamp = int(timestamp) - 100 if timestamp >= 100 else 0
+            for i in range(start_timestamp + 1, int(timestamp)):
+                num_not_accomplished += energy_indexes["not_accomplished"][i]
+            balance = self.__provider.compute_balance(len(pending_customers) + len(active_customers), len(idle_drivers_in_area) + len(responding_drivers_in_area), num_not_accomplished)
 
             statistics = {
                 "area_id": area_id,
@@ -499,7 +577,7 @@ class Simulator:
                 "balance": round(balance,2)
             }
             self.__printer.save_areas_info_agents(timestamp, statistics)
-            print(statistics)
+            #print(statistics)
 
     def __safe_remotion(self, driver_id, customer_id, ride_id):
         print(1)
@@ -548,7 +626,7 @@ class Simulator:
                 driver_area_id = self.check_area_id(driver_info, self.__map.get_area_from_coordinates(
                     driver_info["current_coordinates"]), "driver")
                 if not driver_area_id == "unknown":
-                    self.__generate_driver(timestamp, driver_area_id)
+                    self.__generate_driver(timestamp, driver_area_id, last_ride_timestamp=driver_info["last_ride_timestamp"], rides_completed=driver_info["rides_completed"])
                 print(2)
                 self.__remove_driver(driver_id)
                 raise Exception("Simulator.__start_sumo_route - ride removed because of error in generating route.")
@@ -591,7 +669,7 @@ class Simulator:
             except:
                 print("Simulator.__start_sumo_route - Impossible to move driver to the destination area.")
                 driver_info = self.__drivers[driver_id].get_info()
-                self.__generate_driver(timestamp, driver_area_id)
+                self.__generate_driver(timestamp, driver_area_id, last_ride_timestamp=driver_info["last_ride_timestamp"], rides_completed=driver_info["rides_completed"])
                 print(4)
                 self.__remove_driver(driver_id)
                 raise Exception("Simulator.__start_sumo_route - Impossible to move driver to the destination area.")
@@ -639,7 +717,7 @@ class Simulator:
                         print(f"Simulator.__update_drivers - Impossible to find route. Driver {driver_info['id']} removed.")
                         driver_area_id = self.check_area_id(driver_info, self.__map.get_area_from_coordinates(driver_info["current_coordinates"]), "driver")
                         if not driver_area_id == "unknown":
-                            self.__generate_driver(timestamp, driver_area_id)
+                            self.__generate_driver(timestamp, driver_area_id, last_ride_timestamp=driver_info["last_ride_timestamp"], rides_completed=driver_info["rides_completed"])
                         print(5)
                         self.__remove_driver(driver_id)
             elif driver_info["state"] in [DriverState.IDLE, DriverState.RESPONDING]:
@@ -666,10 +744,10 @@ class Simulator:
                     print(f"Driver {driver_id} stop to work [1]")
                     self.__remove_driver(driver_info["id"])
                     continue
-                elif surge_multiplier < 0.9 and driver_info["state"] == DriverState.IDLE:
+                elif surge_multiplier <= 1 and driver_info["state"] == DriverState.IDLE:
                     stop_policy = self.__driver_setup["stop_work_policy"]
                     stop_probability = (timestamp - last_ride_timestamp) * self.__get_human_policy(stop_policy, driver_info["personality"])
-                    print(f"{stop_probability} - {last_ride_timestamp} - {self.__get_human_policy(stop_policy, driver_info['personality'])}")
+                    #print(f"{stop_probability} - {last_ride_timestamp} - {self.__get_human_policy(stop_policy, driver_info['personality'])}")
                     if utils.random_choice(stop_probability):
                         print(9)
                         print(f"Driver {driver_id} stop to work [2]")
@@ -686,7 +764,14 @@ class Simulator:
                         driver_area_id = self.check_area_id(driver_info, self.__map.get_area_from_coordinates(
                             driver_info["current_coordinates"]), "driver")
                         if not driver_area_id == "unknown":
-                            self.__generate_driver(timestamp, driver_area_id)
+                            self.__generate_driver(timestamp, driver_area_id, last_ride_timestamp=driver_info["last_ride_timestamp"], rides_completed=driver_info["rides_completed"])
+                        if driver_info["state"] in [DriverState.RESPONDING]:
+                            ride_info = self.__provider.find_ride_by_agent_id(driver_info, HumanType.DRIVER)
+                            if ride_info is None:
+                                print(ride_info)
+                                print(driver_info)
+                            ride_info = self.__provider.ride_request_rejected(ride_info["id"], driver_id)
+                            ride_info = self.__provider.set_ride_request_state(ride_info["id"], RideRequestState.REJECTED)
                         print(10)
                         self.__remove_driver(driver_id)
 
@@ -796,6 +881,8 @@ class Simulator:
                         }
                         ride_info = self.__provider.update_ride_end(ride_info["id"], stats)
                         self.__printer.save_specific_indicators(timestamp, ride_info)
+                        self.__energy_indexes.compute_ovehead(timestamp, ride_info["stats"]["timestamp_request"], destination_duration)
+                        self.__energy_indexes.compute_price_fluctuation(timestamp, price, ride_info["stats"]["expected_price"])
                         try:
                             print(f"Simulator.__update_rides_state | Driver {driver_info['id']} - generate random route")
                             random_route = self.__map.generate_random_route_in_area_from_agent(timestamp, self.__sumo_net, driver_info, HumanType.DRIVER)
@@ -808,7 +895,7 @@ class Simulator:
                             print(f"Simulator.__update_ride_stats - Impossible to find route. Driver {driver_info['id']} removed.")
                             driver_area_id = self.check_area_id(driver_info, self.__map.get_area_from_coordinates(driver_info["current_coordinates"]), "driver")
                             if not driver_area_id == "unknown":
-                                self.__generate_driver(timestamp, driver_area_id)
+                                self.__generate_driver(timestamp, driver_area_id, last_ride_timestamp=driver_info["last_ride_timestamp"], rides_completed=driver_info["rides_completed"])
                             print(11)
                             self.__remove_driver(driver_info["id"])
             except:
@@ -816,20 +903,27 @@ class Simulator:
                 self.__safe_remotion(driver_info["id"], ride_info["customer_id"], ride_info["id"])
             driver_info = driver.set_current_distance(Map.compute_distance(driver_info["current_coordinates"], ride_info["destination_point"]))
 
-    def __update_surge_multiplier(self):
+    def __update_surge_multiplier(self, timestamp):
         area_ids = self.__map.get_area_ids()
-        pending_rides = self.__provider.get_pending_rides()
-        pending_request_areas = list(map(lambda r: self.__map_pending_request_area(r), pending_rides))
+        #pending_rides = self.__provider.get_pending_rides()
+        #pending_request_areas = list(map(lambda r: self.__map_pending_request_area(r), pending_rides))
         for area_id in area_ids:
             area_info = self.__map.get_area_info(area_id)
             drivers_in_area = self.__get_drivers_in_area(area_id)
             drivers_in_area_array = drivers_in_area.values()
             idle_drivers_in_area = list(filter(lambda d: d["state"] in [DriverState.IDLE, DriverState.RESPONDING], drivers_in_area_array))
+            responding_drivers_in_area = list(filter(lambda d: d["state"] == DriverState.RESPONDING, drivers_in_area_array))
             surge_multiplier = area_info["surge_multipliers"][0]
             customers_in_area = self.__get_customers_in_area(area_id)
             customers_in_area_array = customers_in_area.values()
-            idle_customers = list(filter(lambda r: r["area_request_id"] == area_id, pending_request_areas))
-            balance = self.__provider.compute_balance(len(idle_customers), len(idle_drivers_in_area), len(drivers_in_area_array), len(customers_in_area_array))
+            #idle_customers = list(filter(lambda r: r["area_request_id"] == area_id, pending_request_areas))
+            pending_customers = list(filter(lambda d: d["state"] in [CustomerState.ACTIVE, CustomerState.PENDING], customers_in_area_array))
+            energy_indexes = self.__energy_indexes.get_energy_indexes()
+            num_not_accomplished = 0
+            start_timestamp = int(timestamp) - 100 if timestamp >= 100 else 0
+            for i in range(int(start_timestamp) + 1, int(timestamp)):
+                num_not_accomplished += energy_indexes["not_accomplished"][i]
+            balance = self.__provider.compute_balance(len(pending_customers), len(idle_drivers_in_area) + len(responding_drivers_in_area), num_not_accomplished)
             self.__map.update_area_balance(area_id, balance)
             surge_multiplier_increment = self.__provider.compute_surge_multiplier_increment(balance)
             new_surge_multiplier = max(0.7, min(surge_multiplier + surge_multiplier_increment, 3.5))
@@ -838,12 +932,6 @@ class Simulator:
     def run(self):
         step = 0
         stop = False
-
-        for area_id, area_info in self.__map.get_areas_info().items():
-            for i in range(4):
-                self.__generate_customer(0.0, area_id)
-            for i in range(7):
-                self.__generate_driver(0.0, area_id)
         while not stop:
             traci.simulationStep()
             timestamp = traci.simulation.getTime()
@@ -852,47 +940,27 @@ class Simulator:
             self.__check_customers_list(timestamp)
             self.__update_coordinates_and_distance(timestamp)
             try:
-                if timestamp % 20.0 == 0:
-                    self.__generate_customer_requests()
+                if utils.random_choice(0.8):
+                    self.__generate_customer_requests(timestamp)
                 self.__process_rides(timestamp)
                 self.__manage_pending_request(timestamp)
-                if timestamp % 35.0 == 0:
-                    self.__update_surge_multiplier()
+                if timestamp % 20.0 == 0:
+                    self.__update_surge_multiplier(timestamp)
                 self.__update_drivers(timestamp)
                 self.__update_rides_state(timestamp)
+                timestamp_generation_events = self.__timeline_generation[str(int(timestamp))]
+                for area_id in timestamp_generation_events["customers"]:
+                    if area_id in self.__map.get_area_ids():
+                        self.__generate_customer(timestamp, area_id)
+                for area_id in timestamp_generation_events["drivers"]:
+                    if area_id in self.__map.get_area_ids():
+                        self.__generate_driver(timestamp, area_id)
                 if timestamp % self.__simulator_setup["checkpoints"]["time_move_driver"] == 0:
                     self.__update_driver_movements(timestamp)
                 scenario_events = self.__scenario.checkEvents(timestamp)
-                if not scenario_events == None:
-                    print("TRIGGER")
-                    for e in scenario_events:
-                        self.__trigger_event(e)
-                if timestamp % 10.0 == 0:
-                    for area_id, area_info in self.__map.get_areas_info().items():
-                        customer_generation_probability = area_info["current_generation_probability"]["customer"][0]
-                        if utils.random_choice(customer_generation_probability):
-                            print(f"Generated customer with generation prob: {customer_generation_probability} - {area_id}")
-                            self.__temp_customers_gen += 1
-                            print(self.__temp_customers_gen)
-                            self.__generate_customer(timestamp, area_id)
-                            print(area_info["current_generation_probability"])
-                            self.__map.reset_agent_generation_policy(area_id, HumanType.CUSTOMER)
-                            print(area_info["current_generation_probability"])
-                        else:
-                            self.__map.increment_generation_probability(area_id, HumanType.CUSTOMER)
-                if timestamp % 10.0 == 0:
-                    for area_id, area_info in self.__map.get_areas_info().items():
-                        driver_generation_probability = area_info["current_generation_probability"]["driver"][0]
-                        if utils.random_choice(driver_generation_probability):
-                            print(f"Generated driver with generation prob: {driver_generation_probability} - {area_id}")
-                            self.__temp_drivers_gen += 1
-                            print(self.__temp_drivers_gen)
-                            self.__generate_driver(timestamp, area_id)
-                            print(area_info["current_generation_probability"])
-                            self.__map.reset_agent_generation_policy(area_id, HumanType.DRIVER)
-                            print(area_info["current_generation_probability"])
-                        else:
-                            self.__map.increment_generation_probability(area_id, HumanType.DRIVER)
+                for event_type, params in scenario_events:
+                    self.__perform_scenario_event(timestamp, event_type, params)
+
                 if timestamp % 100.0 == 0:
                     self.__printer.export_global_indicators()
                     self.__printer.export_specific_indicators()
@@ -901,6 +969,12 @@ class Simulator:
                     self.__printer.export_areas_info_agents_statistics()
                     self.print_drivers_by_state()
                     self.print_customers_by_state()
+                if timestamp >= 100 and timestamp % 100.0 == 0:
+                    self.__printer.export_energy_indexes(timestamp, self.__energy_indexes.get_energy_indexes(), 100)
+                if timestamp >= 200 and timestamp % 100.0 == 0:
+                    self.__printer.export_energy_indexes(timestamp, self.__energy_indexes.get_energy_indexes(), 200)
+                if timestamp >= 500 and timestamp % 100.0 == 0:
+                    self.__printer.export_energy_indexes(timestamp, self.__energy_indexes.get_energy_indexes(), 500)
                 if timestamp % 5000.0 == 0:
                     stop = True
                     print("STOP")
@@ -910,15 +984,20 @@ class Simulator:
                     self.__printer.export_surge_multipliers()
                 if timestamp == 1.0:
                     self.__printer.save_specific_indicators(timestamp)
+                    self.__printer.export_energy_indexes(timestamp, self.__energy_indexes.get_energy_indexes(), 100)
+                    self.__printer.export_energy_indexes(timestamp, self.__energy_indexes.get_energy_indexes(), 200)
+                    self.__printer.export_energy_indexes(timestamp, self.__energy_indexes.get_energy_indexes(), 500)
                 #print(self.__drivers_by_state)
                 #print(self.__customers_by_state)
-                print(self.__sim_drivers_ids)
-                print(traci.vehicle.getIDList())
-                print(self.__sim_customers_ids)
-                print(traci.person.getIDList())
+                #print(self.__sim_drivers_ids)
+                #print(traci.vehicle.getIDList())
+                #print(self.__sim_customers_ids)
+                #print(traci.person.getIDList())
                 self.__printer.save_global_indicators(timestamp, self.__provider.get_rides_info_by_state("all"))
                 self.__printer.save_surge_multipliers(timestamp, self.__map.get_areas_info())
                 self.__save_areas_info_agents(timestamp)
+                print(f"Customers: {len(traci.person.getIDList())}")
+                print(f"Drivers: {len(traci.vehicle.getIDList())}")
             except Exception as e:
                 self.print_drivers()
                 print(self.__drivers_by_state)
@@ -928,10 +1007,12 @@ class Simulator:
                 self.__printer.export_specific_indicators()
                 self.__printer.export_rides_assignations()
                 self.__printer.export_surge_multipliers()
+                self.__printer.export_energy_indexes(timestamp, self.__energy_indexes.get_energy_indexes(), 100)
+                self.__printer.export_energy_indexes(timestamp, self.__energy_indexes.get_energy_indexes(), 200)
+                self.__printer.export_energy_indexes(timestamp, self.__energy_indexes.get_energy_indexes(), 500)
                 raise Exception("A Fatal error occurred in Simulator.run")
         traci.close(False)
         sys.stdout.flush()
-
 
     def print_customers(self):
         customers_info = []

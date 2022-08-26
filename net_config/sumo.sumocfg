@@ -1,6 +1,6 @@
 <configuration>
     <input>
-        <net-file value="schaffhausen_simplified.net.xml"/>
+        <net-file value="san-francisco.net.xml"/>
         <additional-files value="add.add.xml"/>
         <time-to-teleport value="0"/>
     </input>

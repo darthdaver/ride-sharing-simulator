@@ -109,6 +109,9 @@ class Ride:
         self.__request["average_distance"] = avg_distance
         self.__request["average_duration"] = avg_duration
 
+    def update_request_minimal(self, candidates_count):
+        self.__request["candidates_count"] = candidates_count
+
     def update_cancel(self):
         pass
 

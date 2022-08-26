@@ -185,14 +185,19 @@ class Map:
         hexagon_id = h3.geo_to_h3(coordinates[1], coordinates[0], self.__resolution)
         if not hexagon_id in self.__hexagons:
             return "unknown"
-        area_id = self.__hexagons[hexagon_id]["area_id"]
-        return area_id
+        #print(hexagon_id)
+        if "area_id" in self.__hexagons[hexagon_id]:
+            area_id = self.__hexagons[hexagon_id]["area_id"]
+            return area_id
+        return "unknown"
 
     def get_area_from_hexagon(self, hexagon_id):
         if not hexagon_id in self.__hexagons:
             return "unknown"
-        area_id = self.__hexagons[hexagon_id]["area_id"]
-        return area_id
+        if "area_id" in self.__hexagons[hexagon_id]:
+            area_id = self.__hexagons[hexagon_id]["area_id"]
+            return area_id
+        return "unknown"
 
     def get_area_ids(self):
         return self.__areas.keys()
@@ -435,3 +440,8 @@ class Map:
         area["generation_policy"] = {
             **generation_policy
         }
+
+    def update_personality_policy(self, area_id, personality_policy, agent_type):
+        assert agent_type in [HumanType.DRIVER, HumanType.CUSTOMER], f"Map.update_personality_policy - unknown label {agent_type}"
+        area = self.__areas[area_id]
+        area["personality_policy"][agent_type.value.lower()] = personality_policy

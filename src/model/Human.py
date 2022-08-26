@@ -50,7 +50,7 @@ class Human:
             if min_treshold <= value <= max_treshold:
                 return personality
             min_treshold = max_treshold
-        return "normal"
+        assert False, "Human.__assign_personality - personality not found."
 
     def accept_ride_conditions(self, surge_multiplier, policy, bias=0):
         for min_surge, max_surge, probability in policy:

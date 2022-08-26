@@ -21,9 +21,11 @@ def read_setup(path):
 
 def select_from_distribution(distribution):
     p = random.random()
+    min_value = 0
     for threshold, value in distribution:
-        if p <= threshold:
+        if min_value <= p <= threshold:
             return value
+        min_value = threshold
     return select_from_list(distribution)[1]
 
 

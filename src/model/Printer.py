@@ -1,6 +1,7 @@
 import os
 from functools import reduce
 from src.state.RideState import RideState
+from functools import reduce
 
 class Printer:
 
@@ -103,6 +104,57 @@ class Printer:
         with open(path, 'a') as outfile:
             outfile.write(content)
 
+    @staticmethod
+    def export_energy_indexes(timestamp, energy_indexes, num_timestamps):
+        timestamp_start = int(timestamp) - num_timestamps + 1
+        content = ""
+        content_values = ""
+        if timestamp == 1.0:
+            content += "timestamp,unserved_request,unserved_requests_accepted,avg_overhead,avg_price_fluctuation\n"
+            content_values += "timestamp,canceled,not_accomplished,requested,ended\n"
+        else:
+            accepted = 0
+            not_accomplished = 0
+            canceled = 0
+            requested = 0
+            sum_overhead = 0
+            num_events_overhead = 0
+            sum_price_fluctuation = 0
+            num_events_price_fluctuation = 0
+
+            for i in range(int(timestamp_start), int(timestamp) + 1):
+                accepted += energy_indexes["accepted"][i]
+                requested += energy_indexes["requested"][i]
+                not_accomplished += energy_indexes["not_accomplished"][i]
+                canceled += energy_indexes["canceled"][i]
+                sum_overhead += reduce(lambda sum, o: sum + o, energy_indexes["overhead"][i], 0)
+                num_events_overhead += len(energy_indexes["overhead"][i])
+                sum_price_fluctuation += reduce(lambda sum, o: sum + o, energy_indexes["price_fluctuation"][i], 0)
+                num_events_price_fluctuation += len(energy_indexes["price_fluctuation"][i])
+            unserved_requests = (canceled + not_accomplished) / requested if requested else 0
+            unserved_requests_accepted = (canceled + not_accomplished) / (canceled + not_accomplished + accepted) if (canceled + not_accomplished + accepted) else 0
+            avg_overhead = sum_overhead / num_events_overhead if num_events_overhead > 0 else 0.0
+            avg_price_fluctuation = sum_price_fluctuation / num_events_price_fluctuation if num_events_price_fluctuation > 0 else 0.0
+
+            content += f"{timestamp},"
+            content += f"{round(unserved_requests, 3)},"
+            content += f"{round(unserved_requests_accepted, 3)},"
+            content += f"{round(avg_overhead, 3)},"
+            content += f"{round(avg_price_fluctuation, 3)}\n"
+            content_values += f"{timestamp},{canceled},{not_accomplished},{requested},{num_events_overhead}\n"
+        path = f"{os.getcwd()}/output/energy_indexes_{num_timestamps}.csv"
+        path_value = f"{os.getcwd()}/output/energy_indexes_{num_timestamps}_values.csv"
+        with open(path, 'a') as outfile:
+            outfile.write(content)
+        with open(path_value, 'a') as outfile_value:
+            outfile_value.write(content_values)
+
+            #unserved_requests = (energy_indexes["canceled"] + energy_indexes["not_accomplished"]) / energy_indexes["requested"] if energy_indexes["requested"] else 0
+            #unserved_requests_accepted = (energy_indexes["canceled"] + energy_indexes["not_accomplished"]) / (energy_indexes["canceled"] + energy_indexes["not_accomplished"] + energy_indexes["accepted"])  if (energy_indexes["canceled"] + energy_indexes["not_accomplished"] + energy_indexes["accepted"]) else 0
+            #avg_overhead = reduce(lambda sum, o: sum + o, energy_indexes["overhead"], 0) / len(energy_indexes["overhead"]) if len(energy_indexes["overhead"]) else 0
+            #avg_price_fluctuation = reduce(lambda sum, p: sum + p, energy_indexes["price_fluctuation"], 0) / len(energy_indexes["price_fluctuation"]) if len(energy_indexes["price_fluctuation"]) else 0
+
+
     def save_areas_info_agents(self, timestamp, statistics):
         content = "*" * 20 + "\n"
         content += f"TIMESTAMP: {timestamp}\n"
@@ -119,7 +171,6 @@ class Printer:
         content += f"ON ROAD CUSTOMERS: {statistics['on_road_customers']}\n"
         content += f"BALANCE: {statistics['balance']}\n"
         self.__areas_info_agents_content += content
-
 
     def save_global_indicators(self, timestamp, rides_info):
         content = ""
@@ -164,11 +215,13 @@ class Printer:
         rides_pending = list(filter(lambda r: r["state"] == RideState.PENDING, rides_info))
         rides_in_progress = list(filter(lambda r: r["state"] in [RideState.PICKUP, RideState.ON_ROAD], rides_info))
         rides_completed = list(filter(lambda r: r["state"] == RideState.END, rides_info))
+        rides_requested = list(filter(lambda r: r["state"] == RideState.REQUESTED, rides_info))
+        rides_simulation_error = list(filter(lambda r: r["state"] == RideState.SIMULATION_ERROR, rides_info))
         rides_confirmed = list(filter(lambda r: r["state"] in [RideState.PICKUP, RideState.ON_ROAD, RideState.END], rides_info))
         rides_waiting_completed = list(filter(lambda r: r["state"] in [RideState.ON_ROAD, RideState.END], rides_info))
         percentage_not_accomplished = len(rides_not_accomplished) / (len(rides_not_accomplished) + len(rides_confirmed)) if (len(rides_confirmed) + len(rides_not_accomplished)) > 0 else 0
-        percentage_canceled = len(rides_canceled) / (len(rides_canceled) + len(rides_confirmed)) if (len(rides_confirmed) + len(rides_not_accomplished)) > 0 else 0
-        percentage_completed = len(rides_completed) / (len(rides_completed) + len(rides_not_accomplished) +len(rides_canceled)) if (len(rides_completed) + len(rides_not_accomplished) + len(rides_canceled)) > 0 else 0
+        percentage_canceled = len(rides_canceled) / (len(rides_canceled) + len(rides_confirmed)) if (len(rides_confirmed) + len(rides_confirmed)) > 0 else 0
+        percentage_completed = len(rides_completed) / (len(rides_completed) + len(rides_not_accomplished) + len(rides_canceled)) if (len(rides_completed) + len(rides_not_accomplished) + len(rides_canceled)) > 0 else 0
         percentage_in_progress = len(rides_accepted) / (len(rides_accepted) + len(rides_not_accomplished) + len(rides_canceled)) if (len(rides_accepted) + len(rides_not_accomplished) + len(rides_canceled)) > 0 else 0
         average_driver_rejections = reduce(lambda sum, r: sum + len(r["request"]["rejections"]), rides_info, 0) / len(rides_info) if len(rides_info) > 0 else 0
         average_expected_waiting_time = reduce(lambda sum, r: sum + r["stats"]["expected_meeting_duration"], rides_confirmed, 0) / len(rides_confirmed) if len(rides_confirmed) > 0 else 0
@@ -201,7 +254,7 @@ class Printer:
         content += f"{len(rides_in_progress)},"
         content += f"{len(rides_accepted)},"
         content += f"{len(rides_pending)},"
-        content += f"{len(rides_info)},"
+        content += f"{len(rides_canceled) + len(rides_not_accomplished) + len(rides_completed) + len(rides_pending)},"
         content += f"{round(percentage_in_progress, 2)},"
         content += f"{round(percentage_completed, 2)},"
         content += f"{round(average_driver_rejections, 2)},"
