@@ -1,4 +1,16 @@
 {
   "name": "drivers_strike",
-  "events": []
+  "events": [{
+    "start": 2000,
+    "end": 2001,
+    "type": "DRIVERS_STRIKE",
+    "params": {
+      "value": {
+        "HURRY": 0,
+        "GREEDY": 1,
+        "NORMAL": 0.5
+      },
+      "areas": []
+    }
+  }]
 }

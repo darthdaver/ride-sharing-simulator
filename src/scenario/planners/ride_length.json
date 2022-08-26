@@ -19,7 +19,7 @@
   },
   {
     "start": 2100,
-    "end": 2900,
+    "end": 2700,
     "type": "GENERATE_TRAFFIC",
     "params": {
       "operation": "increment",

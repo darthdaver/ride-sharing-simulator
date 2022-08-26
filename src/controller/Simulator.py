@@ -389,6 +389,22 @@ class Simulator:
                 if params["operation"] == "increment":
                     num_drivers = params["value"]
                     self.__generate_traffic(area_id, num_drivers)
+        if event_type == EventType.DRIVERS_STRIKE:
+            for driver_id in [*self.__drivers_by_state[DriverState.IDLE.value], *self.__drivers_by_state[DriverState.MOVING.value]]:
+                driver_info = self.__drivers[driver_id].get_info()
+                if driver_info["personality"] == HumanPersonality.GREEDY.value:
+                    if utils.random_choice(params["value"]["GREEDY"]):
+                        print(f"{driver_id} with personality {driver_info['personality']} joined the strike")
+                        self.__remove_driver(driver_id)
+                elif driver_info["personality"] == HumanPersonality.NORMAL.value:
+                    if utils.random_choice(params["value"]["NORMAL"]):
+                        print(f"{driver_id} with personality {driver_info['personality']} joined the strike")
+                        self.__remove_driver(driver_id)
+                elif driver_info["personality"] == HumanPersonality.HURRY.value:
+                    if utils.random_choice(params["value"]["HURRY"]):
+                        print(f"{driver_id} with personality {driver_info['personality']} joined the strike")
+                        self.__remove_driver(driver_id)
+
 
 
 
@@ -963,7 +979,7 @@ class Simulator:
                         self.__generate_driver(timestamp, area_id)
                 if timestamp % self.__simulator_setup["checkpoints"]["time_move_driver"] == 0:
                     self.__update_driver_movements(timestamp)
-                scenario_events = self.__scenario.checkEvents(timestamp)
+                scenario_events = self.__scenario.check_events(timestamp)
                 for event_type, params in scenario_events:
                     self.__perform_scenario_event(timestamp, event_type, params)
 
