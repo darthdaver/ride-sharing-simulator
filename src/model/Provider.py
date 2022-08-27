@@ -65,7 +65,7 @@ class Provider:
             else:
                 return 0.7 + (idle_drivers_count / (5*idle_customers_count))
         else:
-            return 0.9 + (idle_drivers_count / 10) - 0.1 * num_not_accomplished
+            return max(0.9 + (idle_drivers_count / 10) - 0.1 * num_not_accomplished, 0)
 
     def compute_price(self, travel_time, ride_length, surge_multiplier):
         base_fare = self.__fare["base_fare"]
@@ -78,6 +78,7 @@ class Provider:
         for min_balance, max_balance, value in self.__fare["surge_multiplier_policy"]:
             if min_balance <= balance < max_balance:
                 return value
+        assert False, f"Provider.compute_surge_multiplier_increment - sourge multiplier increment not found for balance {balance}"
 
     def get_ride_meeting_route(self, ride_id):
         ride = self.__rides[ride_id]
