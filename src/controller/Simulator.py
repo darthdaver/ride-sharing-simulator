@@ -162,12 +162,14 @@ class Simulator:
 
     def __generate_traffic(self, timestamp, area_id, num_drivers, hexagon_id="random"):
         for i in range(num_drivers):
-            coordinates = self.__map.generate_random_coordinates_from_hexagon(self.__sumo_net, area_id, hexagon_id)
+            vehicle_id = f"vehicle_{self.__traffic_counter}"
+            self.__traffic_counter += 1
             try:
-                vehicle_id = f"vehicle_{self.__traffic_counter}"
-                self.__traffic_counter += 1
-                random_route = self.__map.generate_random_route_in_area(timestamp, self.__sumo_net, coordinates)
-                traci.vehicle.add(vehicle_id, random_route.get_route_id())
+                coordinates = self.__map.generate_random_coordinates_from_hexagon(self.__sumo_net, area_id, hexagon_id)
+                route_length = utils.select_from_distribution(self.__customer_setup["route_length_distribution"])
+                destination_coordinates = self.__map.generate_destination_point(self.__sumo_net, coordinates, route_length)
+                route = Map.generate_route_from_coordinates(timestamp, self.__sumo_net, [coordinates, destination_coordinates])
+                traci.vehicle.add(vehicle_id, route.get_route_id())
             except:
                 print(f"Simulator.__generate_traffic - Impossible to find route. Vehicle {vehicle_id} not generated.")
 
@@ -384,7 +386,7 @@ class Simulator:
                     for v, human_personality in area_personality_policy:
                         new_personality_policy.append([round(params["value"][human_personality] + v, 4), human_personality])
                     self.__map.update_personality_policy(area_id, new_personality_policy, agent_type)
-                    print(f"new personality policy: {new_personality_policy} - area_id: {area_id}")
+                    #print(f"new personality policy: {new_personality_policy} - area_id: {area_id}")
         if event_type == EventType.INCREASE_LENGTH_RIDES:
             if int(timestamp) == params["start"]:
                 self.__customer_setup["route_length_distribution"] = params["initial_route_length_distribution"]
@@ -400,22 +402,53 @@ class Simulator:
             for area_id in areas:
                 if params["operation"] == "increment":
                     num_drivers = params["value"]
-                    self.__generate_traffic(area_id, num_drivers)
+                    self.__generate_traffic(timestamp, area_id, num_drivers)
         if event_type == EventType.DRIVERS_STRIKE:
             for driver_id in [*self.__drivers_by_state[DriverState.IDLE.value], *self.__drivers_by_state[DriverState.MOVING.value]]:
                 driver_info = self.__drivers[driver_id].get_info()
                 if driver_info["personality"] == HumanPersonality.GREEDY.value:
                     if utils.random_choice(params["value"]["GREEDY"]):
-                        print(f"{driver_id} with personality {driver_info['personality']} joined the strike")
+                        #print(f"{driver_id} with personality {driver_info['personality']} joined the strike")
                         self.__remove_driver(driver_id)
                 elif driver_info["personality"] == HumanPersonality.NORMAL.value:
                     if utils.random_choice(params["value"]["NORMAL"]):
-                        print(f"{driver_id} with personality {driver_info['personality']} joined the strike")
+                        #print(f"{driver_id} with personality {driver_info['personality']} joined the strike")
                         self.__remove_driver(driver_id)
                 elif driver_info["personality"] == HumanPersonality.HURRY.value:
                     if utils.random_choice(params["value"]["HURRY"]):
-                        print(f"{driver_id} with personality {driver_info['personality']} joined the strike")
+                        #print(f"{driver_id} with personality {driver_info['personality']} joined the strike")
                         self.__remove_driver(driver_id)
+        if event_type == EventType.BEHAVIOR_CHANGE:
+            for driver_id in [*self.__drivers_by_state[DriverState.IDLE.value], *self.__drivers_by_state[DriverState.MOVING.value]]:
+                driver = self.__drivers[driver_id]
+                driver_info = self.__drivers[driver_id].get_info()
+                if driver_info["personality"] == HumanPersonality.GREEDY.value:
+                    if not params["value"]["GREEDY"]["NORMAL"] is None:
+                        if utils.random_choice(params["value"]["GREEDY"]["NORMAL"]):
+                            #print(f"{driver_id} with personality {driver_info['personality']} joined the strike")
+                            driver_info = driver.change_personality(HumanPersonality.NORMAL.value)
+                    if not params["value"]["GREEDY"]["HURRY"] is None:
+                        if utils.random_choice(params["value"]["GREEDY"]["HURRY"]):
+                            #print(f"{driver_id} with personality {driver_info['personality']} joined the strike")
+                            driver_info = driver.change_personality(HumanPersonality.HURRY.value)
+                elif driver_info["personality"] == HumanPersonality.NORMAL.value:
+                    if not params["value"]["NORMAL"]["GREEDY"] is None:
+                        if utils.random_choice(params["value"]["NORMAL"]["GREEDY"]):
+                            #print(f"{driver_id} with personality {driver_info['personality']} joined the strike")
+                            driver_info = driver.change_personality(HumanPersonality.GREEDY.value)
+                    if not params["value"]["NORMAL"]["HURRY"] is None:
+                        if utils.random_choice(params["value"]["NORMAL"]["HURRY"]):
+                            #print(f"{driver_id} with personality {driver_info['personality']} joined the strike")
+                            driver_info = driver.change_personality(HumanPersonality.HURRY.value)
+                elif driver_info["personality"] == HumanPersonality.HURRY.value:
+                    if not params["value"]["HURRY"]["GREEDY"] is None:
+                        if utils.random_choice(params["value"]["HURRY"]["GREEDY"]):
+                            #print(f"{driver_id} with personality {driver_info['personality']} joined the strike")
+                            driver_info = driver.change_personality(HumanPersonality.GREEDY.value)
+                    if not params["value"]["HURRY"]["NORMAL"] is None:
+                        if utils.random_choice(params["value"]["HURRY"]["NORMAL"]):
+                            #print(f"{driver_id} with personality {driver_info['personality']} joined the strike")
+                            driver_info = driver.change_personality(HumanPersonality.NORMAL.value)
 
 
 

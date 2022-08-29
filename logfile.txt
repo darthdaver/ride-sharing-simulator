@@ -1,1 +1,22 @@
-*
+***Starting server on port 61509 ***
+Loading net-file from 'net_config/san-francisco.net.xml' ... done (9228ms).
+Loading additional-files from 'net_config/add.add.xml' ... done (15ms).
+Loading done.
+Simulation started with time: 0.00
+Simulation ended at time: 3.00
+Performance: 
+ Duration: 15.11s
+ TraCI-Duration: 11.02s
+ Real time factor: 0.198597
+ UPS: 1.588773
+ UPS-Persons: 0.264795
+Vehicles: 
+ Inserted: 18 (Loaded: 46)
+ Running: 18
+ Waiting: 0
+Persons: 
+ Inserted: 2
+ Running: 2
+
+DijkstraRouter answered 28 queries and explored 768.79 edges on average.
+DijkstraRouter spent 0.04s answering queries (1.29ms on average).

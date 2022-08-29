@@ -9,6 +9,10 @@ class Driver(Human):
         self.__last_ride_timestamp = timestamp if last_ride_timestamp is None else last_ride_timestamp
         self.__rides_completed = rides_completed
 
+    def change_personality(self, new_personality):
+        super(Driver, self).change_personality(new_personality)
+        return self.get_info()
+
     def get_info(self):
         return {
             **super().get_info(),

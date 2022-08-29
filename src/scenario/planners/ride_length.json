@@ -11,29 +11,49 @@
       "value": {
         "8": -0.0006,
         "12": -0.0012,
-        "16": -0.0006,
+        "16": -0.0008,
         "20": 0
       },
       "areas": []
     }
   },
   {
-    "start": 2100,
-    "end": 2700,
+    "start": 2250,
+    "end": 2350,
     "type": "GENERATE_TRAFFIC",
     "params": {
       "operation": "increment",
-      "value": 2,
+      "value": 1,
+      "areas": []
+    }
+  },
+  {
+    "start": 2750,
+    "end": 2850,
+    "type": "GENERATE_TRAFFIC",
+    "params": {
+      "operation": "increment",
+      "value": 1,
+      "areas": []
+    }
+  },
+  {
+    "start": 3200,
+    "end": 3300,
+    "type": "GENERATE_TRAFFIC",
+    "params": {
+      "operation": "increment",
+      "value": 1,
       "areas": []
     }
   },
   {
     "start": 3500,
-    "end": 4000,
+    "end": 3600,
     "type": "GENERATE_TRAFFIC",
     "params": {
       "operation": "increment",
-      "value": 2,
+      "value": 1,
       "areas": []
     }
   }]

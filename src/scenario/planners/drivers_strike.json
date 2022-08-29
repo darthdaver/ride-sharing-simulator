@@ -8,7 +8,7 @@
       "value": {
         "HURRY": 0,
         "GREEDY": 1,
-        "NORMAL": 0.5
+        "NORMAL": 0.8
       },
       "areas": []
     }

@@ -1,8 +1,9 @@
-h3==3.7.4
-InquirerPy==0.3.4
-numpy==1.23.0
-numpyencoder==0.3.0
-pydantic==1.9.1
-sumolib==1.13.0
-traci==1.13.0
-xmltodict==0.13.0
+h3
+InquirerPy
+numpy
+numpyencoder
+pydantic
+sumolib
+traci
+xmltodict
+pydantic[dotenv]

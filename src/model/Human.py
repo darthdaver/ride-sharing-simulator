@@ -24,7 +24,6 @@ class Human:
     def current_coordinates(self, coordinates):
         self._current_coordinates = coordinates
 
-
     @property
     def state(self):
         return self._state
@@ -57,4 +56,7 @@ class Human:
             if min_surge <= surge_multiplier < max_surge:
                 return utils.random_choice(probability + bias)
         return utils.random_choice(0.5 + bias)
+
+    def change_personality(self, new_personality):
+        self._personality = new_personality
 

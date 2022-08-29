@@ -9,9 +9,28 @@
       "initial_human_personality_policy": [[0.1,"HURRY"],[0.2,"GREEDY"],[1,"NORMAL"]],
       "operation": "increment",
       "value": {
-        "HURRY": -0.0004,
-        "GREEDY": 0.0007,
+        "HURRY": -0.0002,
+        "GREEDY": 0.0014,
         "NORMAL": 0.0
+      },
+      "areas": []
+    }
+  },
+  {
+    "start": 1250,
+    "end": 1250,
+    "type": "BEHAVIOR_CHANGE",
+    "params": {
+      "agent_type": "driver",
+      "operation": "change",
+      "value": {
+        "HURRY": {
+          "NORMAL": 0.3
+        },
+        "GREEDY": {},
+        "NORMAL": {
+          "GREEDY": 0.5
+        }
       },
       "areas": []
     }
