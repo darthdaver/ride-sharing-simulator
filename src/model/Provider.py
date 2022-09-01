@@ -297,7 +297,7 @@ class Provider:
                     "air_distance": air_distance
                 })
 
-                if len(nearby_candidates) == 20:
+                if len(nearby_candidates) == 30:
                     break
         if len(nearby_candidates) > 0:
             nearby_candidates.sort(key=lambda c: c["air_distance"])
