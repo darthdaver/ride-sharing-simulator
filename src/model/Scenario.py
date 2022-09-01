@@ -23,6 +23,10 @@ class Scenario:
                     events_type.append((EventType.DRIVERS_STRIKE, { **ev["params"], "start": ev["start"] }))
                 if ev["type"] == EventType.BEHAVIOR_CHANGE.value:
                     events_type.append((EventType.BEHAVIOR_CHANGE, { **ev["params"], "start": ev["start"] }))
+                if ev["type"] == EventType.FLASH_MOB.value:
+                    events_type.append((EventType.FLASH_MOB, { **ev["params"], "start": ev["start"] }))
+                if ev["type"] == EventType.SUDDEN_REQUESTS.value:
+                    events_type.append((EventType.SUDDEN_REQUESTS, { **ev["params"], "start": ev["start"] }))
             if timestamp == ev["end"]:
                 print(f"TRIGGER {ev['type']}: END")
         return events_type

@@ -5,7 +5,7 @@ from src.state.RideRequestState import RideRequestState
 
 
 class Ride:
-    def __init__(self, id, customer_id, meeting_point, destination_point):
+    def __init__(self, id, customer_id, meeting_point, destination_point, stats={}):
         self.__id = id
         self.__customer_id = customer_id
         self.__driver_id = None
@@ -25,7 +25,7 @@ class Ride:
             "meeting_route": None,
             "destination_route": None
         }
-        self.__stats = {}
+        self.__stats = stats
 
     def add_driver_candidate(self, driver_candidate):
         self.__request["drivers_candidates"].append(driver_candidate)

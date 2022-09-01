@@ -22,6 +22,7 @@ from src.model.Printer import Printer
 from src.settings.Settings import Settings
 import os
 import traci
+from traci import tc
 import sumolib
 import sys
 
@@ -54,6 +55,7 @@ class Simulator:
         self.__energy_indexes = EnergyIndexes()
         self.__timeline_generation = utils.read_setup(FileSetup.TIMELINE_GENERATION.value)
         self.__scenario = Scenario(utils.read_setup(FileSetup.SCENARIO.value))
+        self.__taz_edges = utils.read_setup(FileSetup.TAZ_EDGES.value)
 
     def check_area_id(self, agent_info, area_id, type):
         hexagon_id = self.__map.get_hexagon_id_from_coordinates(agent_info["current_coordinates"])
@@ -138,10 +140,23 @@ class Simulator:
             meeting_coordinates = self.__customers[customer_id].get_info()["current_coordinates"]
             route_length = utils.select_from_distribution(self.__customer_setup["route_length_distribution"])
             destination_coordinates = self.__map.generate_destination_point(self.__sumo_net, meeting_coordinates, route_length)
-            ride = Ride(ride_id, customer_id, meeting_coordinates, destination_coordinates)
-            self.__provider.receive_request(ride)
-            self.__energy_indexes.received_request(timestamp)
+            source_area_id = self.__map.get_area_from_coordinates(meeting_coordinates)
+            try:
+                destination_area_id = self.__map.get_area_from_coordinates(destination_coordinates)
 
+                stats = {
+                    "source_area_id": source_area_id,
+                    "destination_area_id": destination_area_id
+                }
+
+                ride = Ride(ride_id, customer_id, meeting_coordinates, destination_coordinates, stats)
+                self.__provider.receive_request(ride)
+                self.__energy_indexes.received_request(timestamp)
+            except:
+                #self.__customers_by_state[CustomerState.ACTIVE.value].remove(customer_id)
+                #self.__customers_by_state[CustomerState.INACTIVE.value].append(customer_id)
+                self.__remove_customer(customer_id)
+                continue
 
     def __generate_driver(self, timestamp, area_id, hexagon_id="random", last_ride_timestamp=None, rides_completed=0):
         area_info = self.__map.get_area_info(area_id)
@@ -152,6 +167,7 @@ class Simulator:
             #print(f"Simulator.__generate_driver | Driver {driver_id} - generate random route")
             random_route = self.__map.generate_random_route_in_area(timestamp, self.__sumo_net, coordinates)
             traci.vehicle.add(driver_id, random_route.get_route_id())
+            traci.vehicle.setRoutingMode(driver_id,tc.ROUTING_MODE_AGGREGATED)
             driver = Driver(timestamp, driver_id, DriverState.IDLE, driver_personality_distribution, coordinates, random_route, last_ride_timestamp=last_ride_timestamp, rides_completed=rides_completed)
             self.__drivers[driver_id] = driver
             self.__drivers_by_state[DriverState.IDLE.value].append(driver_id)
@@ -449,8 +465,37 @@ class Simulator:
                         if utils.random_choice(params["value"]["HURRY"]["NORMAL"]):
                             #print(f"{driver_id} with personality {driver_info['personality']} joined the strike")
                             driver_info = driver.change_personality(HumanPersonality.NORMAL.value)
-
-
+        if event_type == EventType.FLASH_MOB:
+            timestamp = int(timestamp)
+            if timestamp <= params["end_slow_down"]:
+                if timestamp in params["flash_mob_areas"]:
+                    flash_areas = params["flash_mob_areas"][f"{timestamp}"]
+                    for area_id in flash_areas:
+                        if area_id in self.__taz_edges:
+                            edges = self.__taz_edges[area_id]
+                            for edge_id in edges:
+                                edge = self.__sumo_net.getEdge(edge_id)
+                                edge_speed = edge.getSpeed()
+                                traci.edge.setMaxSpeed(edge_id, edge_speed * (1 - params["slow_down_percentage"]))
+            else:
+                delta_timestamp_restore = timestamp - params["end_slow_down"]
+                flash_areas = params["flash_mob_areas"]
+                flash_areas_list = [area for areas in flash_areas.values() for area in areas]
+                for area_id in flash_areas_list:
+                    if area_id in self.__taz_edges:
+                        edges = self.__taz_edges[area_id]
+                        for edge_id in edges:
+                            edge = self.__sumo_net.getEdge(edge_id)
+                            edge_speed = edge.getSpeed()
+                            speed_factor = 1 - (params["slow_down_percentage"] - (params["increase_rate"] * delta_timestamp_restore))
+                            assert speed_factor >= 0, f"Simulator.__perform_scenario_event - speed factor is negative: 1 - ({params['slow_down_percentage']} - ({params['increase_rate']} * {delta_timestamp_restore}))"
+                            traci.edge.setMaxSpeed(edge_id, edge_speed * speed_factor)
+        if event_type == EventType.SUDDEN_REQUESTS:
+            timestamp = int(timestamp)
+            for area_id, request_timestamps in params["areas"]:
+                occurences = request_timestamps.count(timestamp)
+                for i in range(occurences):
+                    self.__generate_customer(timestamp, f"{area_id}")
 
 
     def __populate_scenario(self):
@@ -1011,7 +1056,7 @@ class Simulator:
                     self.__generate_customer_requests(timestamp)
                 self.__process_rides(timestamp)
                 self.__manage_pending_request(timestamp)
-                if timestamp % 20.0 == 0:
+                if timestamp % 10.0 == 0:
                     self.__update_surge_multiplier(timestamp)
                 self.__update_drivers(timestamp)
                 self.__update_rides_state(timestamp)
@@ -1022,7 +1067,7 @@ class Simulator:
                 for area_id in timestamp_generation_events["drivers"]:
                     if area_id in self.__map.get_area_ids():
                         self.__generate_driver(timestamp, area_id)
-                if timestamp % self.__simulator_setup["checkpoints"]["time_move_driver"] == 0:
+                if (timestamp % self.__simulator_setup["checkpoints"]["time_move_driver"]) == 0.0:
                     self.__update_driver_movements(timestamp)
                 scenario_events = self.__scenario.check_events(timestamp)
                 for event_type, params in scenario_events:
@@ -1030,6 +1075,7 @@ class Simulator:
 
                 if timestamp % 100.0 == 0:
                     self.__printer.export_global_indicators()
+                    self.__printer.export_global_indicators_v2()
                     self.__printer.export_specific_indicators()
                     self.__printer.export_rides_assignations()
                     self.__printer.export_surge_multipliers()
@@ -1046,6 +1092,7 @@ class Simulator:
                     stop = True
                     print("STOP")
                     self.__printer.export_global_indicators()
+                    self.__printer.export_global_indicators_v2()
                     self.__printer.export_specific_indicators()
                     self.__printer.export_rides_assignations()
                     self.__printer.export_surge_multipliers()
@@ -1061,6 +1108,7 @@ class Simulator:
                 #print(self.__sim_customers_ids)
                 #print(traci.person.getIDList())
                 self.__printer.save_global_indicators(timestamp, self.__provider.get_rides_info_by_state("all"))
+                self.__printer.save_global_indicators_v2(timestamp, self.__provider.get_rides_info_by_state("all"))
                 self.__printer.save_surge_multipliers(timestamp, self.__map.get_areas_info())
                 self.__save_areas_info_agents(timestamp)
                 print(f"Customers: {len(traci.person.getIDList())}")
@@ -1071,6 +1119,7 @@ class Simulator:
                 print(self.__customers_by_state)
                 print(e)
                 self.__printer.export_global_indicators()
+                self.__printer.export_global_indicators_v2()
                 self.__printer.export_specific_indicators()
                 self.__printer.export_rides_assignations()
                 self.__printer.export_surge_multipliers()

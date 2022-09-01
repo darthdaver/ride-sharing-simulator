@@ -1,6 +1,6 @@
 <configuration>
     <input>
-        <net-file value="san-francisco.net.xml"/>
+        <net-file value="sf_minimal.net.xml"/>
         <additional-files value="add.add.xml"/>
         <time-to-teleport value="0"/>
     </input>

@@ -7,6 +7,7 @@ class Printer:
 
     def __init__(self):
         self.__global_indicators_content = ""
+        self.__global_indicators_content_v2 = ""
         self.__specific_indicators_content = ""
         self.__surge_multipliers_content = ""
         self.__rides_assignations_content = ""
@@ -14,6 +15,11 @@ class Printer:
 
     def export_global_indicators(self):
         path = f"{os.getcwd()}/output/global-indicators.csv"
+        with open(path, 'w') as outfile:
+            outfile.write(self.__global_indicators_content)
+
+    def export_global_indicators_v2(self):
+        path = f"{os.getcwd()}/output/global-indicators_v2.csv"
         with open(path, 'w') as outfile:
             outfile.write(self.__global_indicators_content)
 
@@ -217,13 +223,14 @@ class Printer:
         rides_completed = list(filter(lambda r: r["state"] == RideState.END, rides_info))
         rides_requested = list(filter(lambda r: r["state"] == RideState.REQUESTED, rides_info))
         rides_simulation_error = list(filter(lambda r: r["state"] == RideState.SIMULATION_ERROR, rides_info))
+        rides_set = list(filter(lambda r: r["state"] in [RideState.PENDING, RideState.END, RideState.ON_ROAD, RideState.PICKUP, RideState.NOT_ACCOMPLISHED, RideState.CANCELED], rides_info))
         rides_confirmed = list(filter(lambda r: r["state"] in [RideState.PICKUP, RideState.ON_ROAD, RideState.END], rides_info))
         rides_waiting_completed = list(filter(lambda r: r["state"] in [RideState.ON_ROAD, RideState.END], rides_info))
         percentage_not_accomplished = len(rides_not_accomplished) / (len(rides_not_accomplished) + len(rides_confirmed)) if (len(rides_confirmed) + len(rides_not_accomplished)) > 0 else 0
         percentage_canceled = len(rides_canceled) / (len(rides_canceled) + len(rides_confirmed)) if (len(rides_confirmed) + len(rides_confirmed)) > 0 else 0
         percentage_completed = len(rides_completed) / (len(rides_completed) + len(rides_not_accomplished) + len(rides_canceled)) if (len(rides_completed) + len(rides_not_accomplished) + len(rides_canceled)) > 0 else 0
         percentage_in_progress = len(rides_accepted) / (len(rides_accepted) + len(rides_not_accomplished) + len(rides_canceled)) if (len(rides_accepted) + len(rides_not_accomplished) + len(rides_canceled)) > 0 else 0
-        average_driver_rejections = reduce(lambda sum, r: sum + len(r["request"]["rejections"]), rides_info, 0) / len(rides_info) if len(rides_info) > 0 else 0
+        average_driver_rejections = reduce(lambda sum, r: sum + len(r["request"]["rejections"]), rides_info, 0) / len(rides_set) if len(rides_set) > 0 else 0
         average_expected_waiting_time = reduce(lambda sum, r: sum + r["stats"]["expected_meeting_duration"], rides_confirmed, 0) / len(rides_confirmed) if len(rides_confirmed) > 0 else 0
         average_expected_ride_time = reduce(lambda sum, r: sum + r["stats"]["expected_ride_duration"], rides_confirmed, 0) / len(rides_confirmed) if len(rides_confirmed) > 0 else 0
         average_expected_total_time = reduce(lambda sum, r: sum + r["stats"]["expected_meeting_duration"] + r["stats"]["expected_ride_duration"], rides_confirmed, 0) / len(rides_confirmed) if len(rides_confirmed) > 0 else 0
@@ -283,6 +290,74 @@ class Printer:
         content += "\n"
         self.__global_indicators_content += content
 
+    def save_global_indicators_v2(self, timestamp, rides_info):
+        content = ""
+        if timestamp == 1:
+            content += "timestamp,"
+            content += "percentage_rides_canceled,"
+            content += "percentage_rides_not_accomplished,"
+            content += "percentage_accepted,"
+            content += "percentage_pending,"
+            content += "average_driver_rejections,"
+            content += "average_expected_waiting_time,"
+            content += "average_expected_waiting_time_vs_meeting_length,"
+            content += "average_expected_ride_time_vs_length,"
+            content += "average_expected_waiting_time_vs_average_waiting_time,"
+            content += "average_waiting_time,"
+            content += "average_waiting_time_vs_meeting_length,"
+            content += "average_ride_time_vs_length,"
+            content += "average_expected_meeting_length_vs_meeting_length,"
+            content += "average_expected_ride_length_vs_ride_length,"
+            content += "average_expected_price_vs_average_price,"
+            content += "average_surge_multiplier"
+            content += "\n"
+
+        rides_canceled = list(filter(lambda r: r["state"] in [RideState.CANCELED], rides_info))
+        rides_not_accomplished = list(filter(lambda r: r["state"] in [RideState.NOT_ACCOMPLISHED], rides_info))
+        rides_accepted = list(filter(lambda r: r["state"] in [RideState.PICKUP, RideState.ON_ROAD, RideState.END], rides_info))
+        rides_pending = list(filter(lambda r: r["state"] == RideState.PENDING, rides_info))
+        rides_completed = list(filter(lambda r: r["state"] == RideState.END, rides_info))
+        rides_set = list(filter(lambda r: r["state"] in [RideState.PENDING, RideState.END, RideState.ON_ROAD, RideState.PICKUP, RideState.NOT_ACCOMPLISHED, RideState.CANCELED], rides_info))
+        rides_waiting_completed = list(filter(lambda r: r["state"] in [RideState.ON_ROAD, RideState.END], rides_info))
+
+        percentage_canceled = len(rides_canceled) / (len(rides_set)) if (len(rides_set)) > 0 else 0
+        percentage_not_accomplished = len(rides_not_accomplished) / (len(rides_set)) if (len(rides_set)) > 0 else 0
+        percentage_accepted = len(rides_accepted) / (len(rides_set)) if (len(rides_set)) > 0 else 0
+        percentage_pending = len(rides_pending) / (len(rides_set)) if (len(rides_set)) > 0 else 0
+        average_driver_rejections = reduce(lambda sum, r: sum + len(r["request"]["rejections"]), rides_info, 0) / (len(rides_set)) if (len(rides_set)) > 0 else 0
+        average_expected_waiting_time = reduce(lambda sum, r: sum + r["stats"]["expected_meeting_duration"], rides_accepted, 0) / len(rides_accepted) if len(rides_accepted) > 0 else 0
+        average_expected_waiting_time_vs_meeting_length = reduce(lambda sum, r: sum + (r["stats"]["expected_meeting_duration"]/r["stats"]["expected_meeting_length"]), rides_accepted, 0) / len(rides_accepted) if len(rides_accepted) > 0 else 0
+        average_expected_ride_time_vs_length = reduce(lambda sum, r: sum + (r["stats"]["expected_ride_duration"]/r["stats"]["expected_ride_length"]), rides_accepted, 0) / len(rides_accepted) if len(rides_accepted) > 0 else 0
+        average_expected_waiting_time_vs_average_waiting_time = reduce(lambda sum, r: sum + (r["stats"]["expected_meeting_duration"]/r["stats"]["meeting_duration"]), rides_waiting_completed, 0) / len(rides_waiting_completed) if len(rides_waiting_completed) > 0 else 0
+        average_waiting_time = reduce(lambda sum, r: sum + r["stats"]["meeting_duration"], rides_waiting_completed, 0) / len(rides_waiting_completed) if len(rides_waiting_completed) > 0 else 0
+        average_waiting_time_vs_meeting_length = reduce(lambda sum, r: sum + (r["stats"]["meeting_duration"]/r["stats"]["meeting_length"]), rides_waiting_completed, 0) / len(rides_waiting_completed) if len(rides_waiting_completed) > 0 else 0
+        average_ride_time_vs_length = reduce(lambda sum, r: sum + (r["stats"]["ride_duration"]/r["stats"]["ride_length"]), rides_completed, 0) / len(rides_completed) if len(rides_completed) > 0 else 0
+        average_expected_meeting_length_vs_meeting_length = reduce(lambda sum, r: sum + (r["stats"]["expected_meeting_length"]/r["stats"]["meeting_length"]), rides_waiting_completed, 0) / len(rides_waiting_completed) if len(rides_waiting_completed) > 0 else 0
+        average_expected_ride_length_vs_ride_length = reduce(lambda sum, r: sum + (r["stats"]["expected_ride_length"]/r["stats"]["ride_length"]), rides_completed, 0) / len(rides_completed) if len(rides_completed) > 0 else 0
+        average_expected_price_vs_average_price = reduce(lambda sum, r: sum + (r["stats"]["expected_price"]/r["stats"]["expected_price"]), rides_completed, 0) / len(rides_completed) if len(rides_completed) > 0 else 0
+        average_surge_multipliers = reduce(lambda sum, r: sum + r["stats"]["surge_multiplier"], rides_accepted, 0) / len(rides_accepted) if len(rides_accepted) > 0 else 0
+
+        content += f"{int(timestamp)},"
+        content += f"{round(percentage_canceled,4)},"
+        content += f"{round(percentage_not_accomplished,4)},"
+        content += f"{round(percentage_accepted,4)},"
+        content += f"{round(percentage_pending,4)},"
+        content += f"{round(average_driver_rejections,4)},"
+        content += f"{round(average_expected_waiting_time,4)},"
+        content += f"{round(average_expected_waiting_time_vs_meeting_length,4)},"
+        content += f"{round(average_expected_ride_time_vs_length,4)},"
+        content += f"{round(average_expected_waiting_time_vs_average_waiting_time,4)},"
+        content += f"{round(average_waiting_time,4)},"
+        content += f"{round(average_waiting_time_vs_meeting_length,4)},"
+        content += f"{round(average_ride_time_vs_length,4)},"
+        content += f"{round(average_expected_meeting_length_vs_meeting_length,4)},"
+        content += f"{round(average_expected_ride_length_vs_ride_length,4)},"
+        content += f"{round(average_expected_price_vs_average_price,4)},"
+        content += f"{round(average_surge_multipliers,4)},"
+        content += "\n"
+        self.__global_indicators_content_v2 += content
+
+
     def save_ride_assignation(self, timestamp, ride_id, customer_id, driver_id):
         content = "*" * 20 + "\n"
         content += f"TIMESTAMP: {timestamp}\n";
@@ -298,6 +373,11 @@ class Printer:
         content = ""
         if ride_info is None:
             content += f"timestamp,"
+            content += f"timestamp_request,"
+            content += f"timestamp_accepted,"
+            content += f"timestamp_on_road,"
+            content += f"source_area_id,"
+            content += f"destination_area_id,"
             content += f"ride_length,"
             content += f"meeting_length,"
             content += f"total_length,"
@@ -323,6 +403,11 @@ class Printer:
             content += f"\n"
         else:
             content += f"{timestamp},"
+            content += f"{ride_info['stats']['timestamp_request']},"
+            content += f"{ride_info['stats']['timestamp_pickup']},"
+            content += f"{ride_info['stats']['timestamp_on_road']},"
+            content += f"{ride_info['stats']['source_area_id']},"
+            content += f"{ride_info['stats']['destination_area_id']},"
             content += f"{round(ride_info['stats']['ride_length'], 2)},"
             content += f"{round(ride_info['stats']['meeting_length'], 2)},"
             content += f"{round(ride_info['stats']['meeting_length'] + ride_info['stats']['ride_length'], 2)},"
