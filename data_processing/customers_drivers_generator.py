@@ -19,8 +19,8 @@ with open("../data/df_mov_mean_std_pick_drop_no_hour_sf_n_o.csv", 'r') as trips_
         #customer_uniform_dist = sorted(np.random.uniform(1, 5000, round((pickups_mean)*1.4)).astype(int))
         customer_uniform_dist = sorted(np.random.uniform(1, 5000, round((pickups_mean/3))).astype(int))
         #driver_uniform_dist = sorted(np.random.uniform(1, 5000, round((pickups_mean)*1.4 + pickups_std/10)).astype(int))
-        driver_uniform_dist = sorted(np.random.uniform(1, 5000, round((pickups_mean/3) + pickups_std/5)).astype(int))
-        if random.random() < 0.71:
+        driver_uniform_dist = sorted(np.random.uniform(1, 5000, round((pickups_mean/3) + pickups_std/2)).astype(int))
+        if random.random() < 0.5:
             driver_uniform_dist.insert(0, random.randint(1,11))
             driver_uniform_dist.pop()
         strike_drivers = list(filter(lambda d: d < 2000, driver_uniform_dist))

@@ -1118,9 +1118,9 @@ class Simulator:
                 self.__printer.save_global_indicators_v2(timestamp, self.__provider.get_rides_info_by_state("all"))
                 self.__printer.save_surge_multipliers(timestamp, self.__map.get_areas_info())
                 self.__save_areas_info_agents(timestamp)
-                print(f"Customers: {len(traci.person.getIDList())}")
-                print(f"Drivers: {len(traci.vehicle.getIDList())}")
-                print(f"Idle Drivers: {len(self.__drivers_by_state[DriverState.IDLE.value])}")
+                #print(f"Customers: {len(traci.person.getIDList())}")
+                #print(f"Drivers: {len(traci.vehicle.getIDList())}")
+                #print(f"Idle Drivers: {len(self.__drivers_by_state[DriverState.IDLE.value])}")
             except Exception as e:
                 self.print_drivers()
                 print(self.__drivers_by_state)
