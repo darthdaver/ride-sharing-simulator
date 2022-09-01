@@ -476,6 +476,10 @@ class Simulator:
                                 edge = self.__sumo_net.getEdge(edge_id)
                                 edge_speed = edge.getSpeed()
                                 traci.edge.setMaxSpeed(edge_id, edge_speed * (1 - params["slow_down_percentage"]))
+                                vehicles_ids = traci.vehicle.getLastStepVehicleIDs(edge_id)
+                                for vehicle_id in vehicles_ids:
+                                    vehicle_speed = traci.vehicle.getSpeed(vehicle_id)
+                                    traci.vehicle.slowDown(vehicle_id, vehicle_speed*(1 - params["slow_down_percentage"], params["end_slow_down"] - timestamp))
             else:
                 delta_timestamp_restore = timestamp - params["end_slow_down"]
                 flash_areas = params["flash_mob_areas"]

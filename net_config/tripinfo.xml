@@ -2325,3 +2325,204 @@
         <stop duration="2.00" arrival="3153.00" arrivalPos="11.91" actType="waiting"/>
     </personinfo>
     <tripinfo id="driver_1012" depart="3139.00" departLane="397115949#1_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3153.00" arrivalLane="142972026#0_1" arrivalPos="0.20" arrivalSpeed="19.99" duration="14.00" routeLength="150.86" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="7.72" rerouteNo="0" devices="tripinfo_driver_1012" vType="DEFAULT_VEHTYPE" speedFactor="0.96" vaporized=""/>
+    <tripinfo id="driver_988" depart="3064.00" departLane="224316514_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3158.00" arrivalLane="-228196396#1_0" arrivalPos="0.20" arrivalSpeed="2.01" duration="94.00" routeLength="538.18" waitingTime="30.00" waitingCount="3" stopTime="2.00" timeLoss="60.14" rerouteNo="1" devices="tripinfo_driver_988 person_driver_988" vType="DEFAULT_VEHTYPE" speedFactor="0.92" vaporized=""/>
+    <personinfo id="customer_332" depart="3083.00" type="DEFAULT_PEDTYPE">
+        <stop duration="72.00" arrival="3155.00" arrivalPos="0.00" actType="waiting"/>
+        <ride waitingTime="3.00" vehicle="driver_988" depart="3158.00" arrival="3158.00" arrivalPos="0.20" duration="0.00" routeLength="0.09" timeLoss="0.75"/>
+        <stop duration="1.00" arrival="3159.00" arrivalPos="0.20" actType="waiting"/>
+    </personinfo>
+    <tripinfo id="driver_1004" depart="3112.00" departLane="-35977367#2_0" departPos="1.15" departSpeed="0.00" departDelay="0.00" arrival="3159.00" arrivalLane="399142440#3_0" arrivalPos="4.72" arrivalSpeed="5.43" duration="47.00" routeLength="496.88" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="9.26" rerouteNo="1" devices="tripinfo_driver_1004" vType="DEFAULT_VEHTYPE" speedFactor="1.01" vaporized="traci"/>
+    <tripinfo id="driver_1008" depart="3130.00" departLane="254758114#6_0" departPos="0.60" departSpeed="0.00" departDelay="0.00" arrival="3164.00" arrivalLane="415726782#1_0" arrivalPos="1.18" arrivalSpeed="5.94" duration="34.00" routeLength="238.58" waitingTime="4.00" waitingCount="1" stopTime="0.00" timeLoss="13.49" rerouteNo="1" devices="tripinfo_driver_1008" vType="DEFAULT_VEHTYPE" speedFactor="1.05" vaporized="traci"/>
+    <tripinfo id="driver_1019" depart="3166.00" departLane="-770522074#2_0" departPos="0.10" departSpeed="0.00" departDelay="7.00" arrival="3167.00" arrivalLane="-770522074#2_0" arrivalPos="0.10" arrivalSpeed="0.00" duration="1.00" routeLength="0.00" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.00" rerouteNo="0" devices="tripinfo_driver_1019" vType="DEFAULT_VEHTYPE" speedFactor="0.75" vaporized="traci"/>
+    <personinfo id="customer_341" depart="3169.00" type="DEFAULT_PEDTYPE">
+        <stop duration="2.00" arrival="3171.00" arrivalPos="19.20" actType="waiting"/>
+    </personinfo>
+    <personinfo id="customer_273" depart="2655.00" type="DEFAULT_PEDTYPE">
+        <stop duration="266.00" arrival="2921.00" arrivalPos="0.00" actType="waiting"/>
+        <ride waitingTime="4.00" vehicle="driver_860" depart="2925.00" arrival="3172.00" arrivalPos="66.53" duration="247.00" routeLength="2798.01" timeLoss="91.12"/>
+        <stop duration="2.00" arrival="3174.00" arrivalPos="66.53" actType="waiting"/>
+    </personinfo>
+    <tripinfo id="driver_909" depart="2704.00" departLane="425516617#1_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3174.00" arrivalLane="-417396816#1_0" arrivalPos="0.20" arrivalSpeed="0.08" duration="470.00" routeLength="2800.33" waitingTime="203.00" waitingCount="8" stopTime="3.00" timeLoss="313.02" rerouteNo="3" devices="tripinfo_driver_909 person_driver_909" vType="DEFAULT_VEHTYPE" speedFactor="0.97" vaporized="traci"/>
+    <personinfo id="customer_281" depart="2717.00" type="DEFAULT_PEDTYPE">
+        <stop duration="108.00" arrival="2825.00" arrivalPos="0.00" actType="waiting"/>
+        <ride waitingTime="2.00" vehicle="driver_909" depart="2827.00" arrival="3173.00" arrivalPos="0.20" duration="346.00" routeLength="2004.63" timeLoss="234.34"/>
+        <stop duration="2.00" arrival="3175.00" arrivalPos="0.20" actType="waiting"/>
+    </personinfo>
+    <tripinfo id="driver_993" depart="3077.00" departLane="-254466686#7_0" departPos="0.20" departSpeed="0.00" departDelay="0.00" arrival="3179.00" arrivalLane="-254396709#0_0" arrivalPos="0.96" arrivalSpeed="0.00" duration="102.00" routeLength="466.95" waitingTime="45.00" waitingCount="3" stopTime="0.00" timeLoss="76.37" rerouteNo="1" devices="tripinfo_driver_993" vType="DEFAULT_VEHTYPE" speedFactor="0.96" vaporized="traci"/>
+    <tripinfo id="driver_981" depart="3033.00" departLane="-24335486#1_0" departPos="1.15" departSpeed="0.00" departDelay="0.00" arrival="3187.00" arrivalLane="770522137#2_0" arrivalPos="6.45" arrivalSpeed="5.61" duration="154.00" routeLength="1023.60" waitingTime="44.00" waitingCount="1" stopTime="0.00" timeLoss="64.72" rerouteNo="1" devices="tripinfo_driver_981" vType="DEFAULT_VEHTYPE" speedFactor="0.89" vaporized="traci"/>
+    <personinfo id="customer_280" depart="2709.00" type="DEFAULT_PEDTYPE">
+        <stop duration="86.00" arrival="2795.00" arrivalPos="0.00" actType="waiting"/>
+        <ride waitingTime="3.00" vehicle="driver_903" depart="2798.00" arrival="3196.00" arrivalPos="63.78" duration="398.00" routeLength="1825.96" timeLoss="243.06"/>
+        <stop duration="2.00" arrival="3198.00" arrivalPos="63.79" actType="waiting"/>
+    </personinfo>
+    <personinfo id="customer_299" depart="2830.00" type="DEFAULT_PEDTYPE">
+        <stop duration="99.00" arrival="2929.00" arrivalPos="0.00" actType="waiting"/>
+        <ride waitingTime="3.00" vehicle="driver_917" depart="2932.00" arrival="3202.00" arrivalPos="35.10" duration="270.00" routeLength="1406.67" timeLoss="185.69"/>
+        <stop duration="2.00" arrival="3204.00" arrivalPos="35.10" actType="waiting"/>
+    </personinfo>
+    <tripinfo id="driver_1023" depart="3174.00" departLane="-449201857_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3205.00" arrivalLane="403880755#1_0" arrivalPos="32.16" arrivalSpeed="7.49" duration="31.00" routeLength="250.42" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="4.03" rerouteNo="0" devices="tripinfo_driver_1023" vType="DEFAULT_VEHTYPE" speedFactor="0.92" vaporized="traci"/>
+    <personinfo id="customer_304" depart="2886.00" type="DEFAULT_PEDTYPE">
+        <stop duration="73.00" arrival="2959.00" arrivalPos="83.99" actType="waiting"/>
+        <ride waitingTime="3.00" vehicle="driver_935" depart="2962.00" arrival="3204.00" arrivalPos="86.93" duration="242.00" routeLength="1377.09" timeLoss="116.00"/>
+        <stop duration="2.00" arrival="3206.00" arrivalPos="86.94" actType="waiting"/>
+    </personinfo>
+    <personinfo id="customer_347" depart="3208.00" type="DEFAULT_PEDTYPE">
+        <stop duration="1.00" arrival="3209.00" arrivalPos="0.00" actType="waiting"/>
+    </personinfo>
+    <tripinfo id="driver_871" depart="2561.00" departLane="-254466686#7_0" departPos="0.20" departSpeed="0.00" departDelay="0.00" arrival="3214.00" arrivalLane="-204884121#0_0" arrivalPos="7.63" arrivalSpeed="0.00" duration="653.00" routeLength="3638.48" waitingTime="307.00" waitingCount="14" stopTime="8.00" timeLoss="450.33" rerouteNo="6" devices="tripinfo_driver_871 person_driver_871" vType="DEFAULT_VEHTYPE" speedFactor="1.09" vaporized="traci"/>
+    <personinfo id="customer_307" depart="2927.00" type="DEFAULT_PEDTYPE">
+        <stop duration="76.00" arrival="3003.00" arrivalPos="20.79" actType="waiting"/>
+        <ride waitingTime="3.00" vehicle="driver_778" depart="3006.00" arrival="3215.00" arrivalPos="28.75" duration="209.00" routeLength="2117.72" timeLoss="93.49"/>
+        <stop duration="2.00" arrival="3217.00" arrivalPos="28.75" actType="waiting"/>
+    </personinfo>
+    <tripinfo id="driver_876" depart="2572.00" departLane="968937451#1_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3218.00" arrivalLane="85644948_0" arrivalPos="0.62" arrivalSpeed="0.00" duration="646.00" routeLength="3122.77" waitingTime="266.00" waitingCount="12" stopTime="8.00" timeLoss="369.46" rerouteNo="4" devices="tripinfo_driver_876 person_driver_876" vType="DEFAULT_VEHTYPE" speedFactor="0.92" vaporized="traci"/>
+    <tripinfo id="driver_997" depart="3083.00" departLane="-91181760#3_0" departPos="1.04" departSpeed="0.00" departDelay="0.00" arrival="3219.00" arrivalLane="254758114#3_1" arrivalPos="0.74" arrivalSpeed="13.40" duration="136.00" routeLength="624.75" waitingTime="71.00" waitingCount="2" stopTime="0.00" timeLoss="103.32" rerouteNo="0" devices="tripinfo_driver_997" vType="DEFAULT_VEHTYPE" speedFactor="1.05" vaporized=""/>
+    <tripinfo id="driver_709" depart="2115.00" departLane="-399215885#2_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3222.00" arrivalLane="-706531343#0_0" arrivalPos="16.83" arrivalSpeed="7.96" duration="1107.00" routeLength="6640.32" waitingTime="428.00" waitingCount="19" stopTime="15.00" timeLoss="608.52" rerouteNo="8" devices="tripinfo_driver_709 person_driver_709" vType="DEFAULT_VEHTYPE" speedFactor="0.83" vaporized=""/>
+    <personinfo id="customer_337" depart="3147.00" type="DEFAULT_PEDTYPE">
+        <stop duration="69.00" arrival="3216.00" arrivalPos="0.00" actType="waiting"/>
+        <ride waitingTime="3.00" vehicle="driver_709" depart="3219.00" arrival="3222.00" arrivalPos="16.83" duration="3.00" routeLength="16.69" timeLoss="1.70"/>
+        <stop duration="1.00" arrival="3223.00" arrivalPos="7.74" actType="waiting"/>
+    </personinfo>
+    <personinfo id="customer_279" depart="2696.00" type="DEFAULT_PEDTYPE">
+        <stop duration="159.00" arrival="2855.00" arrivalPos="0.00" actType="waiting"/>
+        <ride waitingTime="5.00" vehicle="driver_898" depart="2860.00" arrival="3232.00" arrivalPos="35.40" duration="372.00" routeLength="2084.47" timeLoss="269.14"/>
+        <stop duration="2.00" arrival="3234.00" arrivalPos="35.40" actType="waiting"/>
+    </personinfo>
+    <tripinfo id="driver_1026" depart="3178.00" departLane="513676833#0_0" departPos="0.20" departSpeed="0.00" departDelay="0.00" arrival="3234.00" arrivalLane="-674757876#2_0" arrivalPos="0.52" arrivalSpeed="7.10" duration="56.00" routeLength="446.49" waitingTime="10.00" waitingCount="1" stopTime="0.00" timeLoss="23.41" rerouteNo="1" devices="tripinfo_driver_1026" vType="DEFAULT_VEHTYPE" speedFactor="1.04" vaporized="traci"/>
+    <tripinfo id="driver_1027" depart="3193.00" departLane="-87376697#0_0" departPos="1.04" departSpeed="0.00" departDelay="0.00" arrival="3243.00" arrivalLane="-514407369#1_1" arrivalPos="0.20" arrivalSpeed="2.84" duration="50.00" routeLength="393.67" waitingTime="8.00" waitingCount="2" stopTime="0.00" timeLoss="24.27" rerouteNo="0" devices="tripinfo_driver_1027" vType="DEFAULT_VEHTYPE" speedFactor="0.95" vaporized=""/>
+    <tripinfo id="driver_995" depart="3081.00" departLane="-255168048#7_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3251.00" arrivalLane="-255168048#8_0" arrivalPos="0.20" arrivalSpeed="1.94" duration="170.00" routeLength="763.64" waitingTime="79.00" waitingCount="4" stopTime="2.00" timeLoss="125.31" rerouteNo="1" devices="tripinfo_driver_995 person_driver_995" vType="DEFAULT_VEHTYPE" speedFactor="0.93" vaporized=""/>
+    <personinfo id="customer_343" depart="3186.00" type="DEFAULT_PEDTYPE">
+        <stop duration="61.00" arrival="3247.00" arrivalPos="0.00" actType="waiting"/>
+        <ride waitingTime="4.00" vehicle="driver_995" depart="3251.00" arrival="3251.00" arrivalPos="0.20" duration="0.00" routeLength="0.05" timeLoss="0.91"/>
+        <stop duration="1.00" arrival="3252.00" arrivalPos="57.48" actType="waiting"/>
+    </personinfo>
+    <personinfo id="customer_349" depart="3251.00" type="DEFAULT_PEDTYPE">
+        <stop duration="1.00" arrival="3252.00" arrivalPos="22.20" actType="waiting"/>
+    </personinfo>
+    <personinfo id="customer_350" depart="3251.00" type="DEFAULT_PEDTYPE">
+        <stop duration="3.00" arrival="3254.00" arrivalPos="0.00" actType="waiting"/>
+    </personinfo>
+    <personinfo id="customer_351" depart="3255.00" type="DEFAULT_PEDTYPE">
+        <stop duration="1.00" arrival="3256.00" arrivalPos="0.00" actType="waiting"/>
+    </personinfo>
+    <tripinfo id="driver_1039" depart="3259.00" departLane="-563092565#1_0" departPos="5.10" departSpeed="0.00" departDelay="2.00" arrival="3260.00" arrivalLane="-563092565#1_0" arrivalPos="5.10" arrivalSpeed="0.00" duration="1.00" routeLength="0.00" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.00" rerouteNo="0" devices="tripinfo_driver_1039" vType="DEFAULT_VEHTYPE" speedFactor="1.05" vaporized="traci"/>
+    <personinfo id="customer_278" depart="2695.00" type="DEFAULT_PEDTYPE">
+        <stop duration="117.00" arrival="2812.00" arrivalPos="20.53" actType="waiting"/>
+        <ride waitingTime="3.00" vehicle="driver_864" depart="2815.00" arrival="3258.00" arrivalPos="0.53" duration="443.00" routeLength="2362.94" timeLoss="320.05"/>
+        <stop duration="2.00" arrival="3260.00" arrivalPos="0.54" actType="waiting"/>
+    </personinfo>
+    <tripinfo id="driver_990" depart="3067.00" departLane="674757877#0_0" departPos="0.20" departSpeed="0.00" departDelay="0.00" arrival="3266.00" arrivalLane="84734271#0_0" arrivalPos="88.41" arrivalSpeed="7.17" duration="199.00" routeLength="939.52" waitingTime="91.00" waitingCount="4" stopTime="0.00" timeLoss="120.10" rerouteNo="1" devices="tripinfo_driver_990" vType="DEFAULT_VEHTYPE" speedFactor="0.90" vaporized="traci"/>
+    <tripinfo id="driver_1013" depart="3140.00" departLane="797255352#1_0" departPos="0.72" departSpeed="0.00" departDelay="0.00" arrival="3266.00" arrivalLane="60949899#0_0" arrivalPos="14.84" arrivalSpeed="0.00" duration="126.00" routeLength="582.29" waitingTime="38.00" waitingCount="5" stopTime="0.00" timeLoss="53.80" rerouteNo="0" devices="tripinfo_driver_1013" vType="DEFAULT_VEHTYPE" speedFactor="0.93" vaporized="traci"/>
+    <tripinfo id="driver_1006" depart="3125.00" departLane="-27167270#0_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3269.00" arrivalLane="-397144576#1_0" arrivalPos="21.37" arrivalSpeed="7.28" duration="144.00" routeLength="945.80" waitingTime="5.00" waitingCount="1" stopTime="3.00" timeLoss="27.74" rerouteNo="1" devices="tripinfo_driver_1006" vType="DEFAULT_VEHTYPE" speedFactor="0.96" vaporized=""/>
+    <tripinfo id="driver_1029" depart="3220.00" departLane="408572569_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3272.00" arrivalLane=":65295332_5_0" arrivalPos="4.05" arrivalSpeed="3.26" duration="52.00" routeLength="89.88" waitingTime="36.00" waitingCount="2" stopTime="0.00" timeLoss="46.78" rerouteNo="0" devices="tripinfo_driver_1029" vType="DEFAULT_VEHTYPE" speedFactor="1.07" vaporized="traci"/>
+    <tripinfo id="driver_967" depart="2936.00" departLane="-30029878#7_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3279.00" arrivalLane="-254758127#5_0" arrivalPos="37.77" arrivalSpeed="11.93" duration="343.00" routeLength="2349.81" waitingTime="106.00" waitingCount="3" stopTime="5.00" timeLoss="192.73" rerouteNo="5" devices="tripinfo_driver_967 person_driver_967" vType="DEFAULT_VEHTYPE" speedFactor="0.96" vaporized=""/>
+    <personinfo id="customer_336" depart="3136.00" type="DEFAULT_PEDTYPE">
+        <stop duration="135.00" arrival="3271.00" arrivalPos="0.00" actType="waiting"/>
+        <ride waitingTime="3.00" vehicle="driver_967" depart="3274.00" arrival="3279.00" arrivalPos="37.77" duration="5.00" routeLength="37.58" timeLoss="2.85"/>
+        <stop duration="1.00" arrival="3280.00" arrivalPos="110.00" actType="waiting"/>
+    </personinfo>
+    <tripinfo id="driver_1014" depart="3147.00" departLane="-254299113#6_0" departPos="1.65" departSpeed="0.00" departDelay="0.00" arrival="3280.00" arrivalLane="8917693_0" arrivalPos="98.36" arrivalSpeed="14.24" duration="133.00" routeLength="1211.37" waitingTime="2.00" waitingCount="1" stopTime="3.00" timeLoss="33.19" rerouteNo="1" devices="tripinfo_driver_1014" vType="DEFAULT_VEHTYPE" speedFactor="1.03" vaporized=""/>
+    <tripinfo id="driver_935" depart="2803.00" departLane="-25372932#1_0" departPos="2.76" departSpeed="0.00" departDelay="0.00" arrival="3286.00" arrivalLane="26988030#4_0" arrivalPos="34.37" arrivalSpeed="9.41" duration="483.00" routeLength="2358.24" waitingTime="191.00" waitingCount="9" stopTime="8.00" timeLoss="272.85" rerouteNo="4" devices="tripinfo_driver_935 person_driver_935" vType="DEFAULT_VEHTYPE" speedFactor="1.06" vaporized="traci"/>
+    <personinfo id="customer_295" depart="2814.00" type="DEFAULT_PEDTYPE">
+        <stop duration="124.00" arrival="2938.00" arrivalPos="4.84" actType="waiting"/>
+        <ride waitingTime="3.00" vehicle="driver_937" depart="2941.00" arrival="3286.00" arrivalPos="42.68" duration="345.00" routeLength="2812.96" timeLoss="183.56"/>
+        <stop duration="2.00" arrival="3288.00" arrivalPos="42.68" actType="waiting"/>
+    </personinfo>
+    <personinfo id="customer_317" depart="2988.00" type="DEFAULT_PEDTYPE">
+        <stop duration="31.00" arrival="3019.00" arrivalPos="0.00" actType="waiting"/>
+        <ride waitingTime="2.00" vehicle="driver_953" depart="3021.00" arrival="3286.00" arrivalPos="132.01" duration="265.00" routeLength="2449.88" timeLoss="137.47"/>
+        <stop duration="2.00" arrival="3288.00" arrivalPos="132.02" actType="waiting"/>
+    </personinfo>
+    <tripinfo id="driver_1010" depart="3137.00" departLane="446233235_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3289.00" arrivalLane="502795946#3_1" arrivalPos="1.14" arrivalSpeed="8.23" duration="152.00" routeLength="639.86" waitingTime="71.00" waitingCount="3" stopTime="0.00" timeLoss="91.62" rerouteNo="0" devices="tripinfo_driver_1010" vType="DEFAULT_VEHTYPE" speedFactor="1.18" vaporized=""/>
+    <tripinfo id="driver_693" depart="2063.00" departLane="8921141_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3290.00" arrivalLane="26938418#4_0" arrivalPos="13.59" arrivalSpeed="9.82" duration="1227.00" routeLength="7171.64" waitingTime="480.00" waitingCount="21" stopTime="16.00" timeLoss="706.59" rerouteNo="8" devices="tripinfo_driver_693 person_driver_693" vType="DEFAULT_VEHTYPE" speedFactor="0.97" vaporized="traci"/>
+    <tripinfo id="driver_1045" depart="3290.00" departLane="-446233234_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3291.00" arrivalLane="-446233234_0" arrivalPos="5.10" arrivalSpeed="0.00" duration="1.00" routeLength="0.00" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.00" rerouteNo="0" devices="tripinfo_driver_1045" vType="DEFAULT_VEHTYPE" speedFactor="0.99" vaporized="traci"/>
+    <tripinfo id="driver_1041" depart="3270.00" departLane="-397170089_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3291.00" arrivalLane="-446233234_0" arrivalPos="64.84" arrivalSpeed="8.66" duration="21.00" routeLength="166.43" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="3.25" rerouteNo="0" devices="tripinfo_driver_1041" vType="DEFAULT_VEHTYPE" speedFactor="1.11" vaporized="traci"/>
+    <tripinfo id="driver_1038" depart="3252.00" departLane="-87376691#5_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3291.00" arrivalLane="-87376681_0" arrivalPos="0.20" arrivalSpeed="14.79" duration="39.00" routeLength="508.36" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="6.27" rerouteNo="0" devices="tripinfo_driver_1038" vType="DEFAULT_VEHTYPE" speedFactor="1.14" vaporized=""/>
+    <personinfo id="customer_297" depart="2826.00" type="DEFAULT_PEDTYPE">
+        <stop duration="202.00" arrival="3028.00" arrivalPos="9.21" actType="waiting"/>
+        <ride waitingTime="3.00" vehicle="driver_927" depart="3031.00" arrival="3290.00" arrivalPos="132.38" duration="259.00" routeLength="2030.19" timeLoss="153.17"/>
+        <stop duration="2.00" arrival="3292.00" arrivalPos="132.38" actType="waiting"/>
+    </personinfo>
+    <tripinfo id="driver_922" depart="2745.00" departLane="30029878#6_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3293.00" arrivalLane="-133781783#1_0" arrivalPos="3.67" arrivalSpeed="2.18" duration="548.00" routeLength="3375.15" waitingTime="231.00" waitingCount="10" stopTime="11.00" timeLoss="343.36" rerouteNo="5" devices="tripinfo_driver_922 person_driver_922" vType="DEFAULT_VEHTYPE" speedFactor="1.11" vaporized=""/>
+    <tripinfo id="driver_977" depart="3018.00" departLane="502795940#0_0" departPos="0.10" departSpeed="0.00" departDelay="0.00" arrival="3294.00" arrivalLane="254758131#2_0" arrivalPos="130.88" arrivalSpeed="6.21" duration="276.00" routeLength="1133.52" waitingTime="99.00" waitingCount="3" stopTime="3.00" timeLoss="130.63" rerouteNo="1" devices="tripinfo_driver_977" vType="DEFAULT_VEHTYPE" speedFactor="0.81" vaporized=""/>
+    <tripinfo id="driver_1034" depart="3234.00" departLane="329596844#1_0" departPos="0.46" departSpeed="0.00" departDelay="0.00" arrival="3297.00" arrivalLane="674757879#2_0" arrivalPos="1.04" arrivalSpeed="9.96" duration="63.00" routeLength="361.47" waitingTime="20.00" waitingCount="2" stopTime="0.00" timeLoss="30.95" rerouteNo="0" devices="tripinfo_driver_1034" vType="DEFAULT_VEHTYPE" speedFactor="0.97" vaporized=""/>
+    <tripinfo id="driver_1035" depart="3237.00" departLane="417094961#0_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3297.00" arrivalLane="667569398#2_0" arrivalPos="0.20" arrivalSpeed="22.78" duration="60.00" routeLength="286.79" waitingTime="28.00" waitingCount="1" stopTime="0.00" timeLoss="39.90" rerouteNo="0" devices="tripinfo_driver_1035" vType="DEFAULT_VEHTYPE" speedFactor="1.04" vaporized=""/>
+    <personinfo id="customer_354" depart="3302.00" type="DEFAULT_PEDTYPE">
+        <stop duration="1.00" arrival="3303.00" arrivalPos="0.00" actType="waiting"/>
+    </personinfo>
+    <tripinfo id="driver_1011" depart="3138.00" departLane="461084153#4_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3303.00" arrivalLane="254758114#0_0" arrivalPos="0.20" arrivalSpeed="2.55" duration="165.00" routeLength="1027.10" waitingTime="59.00" waitingCount="3" stopTime="3.00" timeLoss="97.65" rerouteNo="1" devices="tripinfo_driver_1011" vType="DEFAULT_VEHTYPE" speedFactor="1.06" vaporized=""/>
+    <personinfo id="customer_303" depart="2873.00" type="DEFAULT_PEDTYPE">
+        <stop duration="121.00" arrival="2994.00" arrivalPos="56.04" actType="waiting"/>
+        <ride waitingTime="3.00" vehicle="driver_674" depart="2997.00" arrival="3303.00" arrivalPos="1.37" duration="306.00" routeLength="1492.25" timeLoss="233.84"/>
+        <stop duration="2.00" arrival="3305.00" arrivalPos="1.38" actType="waiting"/>
+    </personinfo>
+    <tripinfo id="driver_1016" depart="3153.00" departLane="28841121#1_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3316.00" arrivalLane="589368075#1_0" arrivalPos="2.35" arrivalSpeed="23.30" duration="163.00" routeLength="601.98" waitingTime="97.00" waitingCount="3" stopTime="0.00" timeLoss="131.03" rerouteNo="0" devices="tripinfo_driver_1016" vType="DEFAULT_VEHTYPE" speedFactor="1.08" vaporized=""/>
+    <personinfo id="customer_318" depart="2992.00" type="DEFAULT_PEDTYPE">
+        <stop duration="171.00" arrival="3163.00" arrivalPos="0.00" actType="waiting"/>
+        <ride waitingTime="3.00" vehicle="driver_946" depart="3166.00" arrival="3318.00" arrivalPos="4.11" duration="152.00" routeLength="1893.94" timeLoss="57.15"/>
+        <stop duration="2.00" arrival="3320.00" arrivalPos="4.11" actType="waiting"/>
+    </personinfo>
+    <tripinfo id="driver_1021" depart="3164.00" departLane="968937452#1_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3323.00" arrivalLane="980893267#1_1" arrivalPos="64.64" arrivalSpeed="7.70" duration="159.00" routeLength="602.14" waitingTime="69.00" waitingCount="3" stopTime="0.00" timeLoss="87.09" rerouteNo="0" devices="tripinfo_driver_1021" vType="DEFAULT_VEHTYPE" speedFactor="0.96" vaporized="traci"/>
+    <tripinfo id="driver_1005" depart="3122.00" departLane="-770522136#1_0" departPos="0.56" departSpeed="0.00" departDelay="0.00" arrival="3325.00" arrivalLane="945294689#1_0" arrivalPos="95.54" arrivalSpeed="2.33" duration="203.00" routeLength="1371.62" waitingTime="61.00" waitingCount="4" stopTime="3.00" timeLoss="114.01" rerouteNo="1" devices="tripinfo_driver_1005" vType="DEFAULT_VEHTYPE" speedFactor="0.96" vaporized=""/>
+    <tripinfo id="driver_1031" depart="3222.00" departLane="425516617#7_0" departPos="1.09" departSpeed="0.00" departDelay="0.00" arrival="3331.00" arrivalLane="397136324#1_1" arrivalPos="1.69" arrivalSpeed="3.11" duration="109.00" routeLength="654.88" waitingTime="46.00" waitingCount="3" stopTime="0.00" timeLoss="73.15" rerouteNo="1" devices="tripinfo_driver_1031" vType="DEFAULT_VEHTYPE" speedFactor="1.01" vaporized="traci"/>
+    <tripinfo id="driver_1054" depart="3326.00" departLane="-100400941#5_0" departPos="0.83" departSpeed="0.00" departDelay="0.00" arrival="3331.00" arrivalLane="-100400941#4_0" arrivalPos="2.36" arrivalSpeed="2.46" duration="5.00" routeLength="2.46" waitingTime="3.00" waitingCount="1" stopTime="0.00" timeLoss="3.89" rerouteNo="0" devices="tripinfo_driver_1054" vType="DEFAULT_VEHTYPE" speedFactor="1.03" vaporized="traci"/>
+    <tripinfo id="driver_1052" depart="3304.00" departLane="770522137#1_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3340.00" arrivalLane="425516617#5_0" arrivalPos="87.61" arrivalSpeed="19.20" duration="36.00" routeLength="420.07" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="11.57" rerouteNo="0" devices="tripinfo_driver_1052" vType="DEFAULT_VEHTYPE" speedFactor="1.24" vaporized="traci"/>
+    <tripinfo id="driver_1037" depart="3244.00" departLane="425516648_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3345.00" arrivalLane="-287958606#5_0" arrivalPos="0.11" arrivalSpeed="3.38" duration="101.00" routeLength="831.36" waitingTime="23.00" waitingCount="1" stopTime="0.00" timeLoss="61.88" rerouteNo="0" devices="tripinfo_driver_1037" vType="DEFAULT_VEHTYPE" speedFactor="1.00" vaporized=""/>
+    <tripinfo id="driver_1003" depart="3103.00" departLane="-27398000_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3349.00" arrivalLane="-425516661#0_0" arrivalPos="130.56" arrivalSpeed="11.58" duration="246.00" routeLength="1959.74" waitingTime="32.00" waitingCount="2" stopTime="3.00" timeLoss="74.88" rerouteNo="1" devices="tripinfo_driver_1003" vType="DEFAULT_VEHTYPE" speedFactor="0.90" vaporized=""/>
+    <tripinfo id="driver_1024" depart="3175.00" departLane="254297763_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3350.00" arrivalLane="766798667#1_1" arrivalPos="0.47" arrivalSpeed="0.00" duration="175.00" routeLength="1072.75" waitingTime="35.00" waitingCount="2" stopTime="0.00" timeLoss="59.53" rerouteNo="1" devices="tripinfo_driver_1024" vType="DEFAULT_VEHTYPE" speedFactor="1.03" vaporized="traci"/>
+    <personinfo id="customer_321" depart="3008.00" type="DEFAULT_PEDTYPE">
+        <stop duration="146.00" arrival="3154.00" arrivalPos="0.00" actType="waiting"/>
+        <ride waitingTime="4.00" vehicle="driver_976" depart="3158.00" arrival="3349.00" arrivalPos="0.16" duration="191.00" routeLength="1659.02" timeLoss="120.77"/>
+        <stop duration="2.00" arrival="3351.00" arrivalPos="0.20" actType="waiting"/>
+    </personinfo>
+    <tripinfo id="driver_741" depart="2196.00" departLane="-588340584_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3352.00" arrivalLane="-8917406#2_0" arrivalPos="123.16" arrivalSpeed="13.56" duration="1156.00" routeLength="6307.33" waitingTime="536.00" waitingCount="21" stopTime="11.00" timeLoss="743.28" rerouteNo="7" devices="tripinfo_driver_741 person_driver_741" vType="DEFAULT_VEHTYPE" speedFactor="1.00" vaporized=""/>
+    <personinfo id="customer_301" depart="2848.00" type="DEFAULT_PEDTYPE">
+        <stop duration="200.00" arrival="3048.00" arrivalPos="130.86" actType="waiting"/>
+        <ride waitingTime="2.00" vehicle="driver_923" depart="3050.00" arrival="3351.00" arrivalPos="0.19" duration="301.00" routeLength="1217.31" timeLoss="240.32"/>
+        <stop duration="2.00" arrival="3353.00" arrivalPos="0.20" actType="waiting"/>
+    </personinfo>
+    <tripinfo id="driver_506" depart="1390.00" departLane="-277480424_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3357.00" arrivalLane="415517887#1_0" arrivalPos="0.85" arrivalSpeed="3.21" duration="1967.00" routeLength="10126.77" waitingTime="722.00" waitingCount="37" stopTime="21.00" timeLoss="994.03" rerouteNo="14" devices="tripinfo_driver_506 person_driver_506" vType="DEFAULT_VEHTYPE" speedFactor="0.88" vaporized="traci"/>
+    <personinfo id="customer_356" depart="3359.00" type="DEFAULT_PEDTYPE">
+        <stop duration="1.00" arrival="3360.00" arrivalPos="0.00" actType="waiting"/>
+    </personinfo>
+    <tripinfo id="driver_1025" depart="3177.00" departLane="224384035#0_0" departPos="0.20" departSpeed="0.00" departDelay="0.00" arrival="3360.00" arrivalLane="-28738271#2_0" arrivalPos="91.41" arrivalSpeed="10.68" duration="183.00" routeLength="2233.63" waitingTime="4.00" waitingCount="2" stopTime="3.00" timeLoss="55.35" rerouteNo="1" devices="tripinfo_driver_1025" vType="DEFAULT_VEHTYPE" speedFactor="1.03" vaporized=""/>
+    <tripinfo id="driver_861" depart="2534.00" departLane="-87376691#6_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3365.00" arrivalLane="-148846997#4_0" arrivalPos="132.41" arrivalSpeed="9.99" duration="831.00" routeLength="4930.76" waitingTime="313.00" waitingCount="13" stopTime="14.00" timeLoss="481.55" rerouteNo="5" devices="tripinfo_driver_861 person_driver_861" vType="DEFAULT_VEHTYPE" speedFactor="0.93" vaporized=""/>
+    <personinfo id="customer_359" depart="3366.00" type="DEFAULT_PEDTYPE">
+        <stop duration="1.00" arrival="3367.00" arrivalPos="1.77" actType="waiting"/>
+    </personinfo>
+    <tripinfo id="driver_937" depart="2806.00" departLane="-399156531#5_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3368.00" arrivalLane="766798669_1" arrivalPos="3.13" arrivalSpeed="7.36" duration="562.00" routeLength="4500.47" waitingTime="184.00" waitingCount="8" stopTime="8.00" timeLoss="285.04" rerouteNo="4" devices="tripinfo_driver_937 person_driver_937" vType="DEFAULT_VEHTYPE" speedFactor="1.00" vaporized="traci"/>
+    <tripinfo id="driver_860" depart="2534.00" departLane="-133376113#0_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3370.00" arrivalLane="-30029703#5_0" arrivalPos="1.61" arrivalSpeed="1.47" duration="836.00" routeLength="7554.69" waitingTime="148.00" waitingCount="8" stopTime="14.00" timeLoss="322.19" rerouteNo="6" devices="tripinfo_driver_860 person_driver_860" vType="DEFAULT_VEHTYPE" speedFactor="0.91" vaporized=""/>
+    <tripinfo id="driver_1032" depart="3223.00" departLane="769490513_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3375.00" arrivalLane="-212214144#2_0" arrivalPos="84.39" arrivalSpeed="8.65" duration="152.00" routeLength="1230.42" waitingTime="19.00" waitingCount="1" stopTime="3.00" timeLoss="51.99" rerouteNo="1" devices="tripinfo_driver_1032" vType="DEFAULT_VEHTYPE" speedFactor="0.87" vaporized=""/>
+    <tripinfo id="driver_884" depart="2596.00" departLane="397135729#0_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3376.00" arrivalLane=":65332850_9_0" arrivalPos="1.15" arrivalSpeed="2.15" duration="780.00" routeLength="4923.16" waitingTime="363.00" waitingCount="14" stopTime="8.00" timeLoss="538.61" rerouteNo="5" devices="tripinfo_driver_884 person_driver_884" vType="DEFAULT_VEHTYPE" speedFactor="1.22" vaporized="traci"/>
+    <personinfo id="customer_313" depart="2973.00" type="DEFAULT_PEDTYPE">
+        <stop duration="136.00" arrival="3109.00" arrivalPos="0.00" actType="waiting"/>
+        <ride waitingTime="3.00" vehicle="driver_710" depart="3112.00" arrival="3379.00" arrivalPos="41.44" duration="267.00" routeLength="1593.73" timeLoss="170.80"/>
+        <stop duration="2.00" arrival="3381.00" arrivalPos="41.49" actType="waiting"/>
+    </personinfo>
+    <tripinfo id="driver_1067" depart="3383.00" departLane="-770522074#2_0" departPos="0.10" departSpeed="0.00" departDelay="7.00" arrival="3384.00" arrivalLane="-770522074#2_0" arrivalPos="0.10" arrivalSpeed="0.00" duration="1.00" routeLength="0.00" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.00" rerouteNo="0" devices="tripinfo_driver_1067" vType="DEFAULT_VEHTYPE" speedFactor="0.89" vaporized="traci"/>
+    <tripinfo id="driver_1070" depart="3384.00" departLane="-770522074#2_0" departPos="0.10" departSpeed="0.00" departDelay="4.00" arrival="3385.00" arrivalLane="-770522074#2_0" arrivalPos="0.10" arrivalSpeed="0.00" duration="1.00" routeLength="0.00" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.00" rerouteNo="0" devices="tripinfo_driver_1070" vType="DEFAULT_VEHTYPE" speedFactor="1.02" vaporized="traci"/>
+    <tripinfo id="driver_1030" depart="3221.00" departLane="397144558#0_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3387.00" arrivalLane="-739669067#0_0" arrivalPos="4.83" arrivalSpeed="0.00" duration="166.00" routeLength="497.61" waitingTime="94.00" waitingCount="5" stopTime="0.00" timeLoss="126.78" rerouteNo="1" devices="tripinfo_driver_1030" vType="DEFAULT_VEHTYPE" speedFactor="1.04" vaporized="traci"/>
+    <tripinfo id="driver_1057" depart="3353.00" departLane="-27050852#2_0" departPos="2.25" departSpeed="0.00" departDelay="0.00" arrival="3388.00" arrivalLane="-224384021_0" arrivalPos="1.15" arrivalSpeed="0.00" duration="35.00" routeLength="257.84" waitingTime="6.00" waitingCount="1" stopTime="0.00" timeLoss="17.64" rerouteNo="0" devices="tripinfo_driver_1057" vType="DEFAULT_VEHTYPE" speedFactor="1.03" vaporized="traci"/>
+    <tripinfo id="driver_1015" depart="3151.00" departLane="399156535#1_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3392.00" arrivalLane="-144346316#1_0" arrivalPos="68.52" arrivalSpeed="6.47" duration="241.00" routeLength="1140.20" waitingTime="106.00" waitingCount="4" stopTime="3.00" timeLoss="149.12" rerouteNo="3" devices="tripinfo_driver_1015" vType="DEFAULT_VEHTYPE" speedFactor="0.86" vaporized="traci"/>
+    <tripinfo id="driver_1069" depart="3377.00" departLane="-686246687#1_0" departPos="0.20" departSpeed="0.00" departDelay="0.00" arrival="3405.00" arrivalLane="-686246687#0_0" arrivalPos="87.27" arrivalSpeed="0.00" duration="28.00" routeLength="88.82" waitingTime="14.00" waitingCount="1" stopTime="0.00" timeLoss="18.22" rerouteNo="0" devices="tripinfo_driver_1069" vType="DEFAULT_VEHTYPE" speedFactor="0.90" vaporized="traci"/>
+    <tripinfo id="driver_674" depart="2027.00" departLane="397135729#0_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3407.00" arrivalLane="111560679#3_0" arrivalPos="84.90" arrivalSpeed="4.28" duration="1380.00" routeLength="6852.29" waitingTime="758.00" waitingCount="27" stopTime="13.00" timeLoss="1031.13" rerouteNo="6" devices="tripinfo_driver_674 person_driver_674" vType="DEFAULT_VEHTYPE" speedFactor="0.97" vaporized="traci"/>
+    <tripinfo id="driver_1028" depart="3204.00" departLane="797255352#5_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3410.00" arrivalLane="406581245_2" arrivalPos="24.27" arrivalSpeed="0.09" duration="206.00" routeLength="665.54" waitingTime="109.00" waitingCount="5" stopTime="0.00" timeLoss="134.95" rerouteNo="0" devices="tripinfo_driver_1028" vType="DEFAULT_VEHTYPE" speedFactor="1.08" vaporized="traci"/>
+    <personinfo id="customer_306" depart="2901.00" type="DEFAULT_PEDTYPE">
+        <stop duration="176.00" arrival="3077.00" arrivalPos="0.00" actType="waiting"/>
+        <ride waitingTime="2.00" vehicle="driver_916" depart="3079.00" arrival="3418.00" arrivalPos="131.39" duration="339.00" routeLength="2630.68" timeLoss="191.48"/>
+        <stop duration="2.00" arrival="3420.00" arrivalPos="131.40" actType="waiting"/>
+    </personinfo>
+    <tripinfo id="driver_1055" depart="3346.00" departLane="28841121#0_0" departPos="1.37" departSpeed="0.00" departDelay="0.00" arrival="3423.00" arrivalLane="-84654238#1_0" arrivalPos="0.20" arrivalSpeed="8.16" duration="77.00" routeLength="247.37" waitingTime="44.00" waitingCount="2" stopTime="0.00" timeLoss="60.68" rerouteNo="0" devices="tripinfo_driver_1055" vType="DEFAULT_VEHTYPE" speedFactor="1.05" vaporized=""/>
+    <tripinfo id="driver_1056" depart="3350.00" departLane="-91185869_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3426.00" arrivalLane="681183500#1_1" arrivalPos="2.91" arrivalSpeed="5.18" duration="76.00" routeLength="683.65" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="17.48" rerouteNo="3" devices="tripinfo_driver_1056" vType="DEFAULT_VEHTYPE" speedFactor="0.92" vaporized="traci"/>
+    <tripinfo id="driver_1042" depart="3280.00" departLane="-563092565#2_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3428.00" arrivalLane="87297164#10_0" arrivalPos="57.00" arrivalSpeed="15.94" duration="148.00" routeLength="788.92" waitingTime="59.00" waitingCount="2" stopTime="0.00" timeLoss="88.32" rerouteNo="1" devices="tripinfo_driver_1042" vType="DEFAULT_VEHTYPE" speedFactor="0.84" vaporized="traci"/>
+    <tripinfo id="driver_1063" depart="3364.00" departLane="-468552082#2_0" departPos="1.77" departSpeed="0.00" departDelay="0.00" arrival="3430.00" arrivalLane="527829938#1_2" arrivalPos="42.45" arrivalSpeed="11.33" duration="66.00" routeLength="193.79" waitingTime="37.00" waitingCount="1" stopTime="0.00" timeLoss="45.73" rerouteNo="0" devices="tripinfo_driver_1063" vType="DEFAULT_VEHTYPE" speedFactor="1.05" vaporized="traci"/>
+    <tripinfo id="driver_1065" depart="3368.00" departLane="771447675_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3433.00" arrivalLane="527857414#2_0" arrivalPos="41.71" arrivalSpeed="3.52" duration="65.00" routeLength="312.64" waitingTime="18.00" waitingCount="1" stopTime="0.00" timeLoss="28.11" rerouteNo="0" devices="tripinfo_driver_1065" vType="DEFAULT_VEHTYPE" speedFactor="0.94" vaporized="traci"/>
+    <personinfo id="customer_344" depart="3194.00" type="DEFAULT_PEDTYPE">
+        <stop duration="52.00" arrival="3246.00" arrivalPos="0.00" actType="waiting"/>
+        <ride waitingTime="2.00" vehicle="driver_1022" depart="3248.00" arrival="3432.00" arrivalPos="0.19" duration="184.00" routeLength="1299.32" timeLoss="76.67"/>
+        <stop duration="2.00" arrival="3434.00" arrivalPos="0.22" actType="waiting"/>
+    </personinfo>
+    <tripinfo id="driver_917" depart="2731.00" departLane="-8921653_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3434.00" arrivalLane="-27167298#4_0" arrivalPos="85.63" arrivalSpeed="13.37" duration="703.00" routeLength="3642.33" waitingTime="285.00" waitingCount="12" stopTime="17.00" timeLoss="412.29" rerouteNo="6" devices="tripinfo_driver_917 person_driver_917" vType="DEFAULT_VEHTYPE" speedFactor="1.00" vaporized=""/>
+    <tripinfo id="driver_927" depart="2760.00" departLane="-767935507_0" departPos="0.20" departSpeed="0.00" departDelay="0.00" arrival="3436.00" arrivalLane="-35977367#2_0" arrivalPos="1.15" arrivalSpeed="1.83" duration="676.00" routeLength="4349.17" waitingTime="282.00" waitingCount="10" stopTime="14.00" timeLoss="435.54" rerouteNo="5" devices="tripinfo_driver_927 person_driver_927" vType="DEFAULT_VEHTYPE" speedFactor="1.05" vaporized=""/>
+    <tripinfo id="driver_1068" depart="3376.00" departLane="769489483#1_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3437.00" arrivalLane="-25372932#0_0" arrivalPos="4.49" arrivalSpeed="0.00" duration="61.00" routeLength="521.21" waitingTime="12.00" waitingCount="1" stopTime="0.00" timeLoss="25.95" rerouteNo="1" devices="tripinfo_driver_1068" vType="DEFAULT_VEHTYPE" speedFactor="1.04" vaporized="traci"/>
+    <tripinfo id="driver_1040" depart="3258.00" departLane="-35977367#5_0" departPos="5.10" departSpeed="0.00" departDelay="0.00" arrival="3438.00" arrivalLane="144346316#8_0" arrivalPos="0.05" arrivalSpeed="0.05" duration="180.00" routeLength="1403.45" waitingTime="42.00" waitingCount="4" stopTime="0.00" timeLoss="88.33" rerouteNo="1" devices="tripinfo_driver_1040" vType="DEFAULT_VEHTYPE" speedFactor="0.94" vaporized="traci"/>
