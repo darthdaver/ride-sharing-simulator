@@ -21,7 +21,7 @@ class Printer:
     def export_global_indicators_v2(self):
         path = f"{os.getcwd()}/output/global-indicators_v2.csv"
         with open(path, 'w') as outfile:
-            outfile.write(self.__global_indicators_content)
+            outfile.write(self.__global_indicators_content_v2)
 
     def export_specific_indicators(self):
         path = f"{os.getcwd()}/output/specific-indicators.csv"

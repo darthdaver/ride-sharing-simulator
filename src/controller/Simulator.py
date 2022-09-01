@@ -137,18 +137,16 @@ class Simulator:
         for customer_id in self.__customers_by_state[CustomerState.ACTIVE.value]:
             ride_id = f"ride_{self.__ride_id_counter}"
             self.__ride_id_counter += 1
-            meeting_coordinates = self.__customers[customer_id].get_info()["current_coordinates"]
-            route_length = utils.select_from_distribution(self.__customer_setup["route_length_distribution"])
-            destination_coordinates = self.__map.generate_destination_point(self.__sumo_net, meeting_coordinates, route_length)
-            source_area_id = self.__map.get_area_from_coordinates(meeting_coordinates)
             try:
+                meeting_coordinates = self.__customers[customer_id].get_info()["current_coordinates"]
+                route_length = utils.select_from_distribution(self.__customer_setup["route_length_distribution"])
+                destination_coordinates = self.__map.generate_destination_point(self.__sumo_net, meeting_coordinates, route_length)
+                source_area_id = self.__map.get_area_from_coordinates(meeting_coordinates)
                 destination_area_id = self.__map.get_area_from_coordinates(destination_coordinates)
-
                 stats = {
                     "source_area_id": source_area_id,
                     "destination_area_id": destination_area_id
                 }
-
                 ride = Ride(ride_id, customer_id, meeting_coordinates, destination_coordinates, stats)
                 self.__provider.receive_request(ride)
                 self.__energy_indexes.received_request(timestamp)
@@ -863,7 +861,7 @@ class Simulator:
                     #print(f"{stop_probability} - {last_ride_timestamp} - {self.__get_human_policy(stop_policy, driver_info['personality'])}")
                     if utils.random_choice(stop_probability):
                         print(9)
-                        print(f"Driver {driver_id} stop to work [2]")
+                        print(f"Driver {driver_id} stop to work with probability {round(stop_probability,4)} [2]")
                         self.__remove_driver(driver_info["id"])
                         continue
                 if Map.is_arrived_by_sumo_edge(self.__sumo_net, driver_info):
@@ -1063,7 +1061,7 @@ class Simulator:
                     self.__generate_customer_requests(timestamp)
                 self.__process_rides(timestamp)
                 self.__manage_pending_request(timestamp)
-                if timestamp % 15.0 == 0:
+                if timestamp % 20.0 == 0:
                     self.__update_surge_multiplier(timestamp)
                 self.__update_drivers(timestamp)
                 self.__update_rides_state(timestamp)
