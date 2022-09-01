@@ -362,6 +362,7 @@ class Simulator:
                 self.__remove_customer(customer_id)
                 if ride_request_state == RideRequestState.NONE:
                     self.__energy_indexes.request_not_accomplished(timestamp)
+                    self.__update_surge_multiplier_not_accomplished(timestamp, area_id)
 
     def __map_pending_request_area(self, r):
         customer_info = self.__customers[r["customer_id"]].get_info()
@@ -817,7 +818,7 @@ class Simulator:
                 assert not driver_info["route"] == None, "Simulator.updateDrivers - unexpected moving driver without route"
                 assert not driver_info["current_distance"] == None, "Simulator.updateDrivers - unexpected driver distance undefined"
                 if Map.is_arrived_by_sumo_edge(self.__sumo_net, driver_info):
-                    print(f"Route completed for driver {driver_info['id']} - [1]")
+                    #print(f"Route completed for driver {driver_info['id']} - [1]")
                     try:
                         print(f"Simulator.__update_drivers | Driver {driver_info['id']} - generate random route [1]")
                         random_route = self.__map.generate_random_route_in_area_from_agent(timestamp, self.__sumo_net, driver_info, HumanType.DRIVER)
@@ -867,7 +868,7 @@ class Simulator:
                         continue
                 if Map.is_arrived_by_sumo_edge(self.__sumo_net, driver_info):
                     try:
-                        print(f"Route completed for driver {driver_info['id']} [2]")
+                        #print(f"Route completed for driver {driver_info['id']} [2]")
                         print(f"Simulator.__update_drivers | Driver {driver_info['id']} - generate random route [2]")
                         random_route = self.__map.generate_random_route_in_area_from_agent(timestamp, self.__sumo_net, driver_info, HumanType.DRIVER)
                         self.__set_driver_route(driver_info["id"], random_route.get_route_id())
@@ -921,7 +922,7 @@ class Simulator:
             driver_info = driver.get_info()
             assert not driver_info["current_distance"] == None, "Simulator.__update_rides_state - unexpected driver distance undefined. [1]"
             if Map.is_arrived_by_sumo_edge(self.__sumo_net, driver_info):
-                print(f"Route completed for driver {driver_info['id']} [3]")
+                #print(f"Route completed for driver {driver_info['id']} [3]")
                 customer = self.__customers[ride_info["customer_id"]]
                 customer_info = customer.update_on_road()
                 assert not ride_info["routes"]["destination_route"] == None, "Simulator.__update_rides_state - destination route not found on pickup."
@@ -971,7 +972,7 @@ class Simulator:
                 if Map.is_arrived_by_sumo_edge(self.__sumo_net, driver_info):
                     people_in_vehicle = traci.vehicle.getPersonNumber(driver_info['id'])
                     if people_in_vehicle == 0:
-                        print(f"Route completed for driver {driver_info['id']} [4]")
+                        #print(f"Route completed for driver {driver_info['id']} [4]")
                         customer = self.__customers[ride_info["customer_id"]]
                         customer_info = customer.update_end()
                         self.__customers_by_state[CustomerState.ON_ROAD.value].remove(customer_info["id"])
@@ -996,7 +997,7 @@ class Simulator:
                         self.__energy_indexes.compute_ovehead(timestamp, ride_info["stats"]["timestamp_request"], destination_duration)
                         self.__energy_indexes.compute_price_fluctuation(timestamp, price, ride_info["stats"]["expected_price"])
                         try:
-                            print(f"Simulator.__update_rides_state | Driver {driver_info['id']} - generate random route")
+                            #print(f"Simulator.__update_rides_state | Driver {driver_info['id']} - generate random route")
                             random_route = self.__map.generate_random_route_in_area_from_agent(timestamp, self.__sumo_net, driver_info, HumanType.DRIVER)
                             self.__set_driver_route(driver_info["id"], random_route.get_route_id())
                             self.__drivers_by_state[DriverState.ON_ROAD.value].remove(driver_info["id"])
@@ -1004,7 +1005,7 @@ class Simulator:
                             driver_info = driver.update_end(timestamp, random_route)
                         except Exception as e:
                             #print(e)
-                            print(f"Simulator.__update_ride_stats - Impossible to find route. Driver {driver_info['id']} removed.")
+                            #print(f"Simulator.__update_ride_stats - Impossible to find route. Driver {driver_info['id']} removed.")
                             driver_area_id = self.check_area_id(driver_info, self.__map.get_area_from_coordinates(driver_info["current_coordinates"]), "driver")
                             if not driver_area_id == "unknown":
                                 self.__generate_driver(timestamp, driver_area_id, last_ride_timestamp=driver_info["last_ride_timestamp"], rides_completed=driver_info["rides_completed"])
@@ -1041,6 +1042,12 @@ class Simulator:
             new_surge_multiplier = max(0.7, min(surge_multiplier + surge_multiplier_increment, 3.5))
             self.__map.update_area_surge_multiplier(area_id, new_surge_multiplier)
 
+    def __update_surge_multiplier_not_accomplished(self, timestamp, area_id):
+        area_info = self.__map.get_area_info(area_id)
+        surge_multiplier = area_info["surge_multipliers"][0]
+        new_surge_multiplier = max(0.7, min(surge_multiplier + 0.05, 3.5))
+        self.__map.update_area_surge_multiplier(area_id, new_surge_multiplier)
+
     def run(self):
         step = 0
         stop = False
@@ -1056,7 +1063,7 @@ class Simulator:
                     self.__generate_customer_requests(timestamp)
                 self.__process_rides(timestamp)
                 self.__manage_pending_request(timestamp)
-                if timestamp % 10.0 == 0:
+                if timestamp % 15.0 == 0:
                     self.__update_surge_multiplier(timestamp)
                 self.__update_drivers(timestamp)
                 self.__update_rides_state(timestamp)
@@ -1080,8 +1087,8 @@ class Simulator:
                     self.__printer.export_rides_assignations()
                     self.__printer.export_surge_multipliers()
                     self.__printer.export_areas_info_agents_statistics()
-                    self.print_drivers_by_state()
-                    self.print_customers_by_state()
+                    #self.print_drivers_by_state()
+                    #self.print_customers_by_state()
                 if timestamp >= 100 and timestamp % 100.0 == 0:
                     self.__printer.export_energy_indexes(timestamp, self.__energy_indexes.get_energy_indexes(), 100)
                 if timestamp >= 200 and timestamp % 100.0 == 0:
@@ -1113,6 +1120,7 @@ class Simulator:
                 self.__save_areas_info_agents(timestamp)
                 print(f"Customers: {len(traci.person.getIDList())}")
                 print(f"Drivers: {len(traci.vehicle.getIDList())}")
+                print(f"Idle Drivers: {len(self.__drivers_by_state[DriverState.IDLE.value])}")
             except Exception as e:
                 self.print_drivers()
                 print(self.__drivers_by_state)

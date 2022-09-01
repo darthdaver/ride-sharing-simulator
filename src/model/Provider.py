@@ -289,6 +289,7 @@ class Provider:
         for driver_info in drivers_info_array:
             driver_id = driver_info["id"]
             air_distance = Map.get_air_distance(meeting_point, driver_info["current_coordinates"])
+            #print(f"Distance:{air_distance}")
             if air_distance <= self.__request["max_driver_distance"]:
                 nearby_candidates.append({
                     "driver_id": driver_id,
@@ -296,7 +297,7 @@ class Provider:
                     "air_distance": air_distance
                 })
 
-                if len(nearby_candidates) == 5:
+                if len(nearby_candidates) == 20:
                     break
         if len(nearby_candidates) > 0:
             nearby_candidates.sort(key=lambda c: c["air_distance"])
