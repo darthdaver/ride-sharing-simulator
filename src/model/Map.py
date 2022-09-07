@@ -277,9 +277,12 @@ class Map:
             while len(way_coordinates_list) > 0:
                 way_coordinates = utils.select_from_list(way_coordinates_list)
                 way_coordinates_list.remove(way_coordinates)
-                way_edge = Map.get_sumo_edge_id_from_coordinates(sumo_net, way_coordinates)
-                if Map.is_sumo_edge(sumo_net, way_edge) and Map.is_traversable(sumo_net, way_edge):
-                    return way_coordinates
+                try:
+                    way_edge = Map.get_sumo_edge_id_from_coordinates(sumo_net, way_coordinates)
+                    if Map.is_sumo_edge(sumo_net, way_edge) and Map.is_traversable(sumo_net, way_edge):
+                        return way_coordinates
+                except:
+                    continue
             return None
         else:
             if way_type == "Point":

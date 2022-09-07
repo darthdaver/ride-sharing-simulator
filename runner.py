@@ -48,7 +48,7 @@ if __name__ == "__main__":
     sumoBinary = checkBinary('sumo')
 
     traci.start(["sumo", "-c", "net_config/sumo.sumocfg",
-                 "--tripinfo-output", "net_config/tripinfo.xml"],
+                 "--tripinfo-output", "net_config/tripinfo.xml", "--threads", "10", "--device.rerouting.threads", "10"],
                 traceFile=f"{os.getcwd()}/traci_logfile.txt", traceGetters=False)
 
     print('INIT')
